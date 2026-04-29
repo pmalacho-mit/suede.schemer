@@ -62,27 +62,19 @@ const prefetchExternalRefs = async (
 };
 
 const node = (raw: JSONSchema7, path: string, ctx: Context): RenderNode => {
-  // Step 1: Resolve $ref (possibly recursive)
-  let schema = resolve(raw, ctx);
-
-  // Step 2: Merge composition keywords into a single effective schema
-  schema = merge(schema, ctx);
-
+  const schema = merge(resolve(raw, ctx), ctx);
   const { oneOf, anyOf, title, description, enum: options } = schema;
 
-  // Step 3: If we still have oneOf/anyOf that couldn't be merged,
+  // If we still have oneOf/anyOf that couldn't be merged,
   // produce a variant node (discriminated union in the UI)
   if (oneOf || anyOf) return variant(schema, path, ctx);
 
-  // Step 4: Infer type if not explicitly stated
   const kind = infer(schema);
 
-  // Step 5: Only catch *untyped* enums as a generic enum node.
-  // Typed enums fall through to their type-specific handler
+  // Catch *untyped* enums as a generic enum node.
   if (options && !kind)
     return { kind: "enum", path, title, description, options };
 
-  // Step 6: Dispatch on type
   switch (kind) {
     case "string":
       if (!valid.options("string", options))
@@ -185,24 +177,33 @@ const object = (schema: JSONSchema7, path: string, ctx: Context) => {
 };
 
 const array = (schema: JSONSchema7, path: string, ctx: Context) => {
-  let itemSchema: JSONSchema7 = {};
+  if (Array.isArray(schema.items)) return tuple(schema, path, ctx);
 
-  if (schema.items)
-    if (Array.isArray(schema.items))
-      // Tuple validation — merge all item schemas as an allOf
-      // so the render tree captures all possible shapes.
-      // (A more sophisticated approach would use a tuple node.)
-      itemSchema = { allOf: schema.items.filter(isSchema) };
-    else if (isSchema(schema.items)) itemSchema = schema.items;
-
+  const itemSchema = isSchema(schema.items) ? schema.items : {};
   const itemNode = node(itemSchema, `${path}.*`, ctx);
 
   return {
     kind: "array",
     path,
+    itemNode,
     title: schema.title,
     description: schema.description,
-    itemNode,
+    minItems: schema.minItems,
+    maxItems: schema.maxItems,
+  } satisfies RenderNode;
+};
+
+const tuple = (schema: JSONSchema7, path: string, ctx: Context) => {
+  const itemNodes = (schema.items as JSONSchema7[])
+    .filter(isSchema)
+    .map((itemSchema, i) => node(itemSchema as JSONSchema7, `${path}.${i}`, ctx));
+
+  return {
+    kind: "tuple",
+    path,
+    itemNodes,
+    title: schema.title,
+    description: schema.description,
     minItems: schema.minItems,
     maxItems: schema.maxItems,
   } satisfies RenderNode;
