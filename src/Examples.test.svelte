@@ -50,14 +50,10 @@
     rate = $state(300);
     size = $state(5);
 
-    readonly tracker: URLParameterize.Return;
-
-    constructor() {
-      this.tracker = URLParameterize<Parameters>(this, {
-        rate: Number,
-        size: Number,
-      });
-    }
+    readonly tracking = URLParameterize<Parameters>(this, {
+      rate: Number,
+      size: Number,
+    });
   }
 </script>
 
@@ -85,7 +81,7 @@
   }));
 
   const parameters = new Parameters();
-  onDestroy(() => parameters.tracker.cleanup());
+  onDestroy(parameters.tracking.cleanup);
 </script>
 
 <div
