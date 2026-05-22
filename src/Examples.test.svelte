@@ -27,7 +27,6 @@
         schema: schema as JSONSchema7,
       })),
   }));
-  type Option = (typeof options)[number];
 
   class Pocket {
     data: Data;
@@ -40,7 +39,7 @@
       this.root = root;
     }
 
-    static async Make(mode: Mode, option: Option) {
+    static async Make(mode: Mode, option: (typeof options)[number]) {
       const { data, schema } = await option.importer();
       const initial = mode === "stream" ? {} : data;
       return new Pocket(data, new Model(mode, initial), await root(schema));
@@ -48,13 +47,13 @@
   }
 
   class Parameters {
-    readonly urlTrack: URLParameterize.Return;
-
     rate = $state(300);
     size = $state(5);
 
+    readonly tracker: URLParameterize.Return;
+
     constructor() {
-      this.urlTrack = URLParameterize<Parameters>(this, {
+      this.tracker = URLParameterize<Parameters>(this, {
         rate: Number,
         size: Number,
       });
@@ -65,7 +64,7 @@
 <script lang="ts">
   import type { JSONSchema7 } from "json-schema";
   import { Model, root, Schema } from "../release";
-  import { flushSync } from "svelte";
+  import { flushSync, onDestroy } from "svelte";
   import { streamSteps } from "./utils";
   import Sweater from "../.suede/sweater-vest-suede/Sweater.svelte";
 
@@ -86,33 +85,22 @@
   }));
 
   const parameters = new Parameters();
+  onDestroy(() => parameters.tracker.cleanup());
 </script>
 
 <div
   style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap;"
 >
-  <label>
-    stream rate (ms / step):
-    <input
-      type="number"
-      bind:value={parameters.rate}
-      min={50}
-      max={5000}
-      step={50}
-      style="width: 80px;"
-    />
-  </label>
-  <label>
-    string chunk size (chars / step):
-    <input
-      type="number"
-      bind:value={parameters.size}
-      min={1}
-      max={20}
-      step={1}
-      style="width: 80px;"
-    />
-  </label>
+  {@render parameter("rate", "stream rate (ms / step)", {
+    min: 50,
+    max: 5000,
+    step: 50,
+  })}
+  {@render parameter("size", "stream chunk size (chars / step)", {
+    min: 1,
+    max: 20,
+    step: 1,
+  })}
 </div>
 
 {#each modes as mode}
@@ -143,3 +131,19 @@
     {/each}
   </Sweater>
 {/each}
+
+{#snippet parameter(
+  key: keyof Parameters,
+  title: string,
+  config: Record<"min" | "max" | "step", number>,
+)}
+  <label>
+    {title}
+    <input
+      type="number"
+      style="width: 80px;"
+      bind:value={parameters[key]}
+      {...config}
+    />
+  </label>
+{/snippet}
