@@ -3,7 +3,8 @@
   import type { Props as ContainerProps } from "./Container.svelte";
   import Container, { mechanism, next, setTotal } from "./Container.svelte";
   import type { Snippet } from "svelte";
-  import { createContainerMap } from "./utils/container-map";
+  import { createContainerMap } from "./utils/container-map.js";
+  import { suiteReady } from "./report/client.js";
 
   type ConfigProps = ContainerProps & {
     target?: HTMLElement;
@@ -63,6 +64,12 @@
     url.searchParams.delete(testHasChangedParam);
     window.history.replaceState({}, "", url.toString());
   };
+
+  const testCount = () => {
+    let total = 0;
+    containers.each((container) => (total += container.count()));
+    return total;
+  };
 </script>
 
 <script lang="ts" generics="T extends Pocket">
@@ -93,6 +100,7 @@
     const allMounted = counts.total() === 0;
     if (!allMounted) return;
     setTotal(containers.total);
+    suiteReady(testCount());
     containers.reset();
     next();
   });

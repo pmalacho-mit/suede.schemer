@@ -4,9 +4,9 @@
 ; git-subrepo command. See https://github.com/ingydotnet/git-subrepo#readme
 ;
 [subrepo]
-	remote = https://github.com/pmalacho-mit/sweater-vest-suede.git
+	remote = https://github.com/pmalacho-mit/typescript-cli-suede
 	branch = release
-	commit = a9b9bf7999ab9dc74dfcd1c136353a3d9028e113
-	parent = c2a104f13eb0e55ba246665d4fae67e0686da7bd
+	commit = 1dd85c37b5e3023b19a16e1f4091fbcbe44b2226
+	parent = ed1e27ed5bd26f247a4ae6234ae542831884920b
 	method = merge
 	cmdver = 0.4.9

@@ -1,9 +1,11 @@
-<script lang="ts">
-  import type { JSONSchema7 } from "json-schema";
-  import { Model, root, Schema } from "../release";
-  import { flushSync } from "svelte";
+<script lang="ts" module>
+  import { URLParameterize } from "../.suede/svelte-url-parameterizer-suede";
 
-  type Mode = "edit" | "view" | "stream";
+  type Data = Record<string, unknown>;
+  type RootNode = Awaited<ReturnType<typeof root>>;
+
+  const modes = ["edit", "stream", "view"] as const;
+  type Mode = (typeof modes)[number];
 
   const examples = import.meta.glob<Record<string, unknown>>(
     "/public/**/*.json",
@@ -25,136 +27,119 @@
         schema: schema as JSONSchema7,
       })),
   }));
+  type Option = (typeof options)[number];
 
-  // Generates streaming steps that mimic LLM token-by-token output:
-  // - strings arrive a few characters at a time
-  // - array elements populate one by one (each element's fields also stream)
-  // - object fields appear sequentially
-  // - numbers and booleans arrive in a single step
-  function* streamSteps(
-    data: unknown,
-    chunk_size: number,
-    base = "",
-  ): Generator<{ path: string; value: unknown }> {
-    if (typeof data === "string") {
-      for (let i = chunk_size; i < data.length; i += chunk_size)
-        yield { path: base, value: data.slice(0, i) };
-      yield { path: base, value: data };
-      return;
+  class Pocket {
+    data: Data;
+    model: Model;
+    root: RootNode;
+
+    private constructor(data: Data, model: Model, root: RootNode) {
+      this.data = data;
+      this.model = model;
+      this.root = root;
     }
 
-    if (typeof data !== "object" || data === null) {
-      yield { path: base, value: data };
-      return;
+    static async Make(mode: Mode, option: Option) {
+      const { data, schema } = await option.importer();
+      const initial = mode === "stream" ? {} : data;
+      return new Pocket(data, new Model(mode, initial), await root(schema));
     }
-
-    if (Array.isArray(data)) {
-      // Initialize to empty so the array container renders immediately
-      if (base) yield { path: base, value: [] };
-      for (let i = 0; i < data.length; i++)
-        yield* streamSteps(
-          data[i],
-          chunk_size,
-          base ? `${base}.${i}` : String(i),
-        );
-      return;
-    }
-
-    for (const [k, v] of Object.entries(data as Record<string, unknown>))
-      yield* streamSteps(v, chunk_size, base ? `${base}.${k}` : k);
   }
 
-  let selected = $state(0);
-  let mode = $state<Mode>("edit");
-  let streamRate = $state(300);
-  let chunkSize = $state(5);
+  class Parameters {
+    readonly urlTrack: URLParameterize.Return;
 
-  type RootNode = Awaited<ReturnType<typeof root>>;
-  type RenderConfig = { model: InstanceType<typeof Model>; rootNode: RootNode };
+    rate = $state(300);
+    size = $state(5);
 
-  let renderConfig = $state<RenderConfig | null>(null);
+    constructor() {
+      this.urlTrack = URLParameterize<Parameters>(this, {
+        rate: Number,
+        size: Number,
+      });
+    }
+  }
+</script>
 
-  $effect(() => {
-    const idx = selected;
-    const currentMode = mode;
-    const rate = streamRate;
+<script lang="ts">
+  import type { JSONSchema7 } from "json-schema";
+  import { Model, root, Schema } from "../release";
+  import { flushSync } from "svelte";
+  import { streamSteps } from "./utils";
+  import Sweater from "../.suede/sweater-vest-suede/Sweater.svelte";
 
-    renderConfig = null;
-    let cancelled = false;
-    let intervalId: ReturnType<typeof setInterval> | null = null;
+  const options = Array.from(
+    new Set(
+      Object.keys(examples).map((path) => path.replace(/\/[^\/]+\.json$/, "")),
+    ),
+  ).map((path) => ({
+    path,
+    importer: () =>
+      Promise.all([
+        examples[path + "/data.json"](),
+        examples[path + "/schema.json"](),
+      ]).then(([data, schema]) => ({
+        data: data as Record<string, unknown>,
+        schema: schema as JSONSchema7,
+      })),
+  }));
 
-    options[idx].importer().then(async ({ data, schema }) => {
-      const rootNode = await root(schema);
-      if (cancelled) return;
-
-      const model = new Model(
-        currentMode,
-        currentMode === "stream" ? ({} as any) : (data as any),
-      );
-      renderConfig = { model, rootNode };
-
-      if (currentMode !== "stream") return;
-
-      const items = [...streamSteps(data, chunkSize)];
-      let i = 0;
-      intervalId = setInterval(() => {
-        if (i >= items.length) {
-          clearInterval(intervalId!);
-          return;
-        }
-        const { path, value } = items[i++];
-        flushSync(() => model.set({ path }, value as any));
-      }, rate);
-    });
-
-    return () => {
-      cancelled = true;
-      if (intervalId !== null) clearInterval(intervalId);
-    };
-  });
+  const parameters = new Parameters();
 </script>
 
 <div
   style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap;"
 >
-  <select bind:value={selected}>
-    {#each options as option, index}
-      <option value={index}>{option.path.split("/").at(-1)}</option>
-    {/each}
-  </select>
-
-  <select bind:value={mode}>
-    <option value="edit">edit</option>
-    <option value="view">view</option>
-    <option value="stream">stream</option>
-  </select>
-
-  {#if mode === "stream"}
-    <label>
-      stream rate (ms / step):
-      <input
-        type="number"
-        bind:value={streamRate}
-        min={50}
-        max={5000}
-        step={50}
-        style="width: 80px;"
-      />
-    </label>
-    <label>
-      string chunk size (chars / step):
-      <input
-        type="number"
-        bind:value={chunkSize}
-        min={1}
-        max={20}
-        step={1}
-        style="width: 80px;"
-      />
-    </label>
-  {/if}
+  <label>
+    stream rate (ms / step):
+    <input
+      type="number"
+      bind:value={parameters.rate}
+      min={50}
+      max={5000}
+      step={50}
+      style="width: 80px;"
+    />
+  </label>
+  <label>
+    string chunk size (chars / step):
+    <input
+      type="number"
+      bind:value={parameters.size}
+      min={1}
+      max={20}
+      step={1}
+      style="width: 80px;"
+    />
+  </label>
 </div>
 
-{#if renderConfig}
-  <Schema model={renderConfig.model} root={renderConfig.rootNode} />
-{/if}
+{#each modes as mode}
+  <Sweater config category={mode}>
+    {#each options as option}
+      {@const name = option.path.split("/").at(-1)}
+      <Sweater
+        lazy
+        {name}
+        body={async ({ set }) => {
+          const pocket = set(await Pocket.Make(mode, option));
+
+          if (mode === "stream") {
+            const items = [...streamSteps(pocket.data, parameters.size)];
+            let i = 0;
+            let intervalId = setInterval(() => {
+              if (i >= items.length) return clearInterval(intervalId);
+              const { path, value } = items[i++];
+              flushSync(() => pocket.model.set({ path }, value));
+            }, parameters.rate);
+          }
+        }}
+      >
+        {#snippet vest(pocket: Pocket)}
+          <Schema {...pocket} />
+        {/snippet}
+      </Sweater>
+    {/each}
+  </Sweater>
+{/each}

@@ -1,12 +1,16 @@
 <script lang="ts" module>
-  import { type PanelProps, type ViewAPI } from "./suede/dockview-svelte-suede";
-  import "./suede/dockview-svelte-suede/styles/dockview.css";
+  import {
+    type PanelProps,
+    type ViewAPI,
+  } from "./.suede/dockview-svelte-suede";
+  // @ts-ignore
+  import "./.suede/dockview-svelte-suede/styles/dockview.css";
   import Runner, {
     type Props as RunnerProps,
-    type Error,
+    type Container,
     reset,
   } from "./Runner.svelte";
-  import { onAbort, TestAborted } from "./utils/abort";
+  import { onAbort } from "./utils/abort";
 
   const orientations = {
     horizontal: "HORIZONTAL",
@@ -20,6 +24,7 @@
     mode?: RunnerProps["mode"];
     class?: string;
     style?: string;
+    category?: string;
   };
 
   export const mechanism = {
@@ -111,50 +116,50 @@
   export const setTotal = (n: number) => (total = n);
   const heightPercentage = $derived(100 / total);
 
-  let count = 0;
+  let containers = 0;
 </script>
 
 <script lang="ts">
-  import { GridView } from "./suede/dockview-svelte-suede";
+  import { GridView } from "./.suede/dockview-svelte-suede";
   import { defer } from "./utils";
 
   let {
     orientation = "horizontal",
     mode,
+    category,
     ...rest
   }: Props & { mechanism: Mechanism } = $props();
 
   let tests = 0;
 
-  const index = count++;
+  const index = containers++;
+  const self: Container = $derived({ index, category });
 
   type API = ViewAPI<"grid", { child: typeof child }>;
+  type ChildProps = RunnerProps & {
+    index: number;
+    container: Container;
+  };
 
   const { promise, resolve } = defer<API>();
 
-  const withDefaults = (props: RunnerProps) => ({
+  const fill = (props: RunnerProps, index: number): ChildProps => ({
     ...props,
+    index,
+    container: self,
     mode: props.mode ?? mode,
-    error: (e: any) => {
-      if (e instanceof TestAborted) return;
-      console.group("❌ Test Failed");
-      console.error("Error:", e);
-      console.error("Message:", e?.message);
-      console.error("Name:", e?.name);
-      console.error("Stack:", e?.stack);
-      if (e?.matcherResult) console.error("Matcher Result:", e.matcherResult);
-      console.groupEnd();
-    },
   });
 
   export const push = async (props: RunnerProps) => {
+    const test = tests++;
     pending.abort ??= abort();
     const [api] = await Promise.all([promise, pending.abort]);
-    const test = tests++;
-    const resolved = withDefaults(props);
+    const resolved = fill(props, test);
     warnIfFirstAndHasPosition(test, resolved);
     api.addSnippetPanel("child", resolved, options(test, props, orientation));
   };
+
+  export const count = () => tests;
 </script>
 
 <svelte:head>
@@ -165,7 +170,7 @@
   </style>
 </svelte:head>
 
-{#snippet child({ params }: PanelProps<"grid", RunnerProps & { error: Error }>)}
+{#snippet child({ params }: PanelProps<"grid", ChildProps>)}
   <Runner
     {...params}
     begin={(abort) => {

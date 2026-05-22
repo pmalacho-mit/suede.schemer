@@ -1,7 +1,7 @@
 import { mount } from "svelte";
-import Gallery from "../.suede/sweater-vest-suede/vite/Gallery.svelte";
+import Closet from "../.suede/sweater-vest-suede/Closet.svelte";
 
-const app = mount(Gallery, {
+const app = mount(Closet, {
   target: document.getElementById("app")!,
   props: {
     glob: import.meta.glob("/src/**/*.test.svelte"),
