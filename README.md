@@ -1,4 +1,6 @@
-# Svelte-schema-renderer-suede
+# `schemer`: svelte schema renderer
+
+Schemer (<ins style="color:white"><sub style="color:grey">_svelte_</sub> <span style="color:#aa1e1e">**Schem**</span><sub>_a_</sub> <sub>_rend_</sub><span style="color:#aa1e1e">**er**</span><sub>_er_</sub> <sub style="color:grey">_suede_</sub></ins>)
 
 This repo is a [suede dependency](https://github.com/pmalacho-mit/suede). 
 
