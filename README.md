@@ -1,4 +1,4 @@
-# `schemer`: svelte schema renderer
+# suede.schemer
 
 Schemer (**S**<ins style="color:white"><sub style="color:grey">_velte s_</sub><span style="color:#aa1e1e">**chem**</span><sub>_a_</sub> <sub>_rend_</sub><span style="color:#aa1e1e">**er**</span><sub>_er_</sub> <sub style="color:grey">_suede_</sub></ins>)
 
