@@ -7,7 +7,12 @@
 </script>
 
 <div class="push">
-  <Button {node} action="push" variant="primary" onclick={() => actions.push(node, model)}>
+  <Button
+    {node}
+    action="push"
+    variant="primary"
+    onclick={() => actions.push(node, model)}
+  >
     <span aria-hidden="true" class="plus">+</span> Add item
   </Button>
 </div>

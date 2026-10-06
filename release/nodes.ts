@@ -196,7 +196,9 @@ const array = (schema: JSONSchema7, path: string, ctx: Context) => {
 const tuple = (schema: JSONSchema7, path: string, ctx: Context) => {
   const itemNodes = (schema.items as JSONSchema7[])
     .filter(isSchema)
-    .map((itemSchema, i) => node(itemSchema as JSONSchema7, `${path}.${i}`, ctx));
+    .map((itemSchema, i) =>
+      node(itemSchema as JSONSchema7, `${path}.${i}`, ctx),
+    );
 
   return {
     kind: "tuple",

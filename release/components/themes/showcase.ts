@@ -6,13 +6,25 @@ export const schema: JSONSchema7 = {
   title: "Conference registration",
   description: "Every kind of field, as this theme draws it.",
   properties: {
-    name: { type: "string", title: "Full name", description: "As it should appear on your badge." },
+    name: {
+      type: "string",
+      title: "Full name",
+      description: "As it should appear on your badge.",
+    },
     email: { type: "string", format: "email", title: "Email" },
     arrival: { type: "string", format: "date", title: "Arrival date" },
-    ticket: { type: "string", title: "Ticket", enum: ["Standard", "Student", "Speaker"] },
+    ticket: {
+      type: "string",
+      title: "Ticket",
+      enum: ["Standard", "Student", "Speaker"],
+    },
     event: { type: "string", title: "Event", const: "SvelteConf 2026" },
     guests: { type: "integer", title: "Guests", minimum: 0, maximum: 4 },
-    workshop: { type: "boolean", title: "Join the workshop", description: "Limited to 40 seats." },
+    workshop: {
+      type: "boolean",
+      title: "Join the workshop",
+      description: "Limited to 40 seats.",
+    },
     shirt: { title: "Shirt size", enum: ["S", "M", "L", "XL"] },
     nickname: { type: "string", title: "Nickname" },
     address: {
@@ -26,8 +38,18 @@ export const schema: JSONSchema7 = {
           title: "Coordinates",
           description: "A group inside a group.",
           properties: {
-            latitude: { type: "number", title: "Latitude", minimum: -90, maximum: 90 },
-            longitude: { type: "number", title: "Longitude", minimum: -180, maximum: 180 },
+            latitude: {
+              type: "number",
+              title: "Latitude",
+              minimum: -90,
+              maximum: 90,
+            },
+            longitude: {
+              type: "number",
+              title: "Longitude",
+              minimum: -180,
+              maximum: 180,
+            },
           },
           required: ["latitude", "longitude"],
         },

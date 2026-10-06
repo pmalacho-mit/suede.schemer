@@ -149,45 +149,45 @@
 {/snippet}
 
 {#if !absent}
-<div {...attributes(node)} data-index={index}>
-  {#if optedOut}
-    {#if optedOutRenderer}
-      {@render optedOutRenderer(rendererArgs!)}
-    {:else if optInRenderer}
-      {@render optInRenderer(rendererArgs!)}
-    {:else}
-      {@const Component = components.byAction["opt_in__"]}
-      <Component {node} {model} />
-    {/if}
-  {:else}
-    {#if canOptOut}
-      {#if optOutRenderer}
-        {@render optOutRenderer(rendererArgs!)}
+  <div {...attributes(node)} data-index={index}>
+    {#if optedOut}
+      {#if optedOutRenderer}
+        {@render optedOutRenderer(rendererArgs!)}
+      {:else if optInRenderer}
+        {@render optInRenderer(rendererArgs!)}
       {:else}
-        {@const Component = components.byAction["opt_out__"]}
+        {@const Component = components.byAction["opt_in__"]}
         <Component {node} {model} />
       {/if}
-    {/if}
-
-    {#if nodeRenderer}
-      {@render nodeRenderer(rendererArgs!)}
     {:else}
-      {@const Component = components.byKind[node.kind] as Component<
-        Field.Props<any>
-      >}
-      <Component
-        {node}
-        {model}
-        {parent}
-        {index}
-        {renderChild}
-        {pushRenderer}
-        {spliceRenderer}
-        {insertRenderer}
-      />
+      {#if canOptOut}
+        {#if optOutRenderer}
+          {@render optOutRenderer(rendererArgs!)}
+        {:else}
+          {@const Component = components.byAction["opt_out__"]}
+          <Component {node} {model} />
+        {/if}
+      {/if}
+
+      {#if nodeRenderer}
+        {@render nodeRenderer(rendererArgs!)}
+      {:else}
+        {@const Component = components.byKind[node.kind] as Component<
+          Field.Props<any>
+        >}
+        <Component
+          {node}
+          {model}
+          {parent}
+          {index}
+          {renderChild}
+          {pushRenderer}
+          {spliceRenderer}
+          {insertRenderer}
+        />
+      {/if}
     {/if}
-  {/if}
-</div>
+  </div>
 {/if}
 
 <!-- an optional field (one its object does not require) can be opted in and out -->

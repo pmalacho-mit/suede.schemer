@@ -7,7 +7,12 @@
 </script>
 
 <div class="corner">
-  <Button {node} action="opt-out" variant="mini" onclick={() => actions.optOut(node, model)}>
+  <Button
+    {node}
+    action="opt-out"
+    variant="mini"
+    onclick={() => actions.optOut(node, model)}
+  >
     <span aria-hidden="true">✕</span>
   </Button>
 </div>

@@ -64,8 +64,11 @@
     font-style: italic;
     color: var(--sc-accent);
     background-color: transparent;
-    background-image:
-      linear-gradient(45deg, transparent 50%, var(--sc-accent) 50%),
+    background-image: linear-gradient(
+        45deg,
+        transparent 50%,
+        var(--sc-accent) 50%
+      ),
       linear-gradient(135deg, var(--sc-accent) 50%, transparent 50%);
     background-position:
       calc(100% - 0.75em) 58%,

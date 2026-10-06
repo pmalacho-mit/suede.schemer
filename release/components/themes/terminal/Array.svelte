@@ -43,7 +43,13 @@
         </div>
         {#if model.editable}
           <div class="splice">
-            <ArrayAction action="splice" renderer={spliceRenderer} {node} {model} {index} />
+            <ArrayAction
+              action="splice"
+              renderer={spliceRenderer}
+              {node}
+              {model}
+              {index}
+            />
           </div>
         {/if}
       </li>

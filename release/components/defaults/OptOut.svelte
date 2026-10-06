@@ -6,4 +6,9 @@
   let { node, model }: Field.Props = $props();
 </script>
 
-<Action {node} {model} onclick={() => actions.optOut(node, model)} action="opt-out">×</Action>
+<Action
+  {node}
+  {model}
+  onclick={() => actions.optOut(node, model)}
+  action="opt-out">×</Action
+>

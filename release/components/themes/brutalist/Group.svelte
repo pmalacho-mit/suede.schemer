@@ -150,13 +150,28 @@
   /* cards carry their own border: no rule above them or right below them */
   :global(:is([data-mode="view"], [data-mode="stream"]))
     .fields
-    > :global(div[data-kind]:is([data-kind="object"], [data-kind="array"], [data-kind="tuple"], [data-kind="oneOf"])) {
+    > :global(
+      div[data-kind]:is(
+          [data-kind="object"],
+          [data-kind="array"],
+          [data-kind="tuple"],
+          [data-kind="oneOf"]
+        )
+    ) {
     border-top: 0;
   }
 
   :global(:is([data-mode="view"], [data-mode="stream"]))
     .fields
-    > :global(div[data-kind]:is([data-kind="object"], [data-kind="array"], [data-kind="tuple"], [data-kind="oneOf"]) + div[data-kind]) {
+    > :global(
+      div[data-kind]:is(
+          [data-kind="object"],
+          [data-kind="array"],
+          [data-kind="tuple"],
+          [data-kind="oneOf"]
+        )
+        + div[data-kind]
+    ) {
     border-top: 0;
   }
 

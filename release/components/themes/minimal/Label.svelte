@@ -22,7 +22,11 @@
 <div class="field" class:inline>
   <label>
     {#if inline}{@render children()}{/if}
-    <span class="name" title={tooltip(node, model)} {...attributes.role("name")}>
+    <span
+      class="name"
+      title={tooltip(node, model)}
+      {...attributes.role("name")}
+    >
       {title(node, model)}
     </span>
     {#if !inline}{@render children()}{/if}

@@ -92,7 +92,8 @@
       <input
         type="color"
         value={parameters.accent || "#000000"}
-        oninput={({ currentTarget }) => (parameters.accent = currentTarget.value)}
+        oninput={({ currentTarget }) =>
+          (parameters.accent = currentTarget.value)}
       />
     </label>
     {#if parameters.accent}
