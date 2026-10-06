@@ -155,7 +155,7 @@
     object: theme?.byKind?.object ?? defaults.component.byKind.object,
   });
 
-  /** the part of speech as the input's placeholder (the schema has no keyword the library reads for one) */
+  /** the part of speech as the input's placeholder: a label, not an example value, so not the schema's `examples` */
   const placeholder = (text: string) => (element: HTMLElement) => {
     for (const input of element.querySelectorAll("input"))
       input.placeholder = text;
@@ -212,12 +212,7 @@
       Clear
     </button>
   </div>
-  <!-- a renderer is not handed `parent`; this group is always the oneOf's chosen variant -->
-  <Themed.object
-    {...props}
-    parent="oneOf"
-    node={{ ...props.node, description: undefined }}
-  />
+  <Themed.object {...props} node={{ ...props.node, description: undefined }} />
 {/snippet}
 
 <!-- the discriminator: the cards already say which story it is -->

@@ -13,7 +13,6 @@
   import type { Field } from "../../../release/components/Field.svelte";
   // what a custom array renderer hands each item: the item's node, its path
   // resolved. Every theme's Array uses it, but it is not in the public API.
-  import { arrayItemAtIndex } from "../../../release/components/naming.ts";
   import EnvelopeDisplay from "./EnvelopeDisplay.svelte";
   import FilterDisplay from "./FilterDisplay.svelte";
   import Keyboard from "./Keyboard.svelte";
@@ -33,7 +32,6 @@
     type Param,
   } from "./params.ts";
   import {
-    defaultFor,
     matchPreset,
     moved,
     normalize,
@@ -41,7 +39,6 @@
     presetNames,
     presets,
     schema,
-    switchVariant,
     waves,
     type Patch,
     type PresetName,
@@ -154,16 +151,6 @@
 
   const isWave = (option: unknown): option is Wave =>
     waves.includes(option as Wave);
-
-  /** what an array's path renderer is typed to take (see the oscillators renderer) */
-  type ArrayRendererProps = Field.Props<"array"> | Field.ArrayActionProps;
-
-  /** an array's path renderer is only ever called with a field's props: those have `renderChild` */
-  const asField = (props: ArrayRendererProps): Field.Props<"array"> => {
-    if (!("renderChild" in props))
-      throw new Error(`${props.node.path} was drawn as an array action`);
-    return props;
-  };
 
   /** a number field's parameter, with the range its schema gives */
   const paramFor = (node: Field.Props<"number">["node"]): Param | undefined => {
@@ -293,7 +280,7 @@
             checked={i === selected}
             disabled={!model.editable}
             onchange={() =>
-              model.set(node, switchVariant(model.get(node), defaultFor(variant)))}
+              controls.variants.select(node, model, i)}
           />
           {controls.variants.label(variant, i)}
         </label>
@@ -305,13 +292,8 @@
   </div>
 {/snippet}
 
-<!--
-  by path: the oscillators, a card each. (An array's path renderer is typed as
-  its push/splice/insert renderer too, as both share the key "oscillators": it
-  is only ever called as a field renderer, so it takes the union and narrows.)
--->
-{#snippet oscillators(props: ArrayRendererProps)}
-  {@const { node, model, renderChild } = asField(props)}
+<!-- by path: the oscillators, a card each -->
+{#snippet oscillators({ node, model, renderChild }: Field.Props<"array">)}
   {@const items = controls.array.items(node, model)}
   <ol class="voices">
     {#each items as _, i (i)}
@@ -327,7 +309,7 @@
             >
           {/if}
         </div>
-        {@render renderChild(arrayItemAtIndex(node, i), "array", i)}
+        {@render renderChild(controls.array.item(node, i), "array", i)}
       </li>
     {/each}
   </ol>
@@ -335,7 +317,7 @@
     <button
       type="button"
       class="add"
-      onclick={() => model.get(node)?.push(defaultFor(node.itemNode))}
+      onclick={() => controls.actions.push(node, model)}
     >
       <span aria-hidden="true">+</span> Add oscillator
     </button>
@@ -360,8 +342,7 @@
 {/snippet}
 
 <!-- by path: the effects, a pedal each, in the order the signal passes through them -->
-{#snippet effects(props: ArrayRendererProps)}
-  {@const { node, model, renderChild } = asField(props)}
+{#snippet effects({ node, model, renderChild }: Field.Props<"array">)}
   {@const items = controls.array.items(node, model)}
   {@const kinds = node.itemNode.kind === "oneOf" ? node.itemNode.variants : []}
   {#if items.length === 0}
@@ -397,7 +378,7 @@
             </span>
           {/if}
         </div>
-        {@render renderChild(arrayItemAtIndex(node, i), "array", i)}
+        {@render renderChild(controls.array.item(node, i), "array", i)}
       </li>
     {/each}
   </ol>
@@ -407,7 +388,7 @@
         <button
           type="button"
           class="add"
-          onclick={() => model.get(node)?.push(defaultFor(kind))}
+          onclick={() => model.get(node)?.push(controls.valueForNode(kind))}
         >
           <span aria-hidden="true">+</span><span class="sr-only">Add</span>
           {controls.variants.label(kind, k)}

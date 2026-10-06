@@ -161,6 +161,29 @@ export const schema: JSONSchema7 = object(
   { description: "A three-oscillator subtractive synthesizer" },
 );
 
+declare namespace schema {
+  /** a new oscillator, as the "add" button makes it from the schema's defaults */
+  export type AnOscillator = Expect<
+    Invoke<typeof defaultAt, [pointer: "/properties/oscillators/items"]>,
+    "=",
+    { wave: "sawtooth"; octave: 0; detune: 0; level: 0.6 }
+  >;
+
+  /** a variant just chosen: its const and every one of its fields */
+  export type AVariant = Expect<
+    Invoke<typeof defaultAt, [pointer: "/properties/filter/oneOf/2"]>,
+    "=",
+    { type: "highpass"; cutoff: 400; resonance: 1 }
+  >;
+
+  /** a new effect: the first variant */
+  export type AOneOf = Expect<
+    Invoke<typeof defaultAt, [pointer: "/properties/effects/items"]>,
+    "=",
+    { type: "delay"; time: 0.35; feedback: 0.4; mix: 0.3 }
+  >;
+}
+
 // ---------------------------------------------------------------------------
 // Presets
 // ---------------------------------------------------------------------------
@@ -402,112 +425,6 @@ declare namespace normalize {
   >;
 }
 
-// ---------------------------------------------------------------------------
-// Values for new items and switched variants
-// ---------------------------------------------------------------------------
-
-const key = (path: string) => path.slice(path.lastIndexOf(".") + 1);
-
-/**
- * The value a node starts with, filled from the schema's `default`s all the
- * way down: an object gets every required field, a variant its const and its
- * fields. (The library's own push and variant switch give an object only its
- * const discriminators, leaving its numbers undefined.)
- */
-export const defaultFor = (node: Schema.Node): unknown => {
-  switch (node.kind) {
-    case "object":
-      return Object.fromEntries(
-        node.children
-          .filter((child) => !child.optional)
-          .map((child) => [key(child.path), defaultFor(child)]),
-      );
-    case "string":
-      return node.const ?? node.default ?? node.options?.[0] ?? "";
-    case "number":
-      return node.default ?? node.min ?? 0;
-    case "boolean":
-      return node.default ?? false;
-    case "array":
-      return [];
-    case "tuple":
-      return node.itemNodes.map(defaultFor);
-    case "oneOf":
-      return node.variants.length ? defaultFor(node.variants[0]) : null;
-    case "enum":
-      return node.options[0] ?? null;
-    default:
-      return null;
-  }
-};
-
-declare namespace defaultFor {
-  /** an oscillator, as the "add" button makes it */
-  export type AnOscillator = Expect<
-    Invoke<typeof defaultAt, [pointer: "/properties/oscillators/items"]>,
-    "=",
-    { wave: "sawtooth"; octave: 0; detune: 0; level: 0.6 }
-  >;
-
-  /** a variant: its const and every one of its fields */
-  export type AVariant = Expect<
-    Invoke<typeof defaultAt, [pointer: "/properties/filter/oneOf/2"]>,
-    "=",
-    { type: "highpass"; cutoff: 400; resonance: 1 }
-  >;
-
-  /** a oneOf: its first variant */
-  export type AOneOf = Expect<
-    Invoke<typeof defaultAt, [pointer: "/properties/effects/items"]>,
-    "=",
-    { type: "delay"; time: 0.35; feedback: 0.4; mix: 0.3 }
-  >;
-}
-
-/**
- * The value after switching to another variant: the new variant's defaults,
- * keeping what was set for any field the two share (a low-pass's cutoff,
- * turned high-pass).
- */
-export const switchVariant = (current: unknown, next: unknown): unknown => {
-  const from = record(current);
-  const to = record(next);
-  if (!next || typeof next !== "object") return next;
-  return Object.fromEntries(
-    Object.entries(to).map(([k, v]) => [
-      k,
-      k !== "type" && k in from && typeof from[k] === typeof v ? from[k] : v,
-    ]),
-  );
-};
-
-declare namespace switchVariant {
-  /** shared fields carry over */
-  export type KeepsShared = Expect<
-    Invoke<
-      typeof switchVariant,
-      [
-        current: { type: "lowpass"; cutoff: 900; resonance: 3 },
-        next: { type: "highpass"; cutoff: 400; resonance: 1 },
-      ]
-    >,
-    "=",
-    { type: "highpass"; cutoff: 900; resonance: 3 }
-  >;
-
-  /** the rest are the new variant's defaults */
-  export type TakesDefaults = Expect<
-    Invoke<
-      typeof switchVariant,
-      [
-        current: { type: "off" },
-        next: { type: "lowpass"; cutoff: 2000; resonance: 1 },
-      ]
-    >,
-    "=",
-    { type: "lowpass"; cutoff: 2000; resonance: 1 }
-  >;
-}
 
 /** The list with the item at `from` moved `by` places (an effect earlier or later in the chain); a move off either end changes nothing. */
 export const moved = <T>(list: readonly T[], from: number, by: number): T[] => {

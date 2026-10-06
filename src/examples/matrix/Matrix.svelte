@@ -133,14 +133,6 @@
     model.data.steps = list;
   };
 
-  const cell = /\.matrix\.(\d)\.(\d)$/;
-  const stepPath = /^steps\.(\d+)$/;
-  /**
-   * The steps array's action renderers. Spread rather than written as props:
-   * <Schema> looks them up as "push__steps" and so on, but its typed props
-   * name an array's action renderers by the bare path ("steps").
-   */
-  const stepActions = { push__steps, splice__steps, insert__steps };
 
   const entryNames = [
     ["a", "b"],
@@ -186,175 +178,169 @@
 {/snippet}
 
 <!-- one step of the transformation: a card with its type, its matrix and its fields -->
-{#snippet oneOf(props: Field.Props<"oneOf">)}
-  {@const { node, model, renderChild } = props}
-  {@const match = stepPath.exec(node.path)}
-  {#if !match}
-    {@const OneOf = kinds.oneOf}
-    <OneOf {...props} />
-  {:else}
-    {@const index = Number(match[1])}
-    {@const value = model.get(node) as Draft}
-    {@const selected = controls.variants.selected(node, model)}
-    {@const variant = selected >= 0 ? node.variants[selected] : undefined}
-    {@const type = selected >= 0 ? stepTypes[selected] : undefined}
-    {@const count = steps.length}
-    {@const done =
-      index < current.step ? 1 : index === current.step ? current.progress : 0}
-    <article
-      class="step"
-      class:moving={t < 1 && index === current.step}
-      style:--done={done}
-      data-step={index}
-      aria-label="Step {index + 1}"
-    >
-      <header>
-        <span class="badge" aria-hidden="true">{index + 1}</span>
-        <span class="picker">
-          {#if type}{@render stepIcon(type)}{/if}
-          <select
-            aria-label="Step {index + 1} type"
-            value={type ?? ""}
-            disabled={!model.editable}
-            onchange={({ currentTarget }) =>
-              model.set(node, fresh(currentTarget.value as StepType))}
+{#snippet steps___item({ node, model, index = 0, renderChild }: Field.Props<"oneOf">)}
+  {@const value = model.get(node) as Draft}
+  {@const selected = controls.variants.selected(node, model)}
+  {@const variant = selected >= 0 ? node.variants[selected] : undefined}
+  {@const type = selected >= 0 ? stepTypes[selected] : undefined}
+  {@const count = steps.length}
+  {@const done =
+    index < current.step ? 1 : index === current.step ? current.progress : 0}
+  <article
+    class="step"
+    class:moving={t < 1 && index === current.step}
+    style:--done={done}
+    data-step={index}
+    aria-label="Step {index + 1}"
+  >
+    <header>
+      <span class="badge" aria-hidden="true">{index + 1}</span>
+      <span class="picker">
+        {#if type}{@render stepIcon(type)}{/if}
+        <select
+          aria-label="Step {index + 1} type"
+          value={type ?? ""}
+          disabled={!model.editable}
+          onchange={({ currentTarget }) =>
+            model.set(node, fresh(currentTarget.value as StepType))}
+        >
+          {#if !type}<option value="" disabled>Choose…</option>{/if}
+          {#each stepTypes as option, i}
+            <option value={option}>{node.variants[i]?.title ?? option}</option>
+          {/each}
+        </select>
+      </span>
+      <code class="symbol">{symbol(value)}</code>
+      {#if model.editable}
+        <span class="tools">
+          <button
+            type="button"
+            class="tool"
+            aria-label="Move step {index + 1} up"
+            title="Move up (acts earlier)"
+            disabled={index === 0}
+            onclick={() => move(index, index - 1)}
           >
-            {#if !type}<option value="" disabled>Choose…</option>{/if}
-            {#each stepTypes as option, i}
-              <option value={option}>{node.variants[i]?.title ?? option}</option>
-            {/each}
-          </select>
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" /></svg>
+          </button>
+          <button
+            type="button"
+            class="tool"
+            aria-label="Move step {index + 1} down"
+            title="Move down (acts later)"
+            disabled={index === count - 1}
+            onclick={() => move(index, index + 1)}
+          >
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3.5 8.5 8 13l4.5-4.5" /></svg>
+          </button>
+          <button
+            type="button"
+            class="tool danger"
+            aria-label="Remove step {index + 1}"
+            title="Remove"
+            onclick={() => remove(index)}
+          >
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" /></svg>
+          </button>
         </span>
-        <code class="symbol">{symbol(value)}</code>
-        {#if model.editable}
-          <span class="tools">
-            <button
-              type="button"
-              class="tool"
-              aria-label="Move step {index + 1} up"
-              title="Move up (acts earlier)"
-              disabled={index === 0}
-              onclick={() => move(index, index - 1)}
-            >
-              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" /></svg>
-            </button>
-            <button
-              type="button"
-              class="tool"
-              aria-label="Move step {index + 1} down"
-              title="Move down (acts later)"
-              disabled={index === count - 1}
-              onclick={() => move(index, index + 1)}
-            >
-              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3.5 8.5 8 13l4.5-4.5" /></svg>
-            </button>
-            <button
-              type="button"
-              class="tool danger"
-              aria-label="Remove step {index + 1}"
-              title="Remove"
-              onclick={() => remove(index)}
-            >
-              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" /></svg>
-            </button>
-          </span>
-        {/if}
-      </header>
-
-      {#if variant}
-        <div class="body">
-          {#if variant.description}
-            <p class="about">{variant.description}</p>
-          {/if}
-          {#if variant.kind === "object"}
-            <div class="fields">
-              {#each variant.children.filter((c) => !controls.is.const(c)) as child (child.path)}
-                {@render renderChild(child, "object")}
-              {/each}
-            </div>
-          {/if}
-          {#if type !== "matrix"}
-            <div class="own">
-              <span>{symbol(value)} =</span>
-              <Bracket matrix={stepMatrix(value)} size="sm" label="Step {index + 1}'s matrix" />
-            </div>
-          {/if}
-        </div>
       {/if}
-      {#if t < 1}<span class="progress" aria-hidden="true"></span>{/if}
-    </article>
-  {/if}
+    </header>
+
+    {#if variant}
+      <div class="body">
+        {#if variant.description}
+          <p class="about">{variant.description}</p>
+        {/if}
+        {#if variant.kind === "object"}
+          <div class="fields">
+            {#each variant.children.filter((c) => !controls.is.const(c)) as child (child.path)}
+              {@render renderChild(child, "object")}
+            {/each}
+          </div>
+        {/if}
+        {#if type !== "matrix"}
+          <div class="own">
+            <span>{symbol(value)} =</span>
+            <Bracket matrix={stepMatrix(value)} size="sm" label="Step {index + 1}'s matrix" />
+          </div>
+        {/if}
+      </div>
+    {/if}
+    {#if t < 1}<span class="progress" aria-hidden="true"></span>{/if}
+  </article>
 {/snippet}
 
 <!-- a step's matrix: a tuple of two tuples, set as a bracketed grid of inputs -->
-{#snippet tuple(props: Field.Props<"tuple">)}
-  {#if props.node.path.endsWith(".matrix")}
-    <div class="matrix-field">
-      <span class="field-name" id="{props.node.path}-name">{props.node.title}</span>
-      <div class="matrix-input" role="group" aria-labelledby="{props.node.path}-name">
-        {#each props.node.itemNodes as row}
-          {#if row.kind === "tuple"}
-            {#each row.itemNodes as entry, c (entry.path)}
-              {@render props.renderChild(entry, "tuple", c)}
-            {/each}
-          {/if}
-        {/each}
-      </div>
-      <small class="hint">
-        The first column is where <b class="i">î</b> lands; the second, <b class="j">ĵ</b>.
-      </small>
+{#snippet steps___item__matrix(props: Field.Props<"tuple">)}
+  <div class="matrix-field">
+    <span class="field-name" id="{props.node.path}-name">{props.node.title}</span>
+    <div class="matrix-input" role="group" aria-labelledby="{props.node.path}-name">
+      {#each props.node.itemNodes as row}
+        {#if row.kind === "tuple"}
+          {#each row.itemNodes as entry, c (entry.path)}
+            {@render props.renderChild(entry, "tuple", c)}
+          {/each}
+        {/if}
+      {/each}
     </div>
-  {:else}
-    {@const Tuple = kinds.tuple}
-    <Tuple {...props} />
-  {/if}
+    <small class="hint">
+      The first column is where <b class="i">î</b> lands; the second, <b class="j">ĵ</b>.
+    </small>
+  </div>
 {/snippet}
 
-<!-- numbers: matrix entries as cells, an angle as a dial, a bounded factor as a slider -->
+<!-- a matrix entry: a cell of the grid, its column its index in the row, its row the one before -->
+{#snippet steps___item__matrix___item___item({ node, model, index: c = 0 }: Field.Props<"number">)}
+  {@const r = Number(node.path.split(".").at(-2))}
+  <input
+    class="cell"
+    class:i={c === 0}
+    class:j={c === 1}
+    type="number"
+    step="0.1"
+    inputmode="decimal"
+    aria-label="{entryNames[r][c]}: row {r + 1}, column {c + 1}"
+    value={model.get(node)}
+    disabled={!model.editable}
+    oninput={model.on(node, Number)}
+  />
+{/snippet}
+
+<!-- a rotation's angle: a dial beside the theme's number field, with common angles -->
+{#snippet steps___item__degrees(props: Field.Props<"number">)}
+  {@const { node, model } = props}
+  {@const Number_ = kinds.number}
+  <div class="angle">
+    <Dial
+      value={model.get(node)}
+      onchange={(degrees) => model.set(node, degrees)}
+      label={node.title ?? "Angle"}
+      min={node.min}
+      max={node.max}
+      disabled={!model.editable}
+    />
+    <div class="angle-fields">
+      <Number_ {...props} />
+      <div class="presets" role="group" aria-label="Common angles">
+        {#each [-90, 30, 45, 90, 180] as preset}
+          <button
+            type="button"
+            class:on={model.get(node) === preset}
+            aria-pressed={model.get(node) === preset}
+            disabled={!model.editable}
+            onclick={() => model.set(node, preset)}>{format(preset)}°</button
+          >
+        {/each}
+      </div>
+    </div>
+  </div>
+{/snippet}
+
+<!-- other numbers: a bounded factor as a slider, the rest as the theme draws them -->
 {#snippet number(props: Field.Props<"number">)}
   {@const { node, model } = props}
   {@const Number_ = kinds.number}
-  {@const position = cell.exec(node.path)}
-  {#if position}
-    {@const [r, c] = [Number(position[1]), Number(position[2])]}
-    <input
-      class="cell"
-      class:i={c === 0}
-      class:j={c === 1}
-      type="number"
-      step="0.1"
-      inputmode="decimal"
-      aria-label="{entryNames[r][c]}: row {r + 1}, column {c + 1}"
-      value={model.get(node)}
-      disabled={!model.editable}
-      oninput={model.on(node, Number)}
-    />
-  {:else if node.path.endsWith(".degrees")}
-    <div class="angle">
-      <Dial
-        value={model.get(node)}
-        onchange={(degrees) => model.set(node, degrees)}
-        label={node.title ?? "Angle"}
-        min={node.min}
-        max={node.max}
-        disabled={!model.editable}
-      />
-      <div class="angle-fields">
-        <Number_ {...props} />
-        <div class="presets" role="group" aria-label="Common angles">
-          {#each [-90, 30, 45, 90, 180] as preset}
-            <button
-              type="button"
-              class:on={model.get(node) === preset}
-              aria-pressed={model.get(node) === preset}
-              disabled={!model.editable}
-              onclick={() => model.set(node, preset)}>{format(preset)}°</button
-            >
-          {/each}
-        </div>
-      </div>
-    </div>
-  {:else if node.min !== undefined && node.max !== undefined}
+  {#if node.min !== undefined && node.max !== undefined}
     {@const id = `${node.path}-range`}
     {@const value = model.get(node)}
     <div class="ranged">
@@ -487,15 +473,19 @@
           root={node}
           {model}
           {theme}
-          {oneOf}
-          {tuple}
+          {steps___item}
+          {steps___item__matrix}
+          {steps___item__matrix___item___item}
+          {steps___item__degrees}
           {number}
           {string}
           {shape}
           {display__basis}
           {display__determinant}
           {display__eigenvectors}
-          {...stepActions}
+          {push__steps}
+          {splice__steps}
+          {insert__steps}
           --schemer-radius="10px"
         />
       {/await}
