@@ -108,15 +108,30 @@ function showInWebview(
   return panel;
 }
 
+/**
+ * Where a browser outside the editor reaches a page: the dev server's own
+ * address when that is reachable from outside, else the editor's forwarded
+ * address for it (the same on a local desktop; tunnelled in a remote or web
+ * editor).
+ */
+async function browserAddress(url: URL, external: boolean) {
+  const target = vscode.Uri.parse(url.href);
+  return external ? target : vscode.env.asExternalUri(target);
+}
+
 export async function openPage(uri: vscode.Uri, snippet: string, name: string) {
   const { url, external } = await pageUrl(uri, snippet);
-  if (setting<"webview" | "browser">("openIn", "webview") === "browser") {
-    const target = vscode.Uri.parse(url.href);
-    return vscode.env.openExternal(
-      external ? target : await vscode.env.asExternalUri(target),
-    );
-  }
+  if (setting<"webview" | "browser">("openIn", "webview") === "browser")
+    return vscode.env.openExternal(await browserAddress(url, external));
   showInWebview(name, url, external);
+}
+
+/** The page's address on the clipboard: where "Open page" would show it, as a browser reaches it. */
+export async function copyPageLink(uri: vscode.Uri, snippet: string) {
+  const { url, external } = await pageUrl(uri, snippet);
+  const link = (await browserAddress(url, external)).toString(true);
+  await vscode.env.clipboard.writeText(link);
+  vscode.window.setStatusBarMessage(`$(check) Copied ${link}`, 4000);
 }
 
 // ── every page of a component at once ────────────────────────────────────────
@@ -223,12 +238,8 @@ export async function openAllPages(
     url: resolved[i]!.url,
   }));
   if (setting<"webview" | "browser">("openIn", "webview") === "browser") {
-    for (const { url } of pages) {
-      const target = vscode.Uri.parse(url.href);
-      await vscode.env.openExternal(
-        external ? target : await vscode.env.asExternalUri(target),
-      );
-    }
+    for (const { url } of pages)
+      await vscode.env.openExternal(await browserAddress(url, external));
     return;
   }
   const layout = await chooseLayout();

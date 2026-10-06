@@ -37,6 +37,10 @@
         "title": "Sweater Vest: Open on the Dev Server"
       },
       {
+        "command": "sweater-vest.copyPageLink",
+        "title": "Sweater Vest: Copy the Link to Its Page on the Dev Server"
+      },
+      {
         "command": "sweater-vest.showCollector",
         "title": "Sweater Vest: Show What Vitest Sees"
       },
@@ -74,6 +78,9 @@
         {
           "command": "sweater-vest.openPage",
           "group": "inline"
+        },
+        {
+          "command": "sweater-vest.copyPageLink"
         }
       ],
       "commandPalette": [

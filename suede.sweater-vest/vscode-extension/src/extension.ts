@@ -13,7 +13,7 @@ import {
 import { generatedViews } from "./generated.ts";
 import { extractedFileLenses, testFileLenses } from "./lenses.ts";
 import { forgetLibrary } from "./library.ts";
-import { openAllPages, openPage } from "./page.ts";
+import { copyPageLink, openAllPages, openPage } from "./page.ts";
 import { printed } from "./printed.ts";
 import { CONFIG_GLOB, forgetProjects } from "./project.ts";
 import { testRunner, type TestRunner } from "./runner.ts";
@@ -57,6 +57,11 @@ function testCommands({ output, tree, runner }: Parts) {
       const item = tree.itemFrom(from);
       const test = item && tree.testOf(item);
       if (item && test) await openPage(item.uri, test.snippet, test.name);
+    }),
+    command("copyPageLink", async (from?: vscode.TestItem | string) => {
+      const item = tree.itemFrom(from);
+      const test = item && tree.testOf(item);
+      if (item && test) await copyPageLink(item.uri, test.snippet);
     }),
     command(
       "openAllPages",

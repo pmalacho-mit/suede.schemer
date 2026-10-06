@@ -66,6 +66,7 @@ function testLenses(
   return [
     lens(range, lensTitle(outcome), failed ? "showFailure" : "runTest", id),
     lens(range, "$(globe) Open page", "openPage", id),
+    lens(range, "$(link) Copy link", "copyPageLink", id),
     lens(range, "$(go-to-file) Extract", "extract", id),
     ...(failed ? [lens(range, "$(refresh) Run again", "runTest", id)] : []),
   ];
