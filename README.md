@@ -4,13 +4,16 @@ Schemer (**S**<ins style="color:white"><sub style="color:grey">_velte s_</sub><s
 
 This repo is a [suede dependency](https://github.com/pmalacho-mit/suede). 
 
-To see the installable source code, please checkout the [release branch](https://github.com/pmalacho-mit/svelte-schema-renderer-suede/tree/release).
+To see the installable source code, please checkout the [release branch](https://github.com/pmalacho-mit/suede.schemer/tree/release).
 
 ## Installation
 
 ```bash
-bash <(curl https://suede.sh/install-release) --repo pmalacho-mit/svelte-schema-renderer-suede
+bash <(curl -fsSL https://suede.sh/install/release) --repo pmalacho-mit/suede.schemer
 ```
+
+Run it where you want the dependency. It installs `./suede.schemer`, stages it, and prints what
+else (if anything) has to be installed beside it.
 
 <details>
 <summary>
@@ -18,7 +21,7 @@ See alternative to using <a href="https://github.com/pmalacho-mit/suede#suedesh"
 </summary>
 
 ```bash
-bash <(curl https://raw.githubusercontent.com/pmalacho-mit/suede/refs/heads/main/scripts/install-release.sh) --repo pmalacho-mit/svelte-schema-renderer-suede
+bash <(curl -fsSL https://raw.githubusercontent.com/pmalacho-mit/suede/refs/heads/main/scripts/install/release.sh) --repo pmalacho-mit/suede.schemer
 ```
 
 </details>
