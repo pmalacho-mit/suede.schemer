@@ -44,7 +44,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(StringField, () => new Model("edit", { name: "" }), "string")}
+  {@const variants = themes.variants(
+    StringField,
+    () => new Model("edit", { name: "" }),
+    "string",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       <Component node={{ kind: "string", path: "name" }} {model} />
@@ -52,7 +56,7 @@
   </themes.Across>
   {test(async ({ expect, within }) =>
     themes.each(variants, async ({ element }) => {
-    const view = within(element);
+      const view = within(element);
       const input = view.getByLabelText("name") as HTMLInputElement;
       expect(input.type).toBe("text");
     }),
@@ -65,7 +69,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(StringField, () => new Model("edit", { name: "" }), "string")}
+  {@const variants = themes.variants(
+    StringField,
+    () => new Model("edit", { name: "" }),
+    "string",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       <Component node={{ kind: "string", path: "name" }} {model} />
@@ -73,7 +81,7 @@
   </themes.Across>
   {test(async ({ expect, user, within }) =>
     themes.each(variants, async ({ element, model }) => {
-    const view = within(element);
+      const view = within(element);
       await user.type(view.getByLabelText("name"), "Alice");
       expect(model.get({ path: "name" })).toBe("Alice");
     }),
@@ -86,7 +94,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(StringField, () => new Model("edit", { email: "" }), "string")}
+  {@const variants = themes.variants(
+    StringField,
+    () => new Model("edit", { email: "" }),
+    "string",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       <Component
@@ -97,7 +109,7 @@
   </themes.Across>
   {test(async ({ expect, within }) =>
     themes.each(variants, async ({ element }) => {
-    const view = within(element);
+      const view = within(element);
       const input = view.getByLabelText("email") as HTMLInputElement;
       expect(input.type).toBe("email");
     }),
@@ -110,7 +122,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(StringField, () => new Model("edit", { birthday: "" }), "string")}
+  {@const variants = themes.variants(
+    StringField,
+    () => new Model("edit", { birthday: "" }),
+    "string",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       <Component
@@ -121,7 +137,7 @@
   </themes.Across>
   {test(async ({ expect, within }) =>
     themes.each(variants, async ({ element }) => {
-    const view = within(element);
+      const view = within(element);
       const input = view.getByLabelText("birthday") as HTMLInputElement;
       expect(input.type).toBe("date");
     }),
@@ -134,7 +150,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(StringField, () => new Model("edit", {}), "string")}
+  {@const variants = themes.variants(
+    StringField,
+    () => new Model("edit", {}),
+    "string",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       <Component
@@ -145,7 +165,7 @@
   </themes.Across>
   {test(async ({ expect, within }) =>
     themes.each(variants, async ({ element }) => {
-    const view = within(element);
+      const view = within(element);
       const input = view.getByLabelText("status") as HTMLInputElement;
       expect(input.disabled).toBe(true);
       expect(input.value).toBe("active");
@@ -159,18 +179,26 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(StringField, () => new Model("edit", { color: "red" }), "string")}
+  {@const variants = themes.variants(
+    StringField,
+    () => new Model("edit", { color: "red" }),
+    "string",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       <Component
-        node={{ kind: "string", path: "color", options: ["red", "green", "blue"] }}
+        node={{
+          kind: "string",
+          path: "color",
+          options: ["red", "green", "blue"],
+        }}
         {model}
       />
     {/snippet}
   </themes.Across>
   {test(async ({ expect, within }) =>
     themes.each(variants, async ({ element }) => {
-    const view = within(element);
+      const view = within(element);
       const select = view.getByRole("combobox") as HTMLSelectElement;
       const options = Array.from(select.options).filter((o) => !o.disabled);
       expect(options.map((o) => o.value)).toEqual(["red", "green", "blue"]);
@@ -184,7 +212,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(StringField, () => new Model("edit", { firstName: "" }), "string")}
+  {@const variants = themes.variants(
+    StringField,
+    () => new Model("edit", { firstName: "" }),
+    "string",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       <Component
@@ -207,10 +239,17 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(StringField, () => new Model("edit", { address: { streetName: "" } }), "string")}
+  {@const variants = themes.variants(
+    StringField,
+    () => new Model("edit", { address: { streetName: "" } }),
+    "string",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
-      <Component node={{ kind: "string", path: "address.streetName" }} {model} />
+      <Component
+        node={{ kind: "string", path: "address.streetName" }}
+        {model}
+      />
     {/snippet}
   </themes.Across>
   {test(async ({ expect }) =>

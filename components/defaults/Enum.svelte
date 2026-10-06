@@ -33,7 +33,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(EnumField, () => new Model("edit", {}), "enum")}
+  {@const variants = themes.variants(
+    EnumField,
+    () => new Model("edit", {}),
+    "enum",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       <Component
@@ -48,7 +52,7 @@
   </themes.Across>
   {test(async ({ expect, within }) =>
     themes.each(variants, async ({ element }) => {
-    const view = within(element);
+      const view = within(element);
       const select = view.getByRole("combobox") as HTMLSelectElement;
       const options = Array.from(select.options).filter((o) => !o.disabled);
       expect(options.map((o) => o.value)).toEqual([
@@ -66,7 +70,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(EnumField, () => new Model("edit", {}), "enum")}
+  {@const variants = themes.variants(
+    EnumField,
+    () => new Model("edit", {}),
+    "enum",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       <Component
@@ -81,7 +89,7 @@
   </themes.Across>
   {test(async ({ expect, user, within }) =>
     themes.each(variants, async ({ element, model }) => {
-    const view = within(element);
+      const view = within(element);
       await user.selectOptions(view.getByRole("combobox"), "published");
       expect(model.get({ path: "status" })).toBe("published");
     }),

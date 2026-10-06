@@ -28,7 +28,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(BooleanField, () => new Model("edit", { active: false }), "boolean")}
+  {@const variants = themes.variants(
+    BooleanField,
+    () => new Model("edit", { active: false }),
+    "boolean",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       <Component node={{ kind: "boolean", path: "active" }} {model} />
@@ -36,7 +40,7 @@
   </themes.Across>
   {test(async ({ expect, within }) =>
     themes.each(variants, async ({ element }) => {
-    const view = within(element);
+      const view = within(element);
       expect(view.getByRole("checkbox")).toBeDefined();
     }),
   )}
@@ -48,7 +52,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(BooleanField, () => new Model("edit", { active: true }), "boolean")}
+  {@const variants = themes.variants(
+    BooleanField,
+    () => new Model("edit", { active: true }),
+    "boolean",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       <Component node={{ kind: "boolean", path: "active" }} {model} />
@@ -56,7 +64,7 @@
   </themes.Across>
   {test(async ({ expect, within }) =>
     themes.each(variants, async ({ element }) => {
-    const view = within(element);
+      const view = within(element);
       expect((view.getByRole("checkbox") as HTMLInputElement).checked).toBe(
         true,
       );
@@ -70,7 +78,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(BooleanField, () => new Model("edit", { active: false }), "boolean")}
+  {@const variants = themes.variants(
+    BooleanField,
+    () => new Model("edit", { active: false }),
+    "boolean",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       <Component node={{ kind: "boolean", path: "active" }} {model} />
@@ -78,7 +90,7 @@
   </themes.Across>
   {test(async ({ expect, user, within }) =>
     themes.each(variants, async ({ element, model }) => {
-    const view = within(element);
+      const view = within(element);
       const checkbox = view.getByRole("checkbox") as HTMLInputElement;
       expect(checkbox.checked).toBe(false);
       await user.click(checkbox);
