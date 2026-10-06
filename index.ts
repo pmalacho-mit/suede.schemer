@@ -12,6 +12,7 @@ export { default as ArrayAction } from "./components/ArrayAction.svelte";
 export { default as Schema } from "./components/Root.svelte";
 export { root } from "./nodes.js";
 export * as defaults from "./components/defaults/index.js";
+export * as themes from "./components/themes/index.js";
 
 export namespace Schema {
   export type Node = RenderNode;
