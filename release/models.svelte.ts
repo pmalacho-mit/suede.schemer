@@ -117,9 +117,11 @@ export class SchemaModel<TMode extends Mode = Mode, TData extends Data = Data> {
       this.set(node, converter ? converter(value) : (value as FromKind<K>));
   }
 
+  /** The field's element, or `undefined` when nothing renders `path`. */
   element({ path }: Pick<RenderNode, "path">) {
-    return this.container?.querySelector<HTMLDivElement>(
-      `[data-path="${path}"]`,
+    return (
+      this.container?.querySelector<HTMLDivElement>(`[data-path="${path}"]`) ??
+      undefined
     );
   }
 }
