@@ -67,19 +67,26 @@
     };
 
     type ArrayActionByPath<TData extends Data = Data> = {
-      [Path in keyof ArrayPathMap<TData> & string]: Snippet<[ArrayActionProps]>;
+      // "push__tags", "splice__tags", "insert__tags"
+      [Path in keyof ArrayPathMap<TData> &
+        string as `${ArrayActions}${PathToSnippetName<Path>}`]: Snippet<
+        [ArrayActionProps]
+      >;
     };
 
     type KindRenderers = {
       [K in Kind]: Snippet<[Field.Props<K>]>;
     };
 
-    export type Renderers<TData extends Data = Data> = Partial<
-      KindRenderers &
-        RendererByPath<TData> &
-        ArrayActionByPath<TData> &
-        ActionRenderers
-    >;
+    export type Renderers<TData extends Data = Data> = Data extends TData
+      ? // data of no particular type: its paths cannot be named, so any name goes
+        Partial<KindRenderers> & Record<string, Snippet<[any]>>
+      : Partial<
+          KindRenderers &
+            RendererByPath<TData> &
+            ArrayActionByPath<TData> &
+            ActionRenderers
+        >;
   }
 
   export type Props = {
@@ -106,6 +113,12 @@
   const components = $derived(registry());
 
   const snippetKey = $derived(pathToSnippetName(node.path));
+  /** the path's key with every item and position a wildcard, as renderers for array items are named: "steps___item__degrees" */
+  const itemKey = $derived(
+    pathToSnippetName(node.path.replace(/(^|\.)\d+(?=\.|$)/g, "$1*")),
+  );
+  /** a variant has its oneOf's path: a renderer for that path is the oneOf's */
+  const byPath = $derived(parent !== "oneOf");
   const value = $derived(model.get(node));
   const resolved = $derived(value !== undefined && value !== null);
   const optedOut = $derived(node.optional && !resolved);
@@ -113,10 +126,13 @@
   const editableArray = $derived(node.kind === "array" && model.editable);
 
   const renderer = <T extends Field.RenderKeys | Field.ArrayActions>(
-    prefix?: T,
+    prefix: T | "" = "",
   ) =>
-    (renderers?.[(prefix ?? "") + snippetKey] ?? // path specific
-      renderers?.[prefix ? prefix : node.kind] ?? // top-level
+    ((byPath
+      ? (renderers?.[prefix + snippetKey] ?? // this path: "steps__0__degrees"
+        renderers?.[prefix + itemKey]) // any item's: "steps___item__degrees"
+      : undefined) ??
+      renderers?.[prefix ? prefix : node.kind] ?? // every node of the kind
       null) as Snippet<[Field.Props<any>]> | null;
 
   const nodeRenderer = $derived(!optedOut ? renderer() : null);
@@ -132,7 +148,7 @@
 
   const rendererArgs = $derived(
     nodeRenderer || optInRenderer || optedOutRenderer || optOutRenderer
-      ? { node, model, renderChild }
+      ? { node, model, parent, index, renderChild }
       : null,
   );
 
@@ -336,6 +352,137 @@
   {test(async ({ expect }) =>
     themes.each(variants, async ({ element }) => {
       expect(element.querySelector('[data-path="nickname"]')).toBeNull();
+    }),
+  )}
+{/snippet}
+
+<!-- renderers: snippets picked by path (this one, then any item's), then by kind -->
+{#snippet anArrayItemsRendererDrawsEveryItemWithItsPlace(
+  Field: typeof Self,
+  Model: typeof SchemaModel,
+  themes: typeof acrossThemes,
+  test: Test,
+)}
+  {@const variants = themes.variants(
+    Field,
+    () => new Model("edit", { tags: ["alpha", "beta"] }),
+  )}
+  <themes.Across {variants}>
+    {#snippet variant({ Component, model })}
+      {#snippet tag({ node, model, parent, index }: Field.Props)}
+        <output>{model.get(node)} at {parent} {index}</output>
+      {/snippet}
+      <Component
+        node={{
+          kind: "array",
+          path: "tags",
+          itemNode: { kind: "string", path: "tags.*" },
+        }}
+        {model}
+        renderers={{ tags___item: tag }}
+      />
+    {/snippet}
+  </themes.Across>
+  {test(async ({ expect }) =>
+    themes.each(variants, async ({ element }) => {
+      const drawn = [...element.querySelectorAll("output")];
+      expect(drawn.map((o) => o.textContent)).toEqual([
+        "alpha at array 0",
+        "beta at array 1",
+      ]);
+    }),
+  )}
+{/snippet}
+
+{#snippet aOneOfsPathRendererDrawsTheOneOfNotItsVariant(
+  Field: typeof Self,
+  Model: typeof SchemaModel,
+  themes: typeof acrossThemes,
+  test: Test,
+)}
+  {@const variants = themes.variants(
+    Field,
+    () => new Model("edit", { filter: { cutoff: 800 } }),
+  )}
+  <themes.Across {variants}>
+    {#snippet variant({ Component, model })}
+      {#snippet filter({ node, renderChild }: Field.Props<"oneOf">)}
+        <section data-drawn={node.kind}>
+          {@render renderChild(node.variants[0], "oneOf")}
+        </section>
+      {/snippet}
+      <!-- kind renderers still draw the variant -->
+      {#snippet object({ node, renderChild }: Field.Props<"object">)}
+        <section data-drawn={node.kind}>
+          {#each node.children as child (child.path)}
+            {@render renderChild(child, "object")}
+          {/each}
+        </section>
+      {/snippet}
+      <Component
+        node={{
+          kind: "oneOf",
+          path: "filter",
+          variants: [
+            {
+              kind: "object",
+              path: "filter",
+              title: "Low-pass",
+              children: [{ kind: "number", path: "filter.cutoff" }],
+              required: new Set(["cutoff"]),
+            },
+          ],
+        }}
+        {model}
+        renderers={{ filter, object }}
+      />
+    {/snippet}
+  </themes.Across>
+  {test(async ({ expect, within }) =>
+    themes.each(variants, async ({ element }) => {
+      const drawn = [...element.querySelectorAll("[data-drawn]")];
+      expect(drawn.map((d) => d.getAttribute("data-drawn"))).toEqual([
+        "oneOf",
+        "object",
+      ]);
+      expect(within(element).getByLabelText("cutoff")).toBeDefined();
+    }),
+  )}
+{/snippet}
+
+{#snippet anArrayActionRendererIsNamedForItsAction(
+  Field: typeof Self,
+  Model: typeof SchemaModel,
+  themes: typeof acrossThemes,
+  test: Test,
+)}
+  {@const variants = themes.variants(
+    Field,
+    () => new Model("edit", { tags: ["alpha"] }),
+  )}
+  <themes.Across {variants}>
+    {#snippet variant({ Component, model })}
+      {#snippet push__tags({ node, model }: Field.ArrayActionProps)}
+        <button type="button" onclick={() => model.get(node)?.push("new")}>
+          Another tag
+        </button>
+      {/snippet}
+      <Component
+        node={{
+          kind: "array",
+          path: "tags",
+          itemNode: { kind: "string", path: "tags.*" },
+        }}
+        {model}
+        renderers={{ push__tags }}
+      />
+    {/snippet}
+  </themes.Across>
+  {test(async ({ expect, within, user }) =>
+    themes.each(variants, async ({ element, model }) => {
+      expect(element.querySelector('[data-action="push"]')).toBeNull();
+      await user.click(within(element).getByRole("button", { name: "Another tag" }));
+      expect(model.get({ path: "tags" })).toEqual(["alpha", "new"]);
     }),
   )}
 {/snippet}

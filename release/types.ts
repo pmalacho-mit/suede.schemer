@@ -83,7 +83,20 @@ export interface Context {
   externalSchemas: Map<string, JSONSchema7>;
 }
 
-export type KindOf<T> = T extends string
+type IsUnion<T, U = T> = T extends unknown
+  ? [U] extends [T]
+    ? false
+    : true
+  : never;
+
+/** The kind of node a TypeScript type is drawn as: a union of objects is a `oneOf`. */
+export type KindOf<T> = [NonNullable<T>] extends [Record<string, unknown>]
+  ? true extends IsUnion<NonNullable<T>>
+    ? "oneOf"
+    : "object"
+  : KindOfEach<T>;
+
+type KindOfEach<T> = T extends string
   ? "string"
   : T extends number
     ? "number"

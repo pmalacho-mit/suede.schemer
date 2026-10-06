@@ -342,22 +342,12 @@
   {/if}
 {/snippet}
 
-<!--
-  by path: the filter, its response on a screen above the switch the oneOf
-  renderer draws. A variant has its oneOf's path, so this draws the chosen
-  variant too: that is a row, as any object. (The renderer is typed from the
-  data's TypeScript type, where a union of objects is an "object".)
--->
-{#snippet filter(props: Field.Props<"object">)}
-  {@const field = props as Field.Props<"object"> | Field.Props<"oneOf">}
-  {#if field.node.kind === "oneOf"}
-    <div class="scope">
-      <FilterDisplay filter={patch.filter} />
-    </div>
-    {@render oneOf(field as Field.Props<"oneOf">)}
-  {:else}
-    {@render object(props)}
-  {/if}
+<!-- by path: the filter, its response on a screen above the switch the oneOf renderer draws -->
+{#snippet filter(props: Field.Props<"oneOf">)}
+  <div class="scope">
+    <FilterDisplay filter={patch.filter} />
+  </div>
+  {@render oneOf(props)}
 {/snippet}
 
 <!-- by path: the envelope, as four upright faders -->
