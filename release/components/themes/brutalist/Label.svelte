@@ -41,68 +41,182 @@
     display: flex;
     flex-direction: column;
     gap: calc(var(--sc-spacing) / 2);
+    min-width: 0;
   }
 
   .inline label {
     flex-direction: row;
     align-items: center;
-    gap: calc(var(--sc-spacing) * 0.75);
+    gap: calc(var(--sc-spacing) * 0.85);
+    align-self: flex-start;
+    cursor: pointer;
   }
 
   .inline .description {
-    padding-left: calc(2.3em + var(--sc-spacing) * 0.75);
+    padding-left: calc(1.9em + var(--sc-spacing) * 0.85);
   }
 
   .name {
-    font-weight: 500;
-    font-size: 0.93em;
+    font-size: 0.78em;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+  }
+
+  .inline .name {
+    font-size: 0.85em;
   }
 
   .description {
     color: var(--sc-muted);
-    font-size: 0.86em;
+    font-size: 0.85em;
+    font-weight: 500;
   }
 
+  /* text-like controls and selects: a white slab with a hard shadow */
   .field :global(:is(input:not([type="checkbox"]), select)) {
     box-sizing: border-box;
     width: 100%;
-    height: 2.5em;
+    height: 2.75em;
+    margin: 0;
     padding: 0 0.85em;
     font: inherit;
-    color: inherit;
-    background: var(--sc-surface);
-    border: 1px solid var(--sc-border);
+    font-weight: 500;
+    color: var(--sc-text);
+    background-color: var(--sc-surface);
+    border: var(--sc-stroke) solid var(--sc-border);
     border-radius: var(--sc-radius);
-    box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
-    transition:
-      border-color 120ms,
-      box-shadow 120ms;
+    box-shadow: var(--sc-shadow) var(--sc-shadow) 0 var(--sc-border);
   }
 
-  .field :global(:is(input, select):focus-visible) {
+  /* a select's arrow: a drawn chevron behind a heavy rule, no images */
+  .field :global(select) {
+    appearance: none;
+    padding-right: 3.4em;
+    cursor: pointer;
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--sc-accent-contrast) 50%),
+      linear-gradient(135deg, var(--sc-accent-contrast) 50%, transparent 50%),
+      linear-gradient(var(--sc-border), var(--sc-border)),
+      linear-gradient(var(--sc-accent), var(--sc-accent));
+    background-position:
+      calc(100% - 1.25em) 52%,
+      calc(100% - 0.8em) 52%,
+      calc(100% - 2.5em) 0,
+      100% 0;
+    background-size:
+      0.45em 0.45em,
+      0.45em 0.45em,
+      var(--sc-stroke) 100%,
+      2.5em 100%;
+    background-repeat: no-repeat;
+  }
+
+  .field :global(select:not(:disabled):hover) {
+    background-color: color-mix(in srgb, var(--sc-accent) 35%, var(--sc-surface));
+  }
+
+  /* focus: the slab lifts off the page and lights up */
+  .field :global(:is(input:not([type="checkbox"]), select):focus-visible) {
     outline: none;
-    border-color: var(--sc-accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--sc-accent) 18%, transparent);
+    color: var(--sc-accent-contrast);
+    background-color: var(--sc-accent);
+    box-shadow: calc(var(--sc-shadow) * 1.5) calc(var(--sc-shadow) * 1.5) 0
+      var(--sc-border);
+    transform: translate(
+      calc(var(--sc-shadow) * -0.5),
+      calc(var(--sc-shadow) * -0.5)
+    );
   }
 
-  /* a const in edit mode: there, but not for changing */
+  @media (prefers-reduced-motion: no-preference) {
+    .field :global(:is(input:not([type="checkbox"]), select)) {
+      transition:
+        transform 90ms ease-out,
+        box-shadow 90ms ease-out,
+        background-color 90ms;
+    }
+  }
+
+  /* a const in edit mode: hatched, flat and pressed in, plainly locked */
   .field :global(:is(input:not([type="checkbox"]), select):disabled) {
     cursor: not-allowed;
     color: var(--sc-muted);
-    background: color-mix(in srgb, var(--sc-border) 35%, var(--sc-surface));
+    border-style: dashed;
+    box-shadow: none;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      transparent 0 7px,
+      color-mix(in srgb, var(--sc-border) 14%, transparent) 7px 9px
+    );
   }
 
-  /* view and stream modes: read-only throughout, so values read as content */
+  /* view and stream modes: a spec sheet, the title left and the value in bold */
+  :global(:is([data-mode="view"], [data-mode="stream"])) .field:not(.inline) label {
+    flex-flow: row wrap;
+    align-items: baseline;
+    column-gap: var(--sc-spacing);
+    row-gap: 0.15em;
+  }
+
+  :global(:is([data-mode="view"], [data-mode="stream"])) .field:not(.inline) .name {
+    flex: 0 0 calc(var(--sc-font-size) * 9);
+    color: var(--sc-muted);
+  }
+
   :global(:is([data-mode="view"], [data-mode="stream"]))
     .field
     :global(:is(input:not([type="checkbox"]), select)) {
+    flex: 1 1 12em;
+    width: auto;
+    min-width: 0;
     height: auto;
     padding: 0;
+    font-size: 1.15em;
+    font-weight: 800;
+    text-overflow: ellipsis;
     color: var(--sc-text);
+    opacity: 1;
     background: none;
-    border-color: transparent;
+    border: 0;
     box-shadow: none;
     appearance: none;
     cursor: default;
+  }
+
+  :global(:is([data-mode="view"], [data-mode="stream"]))
+    .field
+    :global(input::-webkit-calendar-picker-indicator) {
+    display: none;
+  }
+
+  :global(:is([data-mode="view"], [data-mode="stream"]))
+    .field
+    :global(input[type="number"]) {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  :global(:is([data-mode="view"], [data-mode="stream"]))
+    .field
+    :global(input::-webkit-inner-spin-button) {
+    display: none;
+  }
+
+  :global(:is([data-mode="view"], [data-mode="stream"])) .field:not(.inline) .description {
+    padding-left: calc(var(--sc-font-size) * 9 + var(--sc-spacing));
+  }
+
+  @media (max-width: 480px) {
+    :global(:is([data-mode="view"], [data-mode="stream"])) .field:not(.inline) .description {
+      padding-left: 0;
+    }
+
+    :global(:is([data-mode="view"], [data-mode="stream"]))
+      .field
+      :global(:is(input:not([type="checkbox"]), select)) {
+      font-size: 1.05em;
+    }
   }
 </style>

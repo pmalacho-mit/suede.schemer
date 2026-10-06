@@ -8,7 +8,7 @@
 <Label {node} {model} inline>
   <input
     type="checkbox"
-    class="switch"
+    class="box"
     checked={model.get(node) ?? false}
     disabled={!model.editable}
     onchange={({ currentTarget: { checked } }) => model.set(node, checked)}
@@ -16,52 +16,85 @@
 </Label>
 
 <style>
-  /* a checkbox drawn as a switch: still a checkbox to forms and screen readers */
-  .switch {
+  /* a big square box; checked, it fills yellow under a heavy ✕ (drawn, no glyphs) */
+  .box {
+    --stroke: 0.26em;
     appearance: none;
-    position: relative;
     flex: none;
-    width: 2.3em;
-    height: 1.3em;
+    box-sizing: border-box;
+    width: 1.9em;
+    height: 1.9em;
     margin: 0;
-    border-radius: 999px;
-    background: var(--sc-border);
+    background-color: var(--sc-surface);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 62% 62%;
+    border: var(--sc-stroke) solid var(--sc-border);
+    border-radius: var(--sc-radius);
+    box-shadow: calc(var(--sc-shadow) * 0.75) calc(var(--sc-shadow) * 0.75) 0
+      var(--sc-border);
     cursor: pointer;
-    transition: background 150ms;
   }
 
-  .switch::after {
-    content: "";
-    position: absolute;
-    top: 0.15em;
-    left: 0.15em;
-    width: 1em;
-    height: 1em;
-    border-radius: 50%;
-    background: var(--sc-background);
-    box-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
-    transition: transform 150ms;
+  .box:checked {
+    background-color: var(--sc-accent);
+    background-image: linear-gradient(
+        45deg,
+        transparent calc(50% - var(--stroke) / 2),
+        var(--sc-accent-contrast) calc(50% - var(--stroke) / 2)
+          calc(50% + var(--stroke) / 2),
+        transparent calc(50% + var(--stroke) / 2)
+      ),
+      linear-gradient(
+        -45deg,
+        transparent calc(50% - var(--stroke) / 2),
+        var(--sc-accent-contrast) calc(50% - var(--stroke) / 2)
+          calc(50% + var(--stroke) / 2),
+        transparent calc(50% + var(--stroke) / 2)
+      );
   }
 
-  .switch:checked {
-    background: var(--sc-accent);
+  .box:not(:disabled):hover {
+    background-color: color-mix(
+      in srgb,
+      var(--sc-accent) 40%,
+      var(--sc-surface)
+    );
   }
 
-  .switch:checked::after {
-    transform: translateX(1em);
+  .box:checked:not(:disabled):hover {
+    background-color: var(--sc-accent);
   }
 
-  .switch:focus-visible {
-    outline: 2px solid var(--sc-accent);
-    outline-offset: 2px;
+  .box:not(:disabled):active {
+    box-shadow: 0 0 0 var(--sc-border);
+    transform: translate(
+      calc(var(--sc-shadow) * 0.75),
+      calc(var(--sc-shadow) * 0.75)
+    );
   }
 
-  .switch:disabled {
+  .box:focus-visible {
+    outline: var(--sc-stroke) solid var(--sc-border);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .box {
+      transition:
+        transform 70ms ease-out,
+        box-shadow 70ms ease-out;
+    }
+  }
+
+  .box:disabled {
     cursor: default;
   }
 
-  :global([data-mode="edit"]) .switch:disabled {
+  /* in edit mode a disabled box is locked: dashed and flat, still showing its value */
+  :global([data-mode="edit"]) .box:disabled {
     cursor: not-allowed;
-    opacity: 0.55;
+    border-style: dashed;
+    box-shadow: none;
   }
 </style>

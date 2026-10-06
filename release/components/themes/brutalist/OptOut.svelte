@@ -7,17 +7,17 @@
 </script>
 
 <div class="corner">
-  <Button {node} action="opt-out" variant="icon" onclick={() => actions.optOut(node, model)}>
+  <Button {node} action="opt-out" variant="mini" onclick={() => actions.optOut(node, model)}>
     <span aria-hidden="true">✕</span>
   </Button>
 </div>
 
 <style>
+  /* a small yellow tab pinned to the field's top-right corner */
   .corner {
     position: absolute;
-    top: -0.35em;
+    top: -0.55em;
     right: 0;
-    z-index: 1;
-    font-size: 0.85em;
+    z-index: 2;
   }
 </style>

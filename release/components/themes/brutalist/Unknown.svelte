@@ -10,12 +10,28 @@
 </p>
 
 <style>
+  /* a warning sticker: hazard-striped edge, bold copy */
   .unknown {
     margin: 0;
-    padding: 0.6em 0.85em;
+    padding: 0.75em 1em 0.75em 1.6em;
     font-size: 0.9em;
-    color: var(--sc-muted);
-    border: 1px dashed var(--sc-border);
+    font-weight: 600;
+    color: var(--sc-text);
+    background:
+      repeating-linear-gradient(
+          -45deg,
+          var(--sc-accent) 0 6px,
+          var(--sc-border) 6px 12px
+        )
+        left / 0.6em 100% no-repeat,
+      var(--sc-surface);
+    border: var(--sc-stroke) dashed var(--sc-border);
     border-radius: var(--sc-radius);
+  }
+
+  strong {
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
   }
 </style>
