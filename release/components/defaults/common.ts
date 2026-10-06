@@ -172,6 +172,15 @@ export const inputType = ({ format }: SpecificNode<"string">) =>
     ? formats[format as keyof typeof formats]
     : "text";
 
+/**
+ * What an input takes from its schema beyond its value: its first example as
+ * a placeholder, and a number's step (any, unless the schema gives one).
+ */
+export const hints = (node: SpecificNode<"string"> | SpecificNode<"number">) => ({
+  placeholder: node.examples?.length ? String(node.examples[0]) : undefined,
+  ...(node.kind === "number" && { step: node.step ?? "any" }),
+});
+
 /** Whether a field is read-only: outside edit mode, or a string `const`. */
 export const readonly = (node: RenderNode, model: SchemaModel) =>
   !model.editable || is.const(node);

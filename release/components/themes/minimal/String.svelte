@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Field } from "../../Field.svelte";
-  import { inputType, readonly, stringValue } from "../../defaults/common.js";
+  import { inputType, readonly, stringValue, hints } from "../../defaults/common.js";
   import PlaceholderOption from "../../defaults/PlaceholderOption.svelte";
   import Label from "./Label.svelte";
 
@@ -19,6 +19,12 @@
       {/each}
     </select>
   {:else}
-    <input {value} type={inputType(node)} {disabled} oninput={model.on(node)} />
+    <input
+      {value}
+      type={inputType(node)}
+      {...hints(node)}
+      {disabled}
+      oninput={model.on(node)}
+    />
   {/if}
 </Label>

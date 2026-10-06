@@ -44,6 +44,13 @@ declare namespace buildRenderTree.strings {
     }
   >;
 
+  /** carries the examples that are strings */
+  export type Examples = Expect<
+    Invoke<typeof root, [schema: { type: "string"; examples: ["Ada", 1815] }]>,
+    "matches",
+    { examples: ["Ada"] }
+  >;
+
   /** carries string enum options */
   export type CarriesOptions = Expect<
     Invoke<typeof root, [schema: { type: "string"; enum: ["a", "b"] }]>,
@@ -87,6 +94,23 @@ declare namespace buildRenderTree.numbers {
     >,
     "matches",
     { kind: "number"; min: 0; max: 100; default: 42 }
+  >;
+
+  /** an integer moves in steps of 1, a multipleOf in its own */
+  export type Step = [
+    Expect<Invoke<typeof root, [schema: { type: "integer" }]>, "matches", { step: 1 }>,
+    Expect<
+      Invoke<typeof root, [schema: { type: "number"; multipleOf: 0.25 }]>,
+      "matches",
+      { step: 0.25 }
+    >,
+  ];
+
+  /** carries the examples that are numbers */
+  export type Examples = Expect<
+    Invoke<typeof root, [schema: { type: "number"; examples: [3, "three", 4] }]>,
+    "matches",
+    { examples: [3, 4] }
   >;
 
   /** falls back to exclusiveMinimum/exclusiveMaximum */

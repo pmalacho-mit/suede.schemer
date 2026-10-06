@@ -15,7 +15,12 @@ export type Base<Kind extends string, T = {}> = {
   optional?: boolean;
 } & T &
   (Kind extends keyof Primitives
-    ? { default?: Primitives[Kind]; options?: Primitives[Kind][] }
+    ? {
+        default?: Primitives[Kind];
+        options?: Primitives[Kind][];
+        /** the schema's `examples` of this type: the first is an input's placeholder */
+        examples?: Primitives[Kind][];
+      }
     : {});
 
 export type RenderNode =
@@ -31,6 +36,8 @@ export type RenderNode =
       {
         min?: number;
         max?: number;
+        /** the increment a value moves in: the schema's `multipleOf`, or 1 for an `integer` */
+        step?: number;
       }
     >
   | Base<"boolean">
