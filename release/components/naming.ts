@@ -32,7 +32,9 @@ export type PathToSnippetName<P extends string> =
 export const basename = (path: string): string => {
   const index = path.lastIndexOf(".");
   const last = index === -1 ? path : path.slice(index + 1);
-  return last === "*" ? "item" : last;
+  if (last === "*") return "item";
+  // an array item or tuple position: counted from one, as people count
+  return /^\d+$/.test(last) ? `Item ${Number(last) + 1}` : last;
 };
 
 export const arrayItemAtIndex = (
