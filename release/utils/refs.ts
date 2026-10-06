@@ -1,6 +1,13 @@
 import type { JSONSchema7 } from "json-schema";
 import type { Context } from "../types.js";
 import { isSchema } from "./schema.js";
+import type {
+  Construct,
+  Expect,
+  Given,
+  Invoke,
+} from "../../suede.nests.schemer/dsl.import.meta.vitest.ts";
+import type { consoleWarnings } from "./harness.ts";
 
 export const warnings = {
   circularRef: (ref: string) => `Circular $ref detected: ${ref}`,
@@ -47,6 +54,127 @@ export const resolve = (schema: JSONSchema7, ctx: Context): JSONSchema7 => {
 
   return result;
 };
+
+declare namespace resolve {
+  type Ctx<Root extends JSONSchema7> = {
+    rootSchema: Root;
+    refStack: Construct<typeof Set<string>>;
+    externalSchemas: Construct<typeof Map<string, JSONSchema7>>;
+  };
+
+  type Warnings = Invoke<typeof consoleWarnings>;
+
+  /** returns schema unchanged when there is no $ref */
+  export type NoRef = Expect<
+    Invoke<typeof resolve, [schema: { type: "string" }, ctx: Ctx<{}>]>,
+    "=",
+    { type: "string" }
+  >;
+
+  /** resolves a local $ref via #/definitions */
+  export type ViaDefinitions = Expect<
+    Invoke<
+      typeof resolve,
+      [
+        schema: { $ref: "#/definitions/Foo" },
+        ctx: Ctx<{ definitions: { Foo: { type: "string" } } }>,
+      ]
+    >,
+    "=",
+    { type: "string" }
+  >;
+
+  /** resolves a local $ref via #/$defs */
+  export type ViaDefs = Expect<
+    Invoke<
+      typeof resolve,
+      [schema: { $ref: "#/$defs/Bar" }, ctx: Ctx<{ $defs: { Bar: { type: "number" } } }>]
+    >,
+    "=",
+    { type: "number" }
+  >;
+
+  /** merges sibling keywords onto the resolved schema */
+  export type MergesSiblings = Expect<
+    Invoke<
+      typeof resolve,
+      [
+        schema: { $ref: "#/$defs/Baz"; title: "My title" },
+        ctx: Ctx<{ $defs: { Baz: { type: "string" } } }>,
+      ]
+    >,
+    "=",
+    { type: "string"; title: "My title" }
+  >;
+
+  /** resolves chained $refs */
+  export type Chained = Expect<
+    Invoke<
+      typeof resolve,
+      [
+        schema: { $ref: "#/$defs/A" },
+        ctx: Ctx<{ $defs: { A: { $ref: "#/$defs/B" }; B: { type: "boolean" } } }>,
+      ]
+    >,
+    "=",
+    { type: "boolean" }
+  >;
+
+  /** returns a fallback object for an unresolved $ref and warns */
+  export type Unresolved = Given<
+    Warnings,
+    [
+      Expect<
+        Invoke<typeof resolve, [schema: { $ref: "#/definitions/Missing" }, ctx: Ctx<{}>]>,
+        "=",
+        { type: "object"; title: "(unresolved: #/definitions/Missing)" }
+      >,
+      Expect<Warnings, "=", [["Unresolved $ref: #/definitions/Missing"]]>,
+    ]
+  >;
+
+  /** returns a fallback object for circular $refs and warns */
+  export type Circular = Given<
+    Warnings,
+    [
+      Expect<
+        Invoke<
+          typeof resolve,
+          [
+            schema: { $ref: "#/$defs/Self" },
+            ctx: Ctx<{ $defs: { Self: { $ref: "#/$defs/Self" } } }>,
+          ]
+        >,
+        "=",
+        { type: "object"; title: "(circular: #/$defs/Self)" }
+      >,
+      Expect<Warnings, "=", [["Circular $ref detected: #/$defs/Self"]]>,
+    ]
+  >;
+
+  /** returns null for non-local $refs (e.g. remote URLs) */
+  export type Remote = Given<
+    Warnings,
+    Expect<
+      Invoke<typeof resolve, [schema: { $ref: "https://example.com/schema.json" }, ctx: Ctx<{}>]>,
+      "=",
+      { type: "object"; title: "(unresolved: https://example.com/schema.json)" }
+    >
+  >;
+
+  /** decodes JSON Pointer escape sequences in ref segments */
+  export type DecodesPointerEscapes = Expect<
+    Invoke<
+      typeof resolve,
+      [
+        schema: { $ref: "#/definitions/foo~1bar" },
+        ctx: Ctx<{ definitions: { "foo/bar": { type: "integer" } } }>,
+      ]
+    >,
+    "=",
+    { type: "integer" }
+  >;
+}
 
 const lookup = (
   ref: string,
