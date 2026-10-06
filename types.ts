@@ -110,7 +110,9 @@ type KindOfEach<T> = T extends string
     : T extends boolean
       ? "boolean"
       : T extends unknown[]
-        ? "array"
+        ? number extends T["length"]
+          ? "array"
+          : "tuple" // a fixed length: [x: number, y: number]
         : T extends Record<string, unknown>
           ? "object"
           : "unknown";
