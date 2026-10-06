@@ -20,11 +20,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { age: 0 }, {
-          type: "object",
-          properties: { age: { type: "number" } },
-          required: ["age"],
-        });
+    await render(
+      pocket,
+      "edit",
+      { age: 0 },
+      {
+        type: "object",
+        properties: { age: { type: "number" } },
+        required: ["age"],
+      },
+    );
     const input = pocket.el.querySelector(
       '[data-path="age"] input',
     ) as HTMLInputElement | null;
@@ -43,11 +48,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { rating: 5 }, {
-          type: "object",
-          properties: { rating: { type: "number", minimum: 1, maximum: 10 } },
-          required: ["rating"],
-        });
+    await render(
+      pocket,
+      "edit",
+      { rating: 5 },
+      {
+        type: "object",
+        properties: { rating: { type: "number", minimum: 1, maximum: 10 } },
+        required: ["rating"],
+      },
+    );
     const input = pocket.el.querySelector(
       '[data-path="rating"] input',
     ) as HTMLInputElement | null;
@@ -67,11 +77,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { priority: 1 }, {
-          type: "object",
-          properties: { priority: { type: "number", enum: [1, 2, 3] } },
-          required: ["priority"],
-        });
+    await render(
+      pocket,
+      "edit",
+      { priority: 1 },
+      {
+        type: "object",
+        properties: { priority: { type: "number", enum: [1, 2, 3] } },
+        required: ["priority"],
+      },
+    );
     const select = pocket.el.querySelector(
       '[data-path="priority"] select',
     ) as HTMLSelectElement | null;

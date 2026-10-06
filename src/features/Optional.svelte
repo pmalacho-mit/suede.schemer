@@ -23,9 +23,7 @@
   {test(async ({ expect }) => {
     await render(pocket, "edit", {}, schemas.nickname);
     expect(pocket.el.querySelector('[data-action="opt-in"]')).not.toBeNull();
-    expect(
-      pocket.el.querySelector('[data-path="nickname"] input'),
-    ).toBeNull();
+    expect(pocket.el.querySelector('[data-path="nickname"] input')).toBeNull();
   })}
 {/snippet}
 
@@ -61,15 +59,18 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { name: "" }, {
-          type: "object",
-          properties: { name: { type: "string" } },
-          required: ["name"],
-        });
+    await render(
+      pocket,
+      "edit",
+      { name: "" },
+      {
+        type: "object",
+        properties: { name: { type: "string" } },
+        required: ["name"],
+      },
+    );
     expect(pocket.el.querySelector('[data-action="opt-in"]')).toBeNull();
-    expect(
-      pocket.el.querySelector('[data-path="name"] input'),
-    ).not.toBeNull();
+    expect(pocket.el.querySelector('[data-path="name"] input')).not.toBeNull();
   })}
 {/snippet}
 

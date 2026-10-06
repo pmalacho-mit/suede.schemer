@@ -20,11 +20,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { name: "" }, {
-          type: "object",
-          properties: { name: { type: "string" } },
-          required: ["name"],
-        });
+    await render(
+      pocket,
+      "edit",
+      { name: "" },
+      {
+        type: "object",
+        properties: { name: { type: "string" } },
+        required: ["name"],
+      },
+    );
     const element = pocket.model.element({ path: "name" });
     expect(element).not.toBeNull();
     expect(element?.dataset.path).toBe("name");
@@ -41,17 +46,22 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { address: { city: "" } }, {
-          type: "object",
-          properties: {
-            address: {
-              type: "object",
-              properties: { city: { type: "string" } },
-              required: ["city"],
-            },
+    await render(
+      pocket,
+      "edit",
+      { address: { city: "" } },
+      {
+        type: "object",
+        properties: {
+          address: {
+            type: "object",
+            properties: { city: { type: "string" } },
+            required: ["city"],
           },
-          required: ["address"],
-        });
+        },
+        required: ["address"],
+      },
+    );
     const element = pocket.model.element({ path: "address.city" });
     expect(element).not.toBeNull();
     expect(element?.dataset.path).toBe("address.city");
@@ -68,11 +78,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { tags: ["alpha", "beta"] }, {
-          type: "object",
-          properties: { tags: { type: "array", items: { type: "string" } } },
-          required: ["tags"],
-        });
+    await render(
+      pocket,
+      "edit",
+      { tags: ["alpha", "beta"] },
+      {
+        type: "object",
+        properties: { tags: { type: "array", items: { type: "string" } } },
+        required: ["tags"],
+      },
+    );
     const element0 = pocket.model.element({ path: "tags.0" });
     const element1 = pocket.model.element({ path: "tags.1" });
     expect(element0).not.toBeNull();
@@ -92,20 +107,25 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { people: [{ name: "Alice" }, { name: "Bob" }] }, {
-          type: "object",
-          properties: {
-            people: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: { name: { type: "string" } },
-                required: ["name"],
-              },
+    await render(
+      pocket,
+      "edit",
+      { people: [{ name: "Alice" }, { name: "Bob" }] },
+      {
+        type: "object",
+        properties: {
+          people: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: { name: { type: "string" } },
+              required: ["name"],
             },
           },
-          required: ["people"],
-        });
+        },
+        required: ["people"],
+      },
+    );
     const element0 = pocket.model.element({ path: "people.0.name" });
     const element1 = pocket.model.element({ path: "people.1.name" });
     expect(element0).not.toBeNull();
@@ -125,11 +145,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { tags: ["alpha"] }, {
-          type: "object",
-          properties: { tags: { type: "array", items: { type: "string" } } },
-          required: ["tags"],
-        });
+    await render(
+      pocket,
+      "edit",
+      { tags: ["alpha"] },
+      {
+        type: "object",
+        properties: { tags: { type: "array", items: { type: "string" } } },
+        required: ["tags"],
+      },
+    );
     const element = pocket.model.element({ path: "tags.5" });
     expect(element).toBeUndefined();
   })}
@@ -145,11 +170,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { name: "" }, {
-          type: "object",
-          properties: { name: { type: "string" } },
-          required: ["name"],
-        });
+    await render(
+      pocket,
+      "edit",
+      { name: "" },
+      {
+        type: "object",
+        properties: { name: { type: "string" } },
+        required: ["name"],
+      },
+    );
     const element = pocket.model.element({ path: "does.not.exist" });
     expect(element).toBeUndefined();
   })}

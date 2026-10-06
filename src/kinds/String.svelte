@@ -20,11 +20,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { name: "" }, {
-          type: "object",
-          properties: { name: { type: "string" } },
-          required: ["name"],
-        });
+    await render(
+      pocket,
+      "edit",
+      { name: "" },
+      {
+        type: "object",
+        properties: { name: { type: "string" } },
+        required: ["name"],
+      },
+    );
     const input = pocket.el.querySelector(
       '[data-path="name"] input',
     ) as HTMLInputElement | null;
@@ -43,11 +48,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect, user }) => {
-    await render(pocket, "edit", { name: "" }, {
-          type: "object",
-          properties: { name: { type: "string" } },
-          required: ["name"],
-        });
+    await render(
+      pocket,
+      "edit",
+      { name: "" },
+      {
+        type: "object",
+        properties: { name: { type: "string" } },
+        required: ["name"],
+      },
+    );
     const input = pocket.el.querySelector(
       '[data-path="name"] input',
     ) as HTMLInputElement;
@@ -66,11 +76,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { email: "" }, {
-          type: "object",
-          properties: { email: { type: "string", format: "email" } },
-          required: ["email"],
-        });
+    await render(
+      pocket,
+      "edit",
+      { email: "" },
+      {
+        type: "object",
+        properties: { email: { type: "string", format: "email" } },
+        required: ["email"],
+      },
+    );
     const input = pocket.el.querySelector(
       '[data-path="email"] input',
     ) as HTMLInputElement | null;
@@ -89,11 +104,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { birthday: "" }, {
-          type: "object",
-          properties: { birthday: { type: "string", format: "date" } },
-          required: ["birthday"],
-        });
+    await render(
+      pocket,
+      "edit",
+      { birthday: "" },
+      {
+        type: "object",
+        properties: { birthday: { type: "string", format: "date" } },
+        required: ["birthday"],
+      },
+    );
     const input = pocket.el.querySelector(
       '[data-path="birthday"] input',
     ) as HTMLInputElement | null;
@@ -112,11 +132,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", {}, {
-          type: "object",
-          properties: { status: { type: "string", const: "active" } },
-          required: ["status"],
-        });
+    await render(
+      pocket,
+      "edit",
+      {},
+      {
+        type: "object",
+        properties: { status: { type: "string", const: "active" } },
+        required: ["status"],
+      },
+    );
     const input = pocket.el.querySelector(
       '[data-path="status"] input',
     ) as HTMLInputElement | null;
@@ -136,13 +161,18 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { color: "red" }, {
-          type: "object",
-          properties: {
-            color: { type: "string", enum: ["red", "green", "blue"] },
-          },
-          required: ["color"],
-        });
+    await render(
+      pocket,
+      "edit",
+      { color: "red" },
+      {
+        type: "object",
+        properties: {
+          color: { type: "string", enum: ["red", "green", "blue"] },
+        },
+        required: ["color"],
+      },
+    );
     const select = pocket.el.querySelector(
       '[data-path="color"] select',
     ) as HTMLSelectElement | null;

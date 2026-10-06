@@ -20,11 +20,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { tags: ["alpha", "beta"] }, {
-          type: "object",
-          properties: { tags: { type: "array", items: { type: "string" } } },
-          required: ["tags"],
-        });
+    await render(
+      pocket,
+      "edit",
+      { tags: ["alpha", "beta"] },
+      {
+        type: "object",
+        properties: { tags: { type: "array", items: { type: "string" } } },
+        required: ["tags"],
+      },
+    );
     expect(pocket.el.querySelectorAll('[data-path^="tags."]').length).toBe(2);
   })}
 {/snippet}
@@ -39,11 +44,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect, user }) => {
-    await render(pocket, "edit", { tags: [] }, {
-          type: "object",
-          properties: { tags: { type: "array", items: { type: "string" } } },
-          required: ["tags"],
-        });
+    await render(
+      pocket,
+      "edit",
+      { tags: [] },
+      {
+        type: "object",
+        properties: { tags: { type: "array", items: { type: "string" } } },
+        required: ["tags"],
+      },
+    );
     await user.click(pocket.el.querySelector('[data-action="push"]')!);
     expect(pocket.model!.get<"array">({ path: "tags" })!.length).toBe(1);
   })}
@@ -59,11 +69,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect, user }) => {
-    await render(pocket, "edit", { tags: ["alpha", "beta"] }, {
-          type: "object",
-          properties: { tags: { type: "array", items: { type: "string" } } },
-          required: ["tags"],
-        });
+    await render(
+      pocket,
+      "edit",
+      { tags: ["alpha", "beta"] },
+      {
+        type: "object",
+        properties: { tags: { type: "array", items: { type: "string" } } },
+        required: ["tags"],
+      },
+    );
 
     await user.click(pocket.el.querySelector('[data-action="splice"]')!);
     expect(pocket.model!.get<"array">({ path: "tags" })!.length).toBe(1);
@@ -80,13 +95,18 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { tags: ["alpha", "beta"] }, {
-          type: "object",
-          properties: {
-            tags: { type: "array", items: { type: "string" }, maxItems: 2 },
-          },
-          required: ["tags"],
-        });
+    await render(
+      pocket,
+      "edit",
+      { tags: ["alpha", "beta"] },
+      {
+        type: "object",
+        properties: {
+          tags: { type: "array", items: { type: "string" }, maxItems: 2 },
+        },
+        required: ["tags"],
+      },
+    );
     expect(pocket.el.querySelector('[data-action="push"]')).toBeNull();
   })}
 {/snippet}
@@ -101,28 +121,33 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", {
-          people: [
-            { name: "Alice", age: 30 },
-            { name: "Bob", age: 25 },
-          ],
-        }, {
-          type: "object",
-          properties: {
-            people: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  name: { type: "string" },
-                  age: { type: "number" },
-                },
-                required: ["name", "age"],
+    await render(
+      pocket,
+      "edit",
+      {
+        people: [
+          { name: "Alice", age: 30 },
+          { name: "Bob", age: 25 },
+        ],
+      },
+      {
+        type: "object",
+        properties: {
+          people: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                name: { type: "string" },
+                age: { type: "number" },
               },
+              required: ["name", "age"],
             },
           },
-          required: ["people"],
-        });
+        },
+        required: ["people"],
+      },
+    );
     expect(
       pocket.el.querySelector('[data-path="people.0.name"]'),
     ).not.toBeNull();

@@ -23,9 +23,21 @@ export const valid = {
 declare namespace valid.options {
   /** returns true when options is undefined */
   export type Undefined = [
-    Expect<Invoke<typeof valid.options, [kind: "string", options: undefined]>, "=", true>,
-    Expect<Invoke<typeof valid.options, [kind: "number", options: undefined]>, "=", true>,
-    Expect<Invoke<typeof valid.options, [kind: "boolean", options: undefined]>, "=", true>,
+    Expect<
+      Invoke<typeof valid.options, [kind: "string", options: undefined]>,
+      "=",
+      true
+    >,
+    Expect<
+      Invoke<typeof valid.options, [kind: "number", options: undefined]>,
+      "=",
+      true
+    >,
+    Expect<
+      Invoke<typeof valid.options, [kind: "boolean", options: undefined]>,
+      "=",
+      true
+    >,
   ];
 
   /** returns true for an empty array */
@@ -37,22 +49,57 @@ declare namespace valid.options {
 
   /** returns true when every element matches the kind */
   export type EveryElementMatches = [
-    Expect<Invoke<typeof valid.options, [kind: "string", options: ["a", "b", "c"]]>, "=", true>,
-    Expect<Invoke<typeof valid.options, [kind: "number", options: [1, 2, 3]]>, "=", true>,
-    Expect<Invoke<typeof valid.options, [kind: "boolean", options: [true, false]]>, "=", true>,
+    Expect<
+      Invoke<typeof valid.options, [kind: "string", options: ["a", "b", "c"]]>,
+      "=",
+      true
+    >,
+    Expect<
+      Invoke<typeof valid.options, [kind: "number", options: [1, 2, 3]]>,
+      "=",
+      true
+    >,
+    Expect<
+      Invoke<typeof valid.options, [kind: "boolean", options: [true, false]]>,
+      "=",
+      true
+    >,
   ];
 
   /** returns false when any element does not match the kind */
   export type AnyElementMismatches = [
-    Expect<Invoke<typeof valid.options, [kind: "string", options: ["a", 1]]>, "=", false>,
-    Expect<Invoke<typeof valid.options, [kind: "number", options: [1, "two"]]>, "=", false>,
-    Expect<Invoke<typeof valid.options, [kind: "boolean", options: [true, "false"]]>, "=", false>,
+    Expect<
+      Invoke<typeof valid.options, [kind: "string", options: ["a", 1]]>,
+      "=",
+      false
+    >,
+    Expect<
+      Invoke<typeof valid.options, [kind: "number", options: [1, "two"]]>,
+      "=",
+      false
+    >,
+    Expect<
+      Invoke<typeof valid.options, [kind: "boolean", options: [true, "false"]]>,
+      "=",
+      false
+    >,
   ];
 
   /** returns false when the value is not an array and not undefined */
   export type NotAnArray = [
-    Expect<Invoke<typeof valid.options, [kind: "string", options: Fixture<any, "hello">]>, "=", false>,
-    Expect<Invoke<typeof valid.options, [kind: "number", options: Fixture<any, 42>]>, "=", false>,
+    Expect<
+      Invoke<
+        typeof valid.options,
+        [kind: "string", options: Fixture<any, "hello">]
+      >,
+      "=",
+      false
+    >,
+    Expect<
+      Invoke<typeof valid.options, [kind: "number", options: Fixture<any, 42>]>,
+      "=",
+      false
+    >,
   ];
 }
 
@@ -60,23 +107,59 @@ declare namespace valid.options {
 declare namespace valid.defaultValue {
   /** returns true when defaultValue is undefined */
   export type Undefined = [
-    Expect<Invoke<typeof valid.default, [kind: "string", defaultValue: undefined]>, "=", true>,
-    Expect<Invoke<typeof valid.default, [kind: "number", defaultValue: undefined]>, "=", true>,
-    Expect<Invoke<typeof valid.default, [kind: "boolean", defaultValue: undefined]>, "=", true>,
+    Expect<
+      Invoke<typeof valid.default, [kind: "string", defaultValue: undefined]>,
+      "=",
+      true
+    >,
+    Expect<
+      Invoke<typeof valid.default, [kind: "number", defaultValue: undefined]>,
+      "=",
+      true
+    >,
+    Expect<
+      Invoke<typeof valid.default, [kind: "boolean", defaultValue: undefined]>,
+      "=",
+      true
+    >,
   ];
 
   /** returns true when defaultValue matches the kind */
   export type MatchesKind = [
-    Expect<Invoke<typeof valid.default, [kind: "string", defaultValue: "hello"]>, "=", true>,
-    Expect<Invoke<typeof valid.default, [kind: "number", defaultValue: 42]>, "=", true>,
-    Expect<Invoke<typeof valid.default, [kind: "boolean", defaultValue: false]>, "=", true>,
+    Expect<
+      Invoke<typeof valid.default, [kind: "string", defaultValue: "hello"]>,
+      "=",
+      true
+    >,
+    Expect<
+      Invoke<typeof valid.default, [kind: "number", defaultValue: 42]>,
+      "=",
+      true
+    >,
+    Expect<
+      Invoke<typeof valid.default, [kind: "boolean", defaultValue: false]>,
+      "=",
+      true
+    >,
   ];
 
   /** returns false when defaultValue does not match the kind */
   export type MismatchesKind = [
-    Expect<Invoke<typeof valid.default, [kind: "string", defaultValue: 42]>, "=", false>,
-    Expect<Invoke<typeof valid.default, [kind: "number", defaultValue: "hello"]>, "=", false>,
-    Expect<Invoke<typeof valid.default, [kind: "boolean", defaultValue: 1]>, "=", false>,
+    Expect<
+      Invoke<typeof valid.default, [kind: "string", defaultValue: 42]>,
+      "=",
+      false
+    >,
+    Expect<
+      Invoke<typeof valid.default, [kind: "number", defaultValue: "hello"]>,
+      "=",
+      false
+    >,
+    Expect<
+      Invoke<typeof valid.default, [kind: "boolean", defaultValue: 1]>,
+      "=",
+      false
+    >,
   ];
 
   /** returns false for null (not undefined) */

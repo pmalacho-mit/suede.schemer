@@ -20,11 +20,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "stream", { name: "Alice" }, {
-          type: "object",
-          properties: { name: { type: "string" } },
-          required: ["name"],
-        });
+    await render(
+      pocket,
+      "stream",
+      { name: "Alice" },
+      {
+        type: "object",
+        properties: { name: { type: "string" } },
+        required: ["name"],
+      },
+    );
     const input = pocket.el.querySelector(
       '[data-path="name"] input',
     ) as HTMLInputElement;
@@ -42,11 +47,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "stream", { tags: ["alpha"] }, {
-          type: "object",
-          properties: { tags: { type: "array", items: { type: "string" } } },
-          required: ["tags"],
-        });
+    await render(
+      pocket,
+      "stream",
+      { tags: ["alpha"] },
+      {
+        type: "object",
+        properties: { tags: { type: "array", items: { type: "string" } } },
+        required: ["tags"],
+      },
+    );
     expect(pocket.el.querySelector('[data-action="push"]')).toBeNull();
     expect(pocket.el.querySelector('[data-action="splice"]')).toBeNull();
   })}
@@ -63,17 +73,20 @@
   </div>
   {test(async ({ expect }) => {
     // Stream data may arrive before all fields are populated
-    await render(pocket, "stream", {}, {
-          type: "object",
-          properties: {
-            name: { type: "string" },
-            age: { type: "number" },
-          },
-          required: ["name", "age"],
-        });
-    expect(
-      pocket.el.querySelector('[data-path="name"] input'),
-    ).not.toBeNull();
+    await render(
+      pocket,
+      "stream",
+      {},
+      {
+        type: "object",
+        properties: {
+          name: { type: "string" },
+          age: { type: "number" },
+        },
+        required: ["name", "age"],
+      },
+    );
+    expect(pocket.el.querySelector('[data-path="name"] input')).not.toBeNull();
     expect(pocket.el.querySelector('[data-path="age"] input')).not.toBeNull();
   })}
 {/snippet}
@@ -88,11 +101,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect, flushSync }) => {
-    await render(pocket, "stream", {}, {
-          type: "object",
-          properties: { name: { type: "string" } },
-          required: ["name"],
-        });
+    await render(
+      pocket,
+      "stream",
+      {},
+      {
+        type: "object",
+        properties: { name: { type: "string" } },
+        required: ["name"],
+      },
+    );
     const input = pocket.el.querySelector(
       '[data-path="name"] input',
     ) as HTMLInputElement;
@@ -112,11 +130,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect, flushSync }) => {
-    await render(pocket, "stream", {}, {
-          type: "object",
-          properties: { age: { type: "number" } },
-          required: ["age"],
-        });
+    await render(
+      pocket,
+      "stream",
+      {},
+      {
+        type: "object",
+        properties: { age: { type: "number" } },
+        required: ["age"],
+      },
+    );
     const input = pocket.el.querySelector(
       '[data-path="age"] input',
     ) as HTMLInputElement;
@@ -135,20 +158,25 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect, flushSync }) => {
-    await render(pocket, "stream", { address: { city: "Boston" } }, {
-          type: "object",
-          properties: {
-            address: {
-              type: "object",
-              properties: {
-                street: { type: "string" },
-                city: { type: "string" },
-              },
-              required: ["street", "city"],
+    await render(
+      pocket,
+      "stream",
+      { address: { city: "Boston" } },
+      {
+        type: "object",
+        properties: {
+          address: {
+            type: "object",
+            properties: {
+              street: { type: "string" },
+              city: { type: "string" },
             },
+            required: ["street", "city"],
           },
-          required: ["address"],
-        });
+        },
+        required: ["address"],
+      },
+    );
     flushSync(() =>
       pocket.model.applyPartial({ address: { street: "123 Main St" } }),
     );
@@ -173,11 +201,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect, flushSync }) => {
-    await render(pocket, "stream", { tags: [] }, {
-          type: "object",
-          properties: { tags: { type: "array", items: { type: "string" } } },
-          required: ["tags"],
-        });
+    await render(
+      pocket,
+      "stream",
+      { tags: [] },
+      {
+        type: "object",
+        properties: { tags: { type: "array", items: { type: "string" } } },
+        required: ["tags"],
+      },
+    );
     expect(pocket.el.querySelectorAll('[data-path^="tags."]').length).toBe(0);
 
     flushSync(() => pocket.model.set({ path: "tags" }, ["alpha"]));
@@ -198,14 +231,19 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect, flushSync }) => {
-    await render(pocket, "stream", {}, {
-          type: "object",
-          properties: {
-            first: { type: "string" },
-            last: { type: "string" },
-          },
-          required: ["first", "last"],
-        });
+    await render(
+      pocket,
+      "stream",
+      {},
+      {
+        type: "object",
+        properties: {
+          first: { type: "string" },
+          last: { type: "string" },
+        },
+        required: ["first", "last"],
+      },
+    );
 
     flushSync(() => {
       pocket.model.applyPartial({ first: "Jane" });

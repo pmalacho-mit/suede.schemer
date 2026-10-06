@@ -20,16 +20,21 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { coords: [10, 20] }, {
-          type: "object",
-          properties: {
-            coords: {
-              type: "array",
-              items: [{ type: "number" }, { type: "number" }],
-            },
+    await render(
+      pocket,
+      "edit",
+      { coords: [10, 20] },
+      {
+        type: "object",
+        properties: {
+          coords: {
+            type: "array",
+            items: [{ type: "number" }, { type: "number" }],
           },
-          required: ["coords"],
-        });
+        },
+        required: ["coords"],
+      },
+    );
     expect(pocket.el.querySelector('[data-path="coords.0"]')).not.toBeNull();
     expect(pocket.el.querySelector('[data-path="coords.1"]')).not.toBeNull();
   })}
@@ -45,16 +50,21 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { pair: ["hello", 42] }, {
-          type: "object",
-          properties: {
-            pair: {
-              type: "array",
-              items: [{ type: "string" }, { type: "number" }],
-            },
+    await render(
+      pocket,
+      "edit",
+      { pair: ["hello", 42] },
+      {
+        type: "object",
+        properties: {
+          pair: {
+            type: "array",
+            items: [{ type: "string" }, { type: "number" }],
           },
-          required: ["pair"],
-        });
+        },
+        required: ["pair"],
+      },
+    );
     const firstInput = pocket.el.querySelector(
       '[data-path="pair.0"] input',
     ) as HTMLInputElement | null;
@@ -78,16 +88,21 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { coords: [0, 0] }, {
-          type: "object",
-          properties: {
-            coords: {
-              type: "array",
-              items: [{ type: "number" }, { type: "number" }],
-            },
+    await render(
+      pocket,
+      "edit",
+      { coords: [0, 0] },
+      {
+        type: "object",
+        properties: {
+          coords: {
+            type: "array",
+            items: [{ type: "number" }, { type: "number" }],
           },
-          required: ["coords"],
-        });
+        },
+        required: ["coords"],
+      },
+    );
     expect(pocket.el.querySelector('[data-action="push"]')).toBeNull();
     expect(pocket.el.querySelector('[data-action="splice"]')).toBeNull();
   })}
@@ -103,29 +118,30 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", {
-          points: [
-            [1, 2],
-            [3, 4],
-          ],
-        }, {
-          type: "object",
-          properties: {
-            points: {
+    await render(
+      pocket,
+      "edit",
+      {
+        points: [
+          [1, 2],
+          [3, 4],
+        ],
+      },
+      {
+        type: "object",
+        properties: {
+          points: {
+            type: "array",
+            items: {
               type: "array",
-              items: {
-                type: "array",
-                items: [{ type: "number" }, { type: "number" }],
-              },
+              items: [{ type: "number" }, { type: "number" }],
             },
           },
-          required: ["points"],
-        });
-    expect(
-      pocket.el.querySelector('[data-path="points.0.0"]'),
-    ).not.toBeNull();
-    expect(
-      pocket.el.querySelector('[data-path="points.1.1"]'),
-    ).not.toBeNull();
+        },
+        required: ["points"],
+      },
+    );
+    expect(pocket.el.querySelector('[data-path="points.0.0"]')).not.toBeNull();
+    expect(pocket.el.querySelector('[data-path="points.1.1"]')).not.toBeNull();
   })}
 {/snippet}

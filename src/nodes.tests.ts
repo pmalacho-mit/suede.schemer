@@ -247,7 +247,10 @@ declare namespace buildRenderTree.objects {
 
   /** infers object from properties keyword (no explicit type) */
   export type InfersFromProperties = Expect<
-    Invoke<typeof root, [schema: { properties: { x: { type: "number" } } }]>["kind"],
+    Invoke<
+      typeof root,
+      [schema: { properties: { x: { type: "number" } } }]
+    >["kind"],
     "=",
     "object"
   >;
@@ -280,7 +283,11 @@ declare namespace buildRenderTree.objects {
       [
         schema: {
           type: "object";
-          properties: { allowed: true; denied: false; real: { type: "string" } };
+          properties: {
+            allowed: true;
+            denied: false;
+            real: { type: "string" };
+          };
         },
       ]
     >,
@@ -362,7 +369,11 @@ declare namespace buildRenderTree.arrays {
       kind: "tuple";
       itemNodes: [
         { kind: "string"; path: ".0" },
-        { kind: "object"; path: ".1"; children: [{ kind: "number"; path: ".1.b" }] },
+        {
+          kind: "object";
+          path: ".1";
+          children: [{ kind: "number"; path: ".1.b" }];
+        },
       ];
     }
   >;
@@ -437,14 +448,20 @@ declare namespace buildRenderTree.allOf {
 declare namespace buildRenderTree.variants {
   /** builds a oneOf variant node for multiple oneOf schemas */
   export type FromOneOf = Expect<
-    Invoke<typeof root, [schema: { oneOf: [{ type: "string" }, { type: "number" }] }]>,
+    Invoke<
+      typeof root,
+      [schema: { oneOf: [{ type: "string" }, { type: "number" }] }]
+    >,
     "matches",
     { kind: "oneOf"; variants: [{ kind: "string" }, { kind: "number" }] }
   >;
 
   /** builds a oneOf variant node for multiple anyOf schemas */
   export type FromAnyOf = Expect<
-    Invoke<typeof root, [schema: { anyOf: [{ type: "boolean" }, { type: "string" }] }]>,
+    Invoke<
+      typeof root,
+      [schema: { anyOf: [{ type: "boolean" }, { type: "string" }] }]
+    >,
     "matches",
     { kind: "oneOf"; variants: [{}, {}] }
   >;
@@ -532,9 +549,21 @@ declare namespace buildRenderTree.examples.address {
 
   /** marks locality, region, countryName as required */
   export type Required = [
-    Expect<Invoke<typeof required, [node: Node]>, "=", ["locality", "region", "countryName"]>,
-    Expect<Invoke<typeof child, [node: Node, path: "locality"]>["optional"], "=", false>,
-    Expect<Invoke<typeof child, [node: Node, path: "postalCode"]>["optional"], "=", true>,
+    Expect<
+      Invoke<typeof required, [node: Node]>,
+      "=",
+      ["locality", "region", "countryName"]
+    >,
+    Expect<
+      Invoke<typeof child, [node: Node, path: "locality"]>["optional"],
+      "=",
+      false
+    >,
+    Expect<
+      Invoke<typeof child, [node: Node, path: "postalCode"]>["optional"],
+      "=",
+      true
+    >,
   ];
 }
 
@@ -611,7 +640,11 @@ declare namespace buildRenderTree.examples.device {
   >;
 
   /** produces a oneOf variant node with 2 variants */
-  export type TwoVariants = Expect<Node, "matches", { kind: "oneOf"; variants: [{}, {}] }>;
+  export type TwoVariants = Expect<
+    Node,
+    "matches",
+    { kind: "oneOf"; variants: [{}, {}] }
+  >;
 
   /** each variant is an object node */
   export type ObjectVariants = Expect<
@@ -663,15 +696,29 @@ declare namespace buildRenderTree.examples.geographicalLocation {
 
   /** marks both fields as required */
   export type BothRequired = [
-    Expect<Invoke<typeof required, [node: Node]>, "=", ["latitude", "longitude"]>,
-    Expect<Node, "matches", { children: [{ optional: false }, { optional: false }] }>,
+    Expect<
+      Invoke<typeof required, [node: Node]>,
+      "=",
+      ["latitude", "longitude"]
+    >,
+    Expect<
+      Node,
+      "matches",
+      { children: [{ optional: false }, { optional: false }] }
+    >,
   ];
 }
 
 declare namespace buildRenderTree.examples.healthRecord {
   type Node = Invoke<
     typeof root,
-    [schema: FromFile<"../public/health-record/schema.json", "json", JSONSchema7>]
+    [
+      schema: FromFile<
+        "../public/health-record/schema.json",
+        "json",
+        JSONSchema7
+      >,
+    ]
   >;
 
   type StringArray = { kind: "array"; itemNode: { kind: "string" } };
@@ -688,9 +735,21 @@ declare namespace buildRenderTree.examples.healthRecord {
 
   /** renders array fields (allergies, conditions, medications) with string items */
   export type StringArrays = [
-    Expect<Invoke<typeof child, [node: Node, path: "allergies"]>, "matches", StringArray>,
-    Expect<Invoke<typeof child, [node: Node, path: "conditions"]>, "matches", StringArray>,
-    Expect<Invoke<typeof child, [node: Node, path: "medications"]>, "matches", StringArray>,
+    Expect<
+      Invoke<typeof child, [node: Node, path: "allergies"]>,
+      "matches",
+      StringArray
+    >,
+    Expect<
+      Invoke<typeof child, [node: Node, path: "conditions"]>,
+      "matches",
+      StringArray
+    >,
+    Expect<
+      Invoke<typeof child, [node: Node, path: "medications"]>,
+      "matches",
+      StringArray
+    >,
   ];
 }
 
@@ -738,7 +797,10 @@ declare namespace buildRenderTree.examples.movie {
   export type Genre = Expect<
     Invoke<typeof child, [node: Node, path: "genre"]>,
     "matches",
-    { kind: "string"; options: ["Action", "Comedy", "Drama", "Science Fiction"] }
+    {
+      kind: "string";
+      options: ["Action", "Comedy", "Drama", "Science Fiction"];
+    }
   >;
 
   /** renders cast as an array of strings */
@@ -752,7 +814,13 @@ declare namespace buildRenderTree.examples.movie {
 declare namespace buildRenderTree.examples.userProfile {
   type Node = Invoke<
     typeof root,
-    [schema: FromFile<"../public/user-profile/schema.json", "json", JSONSchema7>]
+    [
+      schema: FromFile<
+        "../public/user-profile/schema.json",
+        "json",
+        JSONSchema7
+      >,
+    ]
   >;
 
   /** produces an object node */

@@ -60,7 +60,10 @@ declare namespace merge {
 
   /** returns schema unchanged when no composition keywords are present */
   export type Unchanged = Expect<
-    Invoke<typeof merge, [schema: { type: "string"; title: "Name" }, ctx: Ctx<{}>]>,
+    Invoke<
+      typeof merge,
+      [schema: { type: "string"; title: "Name" }, ctx: Ctx<{}>]
+    >,
     "=",
     { type: "string"; title: "Name" }
   >;
@@ -82,10 +85,17 @@ declare namespace merge {
   /** merges allOf sub-schemas */
   export type MergesAllOf = [
     Expect<AllOf["allOf"], "undefined">,
-    Expect<AllOf["properties"], "=", { a: { type: "string" }; b: { type: "number" } }>,
+    Expect<
+      AllOf["properties"],
+      "=",
+      { a: { type: "string" }; b: { type: "number" } }
+    >,
   ];
 
-  type SingleAnyOf = Invoke<typeof merge, [schema: { anyOf: [{ type: "string" }] }, ctx: Ctx<{}>]>;
+  type SingleAnyOf = Invoke<
+    typeof merge,
+    [schema: { anyOf: [{ type: "string" }] }, ctx: Ctx<{}>]
+  >;
 
   /** inlines a single-variant anyOf */
   export type InlinesSingleAnyOf = [
@@ -97,13 +107,19 @@ declare namespace merge {
   export type KeepsMultiAnyOf = Expect<
     Invoke<
       typeof merge,
-      [schema: { anyOf: [{ type: "string" }, { type: "number" }] }, ctx: Ctx<{}>]
+      [
+        schema: { anyOf: [{ type: "string" }, { type: "number" }] },
+        ctx: Ctx<{}>,
+      ]
     >["anyOf"],
     "=",
     [{ type: "string" }, { type: "number" }]
   >;
 
-  type SingleOneOf = Invoke<typeof merge, [schema: { oneOf: [{ type: "boolean" }] }, ctx: Ctx<{}>]>;
+  type SingleOneOf = Invoke<
+    typeof merge,
+    [schema: { oneOf: [{ type: "boolean" }] }, ctx: Ctx<{}>]
+  >;
 
   /** inlines a single-variant oneOf */
   export type InlinesSingleOneOf = [
@@ -115,7 +131,10 @@ declare namespace merge {
   export type KeepsMultiOneOf = Expect<
     Invoke<
       typeof merge,
-      [schema: { oneOf: [{ type: "string" }, { type: "number" }] }, ctx: Ctx<{}>]
+      [
+        schema: { oneOf: [{ type: "string" }, { type: "number" }] },
+        ctx: Ctx<{}>,
+      ]
     >["oneOf"],
     "defined"
   >;
@@ -137,7 +156,11 @@ declare namespace merge {
     Expect<Conditional["if"], "undefined">,
     Expect<Conditional["then"], "undefined">,
     Expect<Conditional["else"], "undefined">,
-    Expect<Conditional["properties"], "=", { a: { type: "string" }; b: { type: "number" } }>,
+    Expect<
+      Conditional["properties"],
+      "=",
+      { a: { type: "string" }; b: { type: "number" } }
+    >,
   ];
 
   /** resolves $ref inside allOf against rootSchema */
@@ -146,7 +169,9 @@ declare namespace merge {
       typeof merge,
       [
         schema: { allOf: [{ $ref: "#/$defs/Name" }] },
-        ctx: Ctx<{ $defs: { Name: { properties: { first: { type: "string" } } } } }>,
+        ctx: Ctx<{
+          $defs: { Name: { properties: { first: { type: "string" } } } };
+        }>,
       ]
     >["properties"],
     "=",
@@ -196,14 +221,20 @@ export const mergeSchemas = (
 declare namespace mergeSchemas {
   /** produces a shallow merge of two schemas */
   export type ShallowMerge = Expect<
-    Invoke<typeof mergeSchemas, [base: { type: "object" }, override: { title: "Foo" }]>,
+    Invoke<
+      typeof mergeSchemas,
+      [base: { type: "object" }, override: { title: "Foo" }]
+    >,
     "matches",
     { type: "object"; title: "Foo" }
   >;
 
   /** override wins for conflicting scalar fields */
   export type OverrideWins = Expect<
-    Invoke<typeof mergeSchemas, [base: { type: "string" }, override: { type: "number" }]>["type"],
+    Invoke<
+      typeof mergeSchemas,
+      [base: { type: "string" }, override: { type: "number" }]
+    >["type"],
     "=",
     "number"
   >;
@@ -236,40 +267,91 @@ declare namespace mergeSchemas {
 
   /** unions required arrays and deduplicates */
   export type UnionsRequired = Expect<
-    Invoke<typeof mergeSchemas, [base: { required: ["a", "b"] }, override: { required: ["b", "c"] }]>["required"],
+    Invoke<
+      typeof mergeSchemas,
+      [base: { required: ["a", "b"] }, override: { required: ["b", "c"] }]
+    >["required"],
     "=",
     ["a", "b", "c"]
   >;
 
   /** picks the higher minimum */
   export type HigherMinimum = [
-    Expect<Invoke<typeof mergeSchemas, [base: { minimum: 1 }, override: { minimum: 5 }]>["minimum"], "=", 5>,
-    Expect<Invoke<typeof mergeSchemas, [base: { minimum: 10 }, override: { minimum: 3 }]>["minimum"], "=", 10>,
+    Expect<
+      Invoke<
+        typeof mergeSchemas,
+        [base: { minimum: 1 }, override: { minimum: 5 }]
+      >["minimum"],
+      "=",
+      5
+    >,
+    Expect<
+      Invoke<
+        typeof mergeSchemas,
+        [base: { minimum: 10 }, override: { minimum: 3 }]
+      >["minimum"],
+      "=",
+      10
+    >,
   ];
 
   /** picks the lower maximum */
   export type LowerMaximum = [
-    Expect<Invoke<typeof mergeSchemas, [base: { maximum: 10 }, override: { maximum: 5 }]>["maximum"], "=", 5>,
-    Expect<Invoke<typeof mergeSchemas, [base: { maximum: 3 }, override: { maximum: 100 }]>["maximum"], "=", 3>,
+    Expect<
+      Invoke<
+        typeof mergeSchemas,
+        [base: { maximum: 10 }, override: { maximum: 5 }]
+      >["maximum"],
+      "=",
+      5
+    >,
+    Expect<
+      Invoke<
+        typeof mergeSchemas,
+        [base: { maximum: 3 }, override: { maximum: 100 }]
+      >["maximum"],
+      "=",
+      3
+    >,
   ];
 
   /** picks the higher minLength */
   export type HigherMinLength = Expect<
-    Invoke<typeof mergeSchemas, [base: { minLength: 2 }, override: { minLength: 8 }]>["minLength"],
+    Invoke<
+      typeof mergeSchemas,
+      [base: { minLength: 2 }, override: { minLength: 8 }]
+    >["minLength"],
     "=",
     8
   >;
 
   /** picks the lower maxLength */
   export type LowerMaxLength = Expect<
-    Invoke<typeof mergeSchemas, [base: { maxLength: 20 }, override: { maxLength: 10 }]>["maxLength"],
+    Invoke<
+      typeof mergeSchemas,
+      [base: { maxLength: 20 }, override: { maxLength: 10 }]
+    >["maxLength"],
     "=",
     10
   >;
 
   /** leaves minimum/maximum alone when only one side has them */
   export type OneSidedBounds = [
-    Expect<Invoke<typeof mergeSchemas, [base: { minimum: 1 }, override: {}]>["minimum"], "=", 1>,
-    Expect<Invoke<typeof mergeSchemas, [base: {}, override: { maximum: 99 }]>["maximum"], "=", 99>,
+    Expect<
+      Invoke<
+        typeof mergeSchemas,
+        [base: { minimum: 1 }, override: {}]
+      >["minimum"],
+      "=",
+      1
+    >,
+    Expect<
+      Invoke<
+        typeof mergeSchemas,
+        [base: {}, override: { maximum: 99 }]
+      >["maximum"],
+      "=",
+      99
+    >,
   ];
 }

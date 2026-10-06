@@ -20,11 +20,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "view", { name: "Alice" }, {
-          type: "object",
-          properties: { name: { type: "string" } },
-          required: ["name"],
-        });
+    await render(
+      pocket,
+      "view",
+      { name: "Alice" },
+      {
+        type: "object",
+        properties: { name: { type: "string" } },
+        required: ["name"],
+      },
+    );
     const input = pocket.el.querySelector(
       '[data-path="name"] input',
     ) as HTMLInputElement;
@@ -42,11 +47,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "view", { active: true }, {
-          type: "object",
-          properties: { active: { type: "boolean" } },
-          required: ["active"],
-        });
+    await render(
+      pocket,
+      "view",
+      { active: true },
+      {
+        type: "object",
+        properties: { active: { type: "boolean" } },
+        required: ["active"],
+      },
+    );
     const checkbox = pocket.el.querySelector(
       '[data-path="active"] input[type="checkbox"]',
     ) as HTMLInputElement;
@@ -64,10 +74,15 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "view", { nickname: "Neo" }, {
-          type: "object",
-          properties: { nickname: { type: "string" } },
-        });
+    await render(
+      pocket,
+      "view",
+      { nickname: "Neo" },
+      {
+        type: "object",
+        properties: { nickname: { type: "string" } },
+      },
+    );
     expect(pocket.el.querySelector('[data-action="opt-out"]')).toBeNull();
     expect(pocket.el.querySelector('[data-action="opt-in"]')).toBeNull();
   })}
@@ -83,11 +98,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "view", { tags: ["alpha", "beta"] }, {
-          type: "object",
-          properties: { tags: { type: "array", items: { type: "string" } } },
-          required: ["tags"],
-        });
+    await render(
+      pocket,
+      "view",
+      { tags: ["alpha", "beta"] },
+      {
+        type: "object",
+        properties: { tags: { type: "array", items: { type: "string" } } },
+        required: ["tags"],
+      },
+    );
     expect(pocket.el.querySelector('[data-action="push"]')).toBeNull();
     expect(pocket.el.querySelector('[data-action="splice"]')).toBeNull();
   })}

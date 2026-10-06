@@ -20,17 +20,20 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { name: "", age: 0 }, {
-          type: "object",
-          title: "User",
-          properties: { name: { type: "string" }, age: { type: "number" } },
-          required: ["name", "age"],
-        });
+    await render(
+      pocket,
+      "edit",
+      { name: "", age: 0 },
+      {
+        type: "object",
+        title: "User",
+        properties: { name: { type: "string" }, age: { type: "number" } },
+        required: ["name", "age"],
+      },
+    );
     const fieldset = pocket.el.querySelector("fieldset");
     expect(fieldset).not.toBeNull();
-    expect(fieldset!.querySelector("legend")?.textContent?.trim()).toBe(
-      "User",
-    );
+    expect(fieldset!.querySelector("legend")?.textContent?.trim()).toBe("User");
   })}
 {/snippet}
 
@@ -44,15 +47,20 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { name: "", age: 0, active: false }, {
-          type: "object",
-          properties: {
-            name: { type: "string" },
-            age: { type: "number" },
-            active: { type: "boolean" },
-          },
-          required: ["name", "age", "active"],
-        });
+    await render(
+      pocket,
+      "edit",
+      { name: "", age: 0, active: false },
+      {
+        type: "object",
+        properties: {
+          name: { type: "string" },
+          age: { type: "number" },
+          active: { type: "boolean" },
+        },
+        required: ["name", "age", "active"],
+      },
+    );
     expect(pocket.el.querySelector('[data-path="name"]')).not.toBeNull();
     expect(pocket.el.querySelector('[data-path="age"]')).not.toBeNull();
     expect(pocket.el.querySelector('[data-path="active"]')).not.toBeNull();
@@ -69,20 +77,25 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { address: { street: "", city: "" } }, {
-          type: "object",
-          properties: {
-            address: {
-              type: "object",
-              properties: {
-                street: { type: "string" },
-                city: { type: "string" },
-              },
-              required: ["street", "city"],
+    await render(
+      pocket,
+      "edit",
+      { address: { street: "", city: "" } },
+      {
+        type: "object",
+        properties: {
+          address: {
+            type: "object",
+            properties: {
+              street: { type: "string" },
+              city: { type: "string" },
             },
+            required: ["street", "city"],
           },
-          required: ["address"],
-        });
+        },
+        required: ["address"],
+      },
+    );
     expect(
       pocket.el.querySelectorAll("fieldset").length,
     ).toBeGreaterThanOrEqual(2);

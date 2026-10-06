@@ -20,21 +20,23 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { name: "", age: 0, active: false }, {
-          type: "object",
-          properties: {
-            name: { type: "string" },
-            age: { type: "number" },
-            active: { type: "boolean" },
-          },
-          required: ["name", "age", "active"],
-        });
+    await render(
+      pocket,
+      "edit",
+      { name: "", age: 0, active: false },
+      {
+        type: "object",
+        properties: {
+          name: { type: "string" },
+          age: { type: "number" },
+          active: { type: "boolean" },
+        },
+        required: ["name", "age", "active"],
+      },
+    );
     expect(
-      (
-        pocket.el.querySelector(
-          '[data-path="name"] input',
-        ) as HTMLInputElement
-      ).disabled,
+      (pocket.el.querySelector('[data-path="name"] input') as HTMLInputElement)
+        .disabled,
     ).toBe(false);
     expect(
       (pocket.el.querySelector('[data-path="age"] input') as HTMLInputElement)
@@ -60,11 +62,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { tags: ["alpha"] }, {
-          type: "object",
-          properties: { tags: { type: "array", items: { type: "string" } } },
-          required: ["tags"],
-        });
+    await render(
+      pocket,
+      "edit",
+      { tags: ["alpha"] },
+      {
+        type: "object",
+        properties: { tags: { type: "array", items: { type: "string" } } },
+        required: ["tags"],
+      },
+    );
     expect(pocket.el.querySelector('[data-action="push"]')).not.toBeNull();
     expect(pocket.el.querySelector('[data-action="splice"]')).not.toBeNull();
   })}
@@ -80,11 +87,16 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect, flushSync }) => {
-    await render(pocket, "edit", { name: "Alice" }, {
-          type: "object",
-          properties: { name: { type: "string" } },
-          required: ["name"],
-        });
+    await render(
+      pocket,
+      "edit",
+      { name: "Alice" },
+      {
+        type: "object",
+        properties: { name: { type: "string" } },
+        required: ["name"],
+      },
+    );
     const input = pocket.el.querySelector(
       '[data-path="name"] input',
     ) as HTMLInputElement;

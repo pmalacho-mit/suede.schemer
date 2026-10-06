@@ -20,28 +20,33 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", { contact: {} }, {
-          type: "object",
-          properties: {
-            contact: {
-              oneOf: [
-                {
-                  type: "object",
-                  title: "Email",
-                  properties: { email: { type: "string", format: "email" } },
-                  required: ["email"],
-                },
-                {
-                  type: "object",
-                  title: "Phone",
-                  properties: { phone: { type: "string" } },
-                  required: ["phone"],
-                },
-              ],
-            },
+    await render(
+      pocket,
+      "edit",
+      { contact: {} },
+      {
+        type: "object",
+        properties: {
+          contact: {
+            oneOf: [
+              {
+                type: "object",
+                title: "Email",
+                properties: { email: { type: "string", format: "email" } },
+                required: ["email"],
+              },
+              {
+                type: "object",
+                title: "Phone",
+                properties: { phone: { type: "string" } },
+                required: ["phone"],
+              },
+            ],
           },
-          required: ["contact"],
-        });
+        },
+        required: ["contact"],
+      },
+    );
     expect(
       pocket.el.querySelector('[data-role="variant-selector"] select'),
     ).not.toBeNull();
@@ -58,13 +63,18 @@
     {#if pocket.root}<Harness root={pocket.root} model={pocket.model} />{/if}
   </div>
   {test(async ({ expect }) => {
-    await render(pocket, "edit", {}, {
-          oneOf: [
-            { type: "string", title: "Text" },
-            { type: "number", title: "Count" },
-            { type: "boolean", title: "Flag" },
-          ],
-        });
+    await render(
+      pocket,
+      "edit",
+      {},
+      {
+        oneOf: [
+          { type: "string", title: "Text" },
+          { type: "number", title: "Count" },
+          { type: "boolean", title: "Flag" },
+        ],
+      },
+    );
     const select = pocket.el.querySelector(
       '[data-role="variant-selector"] select',
     ) as HTMLSelectElement;

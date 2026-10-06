@@ -3,7 +3,8 @@
 import type { RenderNode } from "../release/types.ts";
 
 const object = (node: RenderNode) => {
-  if (node.kind !== "object") throw new Error(`expected object node, got ${node.kind}`);
+  if (node.kind !== "object")
+    throw new Error(`expected object node, got ${node.kind}`);
   return node;
 };
 
@@ -15,4 +16,6 @@ export const child = (node: RenderNode, path: string): RenderNode => {
 };
 
 /** An object node's required property names, in order. */
-export const required = (node: RenderNode): string[] => [...object(node).required];
+export const required = (node: RenderNode): string[] => [
+  ...object(node).required,
+];
