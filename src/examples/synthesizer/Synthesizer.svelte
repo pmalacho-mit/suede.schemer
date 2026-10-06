@@ -319,11 +319,7 @@
 
     <div class="panel">
       {#await tree then node}
-        <Schema
-          root={node}
-          {model}
-          {theme}
-        >
+        <Schema root={node} {model} {theme}>
           <!-- by kind: every object. The root is the rack of modules; any other object is a row of controls -->
           {#snippet object({ node, renderChild })}
             {#if node.path === ""}
@@ -331,7 +327,9 @@
                 {#each node.children as child (child.path)}
                   {#if child.kind === "string"}
                     <!-- the patch name: drawn by the theme, as a theme draws any text field -->
-                    <div class="nameplate">{@render renderChild(child, "object")}</div>
+                    <div class="nameplate">
+                      {@render renderChild(child, "object")}
+                    </div>
                   {:else}
                     <section
                       class="module"
@@ -367,7 +365,8 @@
                 {@render fader(node, model, param, value)}
               {/if}
             {:else}
-              {@const Fallback = theme.byKind?.number ?? defaults.component.byKind.number}
+              {@const Fallback =
+                theme.byKind?.number ?? defaults.component.byKind.number}
               <Fallback {node} {model} />
             {/if}
           {/snippet}
@@ -379,7 +378,9 @@
               <!-- the variant switch above already says which this is -->
             {:else if node.options}
               <div class="choice">
-                <span class="name" id="{uid}-{node.path}-label">{node.title}</span>
+                <span class="name" id="{uid}-{node.path}-label"
+                  >{node.title}</span
+                >
                 <div
                   class="segmented"
                   role="radiogroup"
@@ -396,7 +397,11 @@
                         onchange={model.on(node)}
                       />
                       {#if isWave(option)}
-                        <svg class="glyph" viewBox="0 0 24 14" aria-hidden="true">
+                        <svg
+                          class="glyph"
+                          viewBox="0 0 24 14"
+                          aria-hidden="true"
+                        >
                           <path d={glyph(option)} />
                         </svg>
                         <span class="sr-only">{option}</span>
@@ -408,7 +413,8 @@
                 </div>
               </div>
             {:else}
-              {@const Fallback = theme.byKind?.string ?? defaults.component.byKind.string}
+              {@const Fallback =
+                theme.byKind?.string ?? defaults.component.byKind.string}
               <Fallback {...props} />
             {/if}
           {/snippet}
@@ -431,11 +437,16 @@
                         type="button"
                         class="mini"
                         aria-label="Remove oscillator {i + 1}"
-                        onclick={() => controls.actions.splice(node, model, i)}>×</button
+                        onclick={() => controls.actions.splice(node, model, i)}
+                        >×</button
                       >
                     {/if}
                   </div>
-                  {@render renderChild(controls.array.item(node, i), "array", i)}
+                  {@render renderChild(
+                    controls.array.item(node, i),
+                    "array",
+                    i,
+                  )}
                 </li>
               {/each}
             </ol>
@@ -470,9 +481,12 @@
           <!-- by path: the effects, a pedal each, in the order the signal passes through them -->
           {#snippet effects({ node, model, renderChild })}
             {@const items = controls.array.items(node, model)}
-            {@const kinds = node.itemNode.kind === "oneOf" ? node.itemNode.variants : []}
+            {@const kinds =
+              node.itemNode.kind === "oneOf" ? node.itemNode.variants : []}
             {#if items.length === 0}
-              <p class="empty">No effects: the filter goes straight to the master.</p>
+              <p class="empty">
+                No effects: the filter goes straight to the master.
+              </p>
             {/if}
             <ol class="pedals">
               {#each items as _, i (i)}
@@ -486,26 +500,32 @@
                           class="mini"
                           aria-label="Move effect {i + 1} earlier"
                           disabled={i === 0}
-                          onclick={() => model.set(node, moved(items, i, -1))}>◂</button
+                          onclick={() => model.set(node, moved(items, i, -1))}
+                          >◂</button
                         >
                         <button
                           type="button"
                           class="mini"
                           aria-label="Move effect {i + 1} later"
                           disabled={i === items.length - 1}
-                          onclick={() => model.set(node, moved(items, i, 1))}>▸</button
+                          onclick={() => model.set(node, moved(items, i, 1))}
+                          >▸</button
                         >
                         <button
                           type="button"
                           class="mini"
                           aria-label="Remove effect {i + 1}"
-                          onclick={() => controls.actions.splice(node, model, i)}
-                          >×</button
+                          onclick={() =>
+                            controls.actions.splice(node, model, i)}>×</button
                         >
                       </span>
                     {/if}
                   </div>
-                  {@render renderChild(controls.array.item(node, i), "array", i)}
+                  {@render renderChild(
+                    controls.array.item(node, i),
+                    "array",
+                    i,
+                  )}
                 </li>
               {/each}
             </ol>
@@ -515,9 +535,12 @@
                   <button
                     type="button"
                     class="add"
-                    onclick={() => model.get(node)?.push(controls.valueForNode(kind))}
+                    onclick={() =>
+                      model.get(node)?.push(controls.valueForNode(kind))}
                   >
-                    <span aria-hidden="true">+</span><span class="sr-only">Add</span>
+                    <span aria-hidden="true">+</span><span class="sr-only"
+                      >Add</span
+                    >
                     {controls.variants.label(kind, k)}
                   </button>
                 {/each}
@@ -534,7 +557,11 @@
               {@render dial(node, model, param, value, "large")}
               <div class="meter" aria-hidden="true">
                 {#each Array.from({ length: 8 }, (_, i) => 7 - i) as i (i)}
-                  <span class="segment-led" class:lit={i < lit} class:hot={i >= 6}></span>
+                  <span
+                    class="segment-led"
+                    class:lit={i < lit}
+                    class:hot={i >= 6}
+                  ></span>
                 {/each}
               </div>
             </div>

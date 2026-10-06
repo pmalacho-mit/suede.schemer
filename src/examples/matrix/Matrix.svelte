@@ -133,7 +133,6 @@
     model.data.steps = list;
   };
 
-
   const entryNames = [
     ["a", "b"],
     ["c", "d"],
@@ -194,29 +193,29 @@
     <h1>What a matrix does to the plane</h1>
     <p class="lede">
       Compose a transformation from steps on the left; every control there is
-      drawn from a JSON Schema. The figure shows where the plane, its basis
-      and a shape end up.
+      drawn from a JSON Schema. The figure shows where the plane, its basis and
+      a shape end up.
     </p>
   </header>
 
   <div class="layout">
     <section class="controls" aria-label="The transformation">
       {#await tree then node}
-        <Schema
-          root={node}
-          {model}
-          {theme}
-          --schemer-radius="10px"
-        >
+        <Schema root={node} {model} {theme} --schemer-radius="10px">
           <!-- one step of the transformation: a card with its type, its matrix and its fields -->
           {#snippet steps___item({ node, model, index = 0, renderChild })}
             {@const value = model.get(node) as Draft}
             {@const selected = controls.variants.selected(node, model)}
-            {@const variant = selected >= 0 ? node.variants[selected] : undefined}
+            {@const variant =
+              selected >= 0 ? node.variants[selected] : undefined}
             {@const type = selected >= 0 ? stepTypes[selected] : undefined}
             {@const count = steps.length}
             {@const done =
-              index < current.step ? 1 : index === current.step ? current.progress : 0}
+              index < current.step
+                ? 1
+                : index === current.step
+                  ? current.progress
+                  : 0}
             <article
               class="step"
               class:moving={t < 1 && index === current.step}
@@ -237,7 +236,9 @@
                   >
                     {#if !type}<option value="" disabled>Choose…</option>{/if}
                     {#each stepTypes as option, i}
-                      <option value={option}>{node.variants[i]?.title ?? option}</option>
+                      <option value={option}
+                        >{node.variants[i]?.title ?? option}</option
+                      >
                     {/each}
                   </select>
                 </span>
@@ -252,7 +253,9 @@
                       disabled={index === 0}
                       onclick={() => move(index, index - 1)}
                     >
-                      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" /></svg>
+                      <svg viewBox="0 0 16 16" aria-hidden="true"
+                        ><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" /></svg
+                      >
                     </button>
                     <button
                       type="button"
@@ -262,7 +265,9 @@
                       disabled={index === count - 1}
                       onclick={() => move(index, index + 1)}
                     >
-                      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3.5 8.5 8 13l4.5-4.5" /></svg>
+                      <svg viewBox="0 0 16 16" aria-hidden="true"
+                        ><path d="M8 3v10M3.5 8.5 8 13l4.5-4.5" /></svg
+                      >
                     </button>
                     <button
                       type="button"
@@ -271,7 +276,9 @@
                       title="Remove"
                       onclick={() => remove(index)}
                     >
-                      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" /></svg>
+                      <svg viewBox="0 0 16 16" aria-hidden="true"
+                        ><path d="M4 4l8 8M12 4l-8 8" /></svg
+                      >
                     </button>
                   </span>
                 {/if}
@@ -292,7 +299,11 @@
                   {#if type !== "matrix"}
                     <div class="own">
                       <span>{symbol(value)} =</span>
-                      <Bracket matrix={stepMatrix(value)} size="sm" label="Step {index + 1}'s matrix" />
+                      <Bracket
+                        matrix={stepMatrix(value)}
+                        size="sm"
+                        label="Step {index + 1}'s matrix"
+                      />
                     </div>
                   {/if}
                 </div>
@@ -304,8 +315,14 @@
           <!-- a step's matrix: a tuple of two tuples, set as a bracketed grid of inputs -->
           {#snippet steps___item__matrix(props)}
             <div class="matrix-field">
-              <span class="field-name" id="{props.node.path}-name">{props.node.title}</span>
-              <div class="matrix-input" role="group" aria-labelledby="{props.node.path}-name">
+              <span class="field-name" id="{props.node.path}-name"
+                >{props.node.title}</span
+              >
+              <div
+                class="matrix-input"
+                role="group"
+                aria-labelledby="{props.node.path}-name"
+              >
                 {#each props.node.itemNodes as row}
                   {#if row.kind === "tuple"}
                     {#each row.itemNodes as entry, c (entry.path)}
@@ -315,13 +332,18 @@
                 {/each}
               </div>
               <small class="hint">
-                The first column is where <b class="i">î</b> lands; the second, <b class="j">ĵ</b>.
+                The first column is where <b class="i">î</b> lands; the second,
+                <b class="j">ĵ</b>.
               </small>
             </div>
           {/snippet}
 
           <!-- a matrix entry: a cell of the grid, its column its index in the row, its row the one before -->
-          {#snippet steps___item__matrix___item___item({ node, model, index: c = 0 })}
+          {#snippet steps___item__matrix___item___item({
+            node,
+            model,
+            index: c = 0,
+          })}
             {@const r = Number(node.path.split(".").at(-2))}
             <input
               class="cell"
@@ -359,7 +381,8 @@
                       class:on={model.get(node) === preset}
                       aria-pressed={model.get(node) === preset}
                       disabled={!model.editable}
-                      onclick={() => model.set(node, preset)}>{format(preset)}°</button
+                      onclick={() => model.set(node, preset)}
+                      >{format(preset)}°</button
                     >
                   {/each}
                 </div>
@@ -375,7 +398,9 @@
               {@const id = `${node.path}-range`}
               {@const value = model.get(node)}
               <div class="ranged">
-                <label class="field-name" for={id}>{node.title ?? node.path}</label>
+                <label class="field-name" for={id}
+                  >{node.title ?? node.path}</label
+                >
                 <div class="ranged-row">
                   <input
                     {id}
@@ -386,7 +411,9 @@
                     value={value ?? 0}
                     disabled={!model.editable}
                     oninput={model.on(node, Number)}
-                    style:--fill="{(((value ?? 0) - node.min) / (node.max - node.min)) * 100}%"
+                    style:--fill="{(((value ?? 0) - node.min) /
+                      (node.max - node.min)) *
+                      100}%"
                   />
                   <input
                     class="ranged-value"
@@ -400,7 +427,9 @@
                     oninput={model.on(node, Number)}
                   />
                 </div>
-                {#if node.description}<small class="hint">{node.description}</small>{/if}
+                {#if node.description}<small class="hint"
+                    >{node.description}</small
+                  >{/if}
               </div>
             {:else}
               <Number_ {...props} />
@@ -464,7 +493,9 @@
                     onclick={() => model.get(node)?.push(fresh(type))}
                   >
                     {@render stepIcon(type)}
-                    {node.itemNode.kind === "oneOf" ? node.itemNode.variants[i].title : type}
+                    {node.itemNode.kind === "oneOf"
+                      ? node.itemNode.variants[i].title
+                      : type}
                   </button>
                 {/each}
               </div>
@@ -486,21 +517,39 @@
             matrix={shown}
             final={composed}
             shape={model.data.shape ?? "Letter F"}
-            display={model.data.display ?? { basis: true, determinant: true, eigenvectors: true }}
+            display={model.data.display ?? {
+              basis: true,
+              determinant: true,
+              eigenvectors: true,
+            }}
           />
         </div>
         <figcaption class="legend">
           {#if model.data.display?.basis}
-            <span data-legend="i"><i class="key i"></i>Mî = {coordinates(apply(shown, [1, 0]))}</span>
-            <span data-legend="j"><i class="key j"></i>Mĵ = {coordinates(apply(shown, [0, 1]))}</span>
+            <span data-legend="i"
+              ><i class="key i"></i>Mî = {coordinates(
+                apply(shown, [1, 0]),
+              )}</span
+            >
+            <span data-legend="j"
+              ><i class="key j"></i>Mĵ = {coordinates(
+                apply(shown, [0, 1]),
+              )}</span
+            >
           {/if}
           {#if model.data.display?.determinant}
-            <span><i class="key area" class:negative={determinant(shown) < 0}></i>unit square's image</span>
+            <span
+              ><i class="key area" class:negative={determinant(shown) < 0}
+              ></i>unit square's image</span
+            >
           {/if}
           {#if model.data.display?.eigenvectors}
             <span><i class="key eigen"></i>eigenvector lines</span>
           {/if}
-          <span><i class="key shape"></i>{model.data.shape ?? "shape"}, before and after</span>
+          <span
+            ><i class="key shape"></i>{model.data.shape ?? "shape"}, before and
+            after</span
+          >
         </figcaption>
       </figure>
 
@@ -508,13 +557,21 @@
         <button
           type="button"
           class="play"
-          aria-label={playing ? "Pause" : t >= 1 ? "Replay the transformation" : "Play the transformation"}
+          aria-label={playing
+            ? "Pause"
+            : t >= 1
+              ? "Replay the transformation"
+              : "Play the transformation"}
           onclick={play}
         >
           {#if playing}
-            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3v10M11 3v10" /></svg>
+            <svg viewBox="0 0 16 16" aria-hidden="true"
+              ><path d="M5 3v10M11 3v10" /></svg
+            >
           {:else}
-            <svg viewBox="0 0 16 16" aria-hidden="true"><path class="fill" d="M5 3l8 5-8 5z" /></svg>
+            <svg viewBox="0 0 16 16" aria-hidden="true"
+              ><path class="fill" d="M5 3l8 5-8 5z" /></svg
+            >
           {/if}
         </button>
         <label class="scrub">
@@ -541,12 +598,19 @@
           <span class="product" data-readout="product">{product(steps)}</span>
           <span class="eq">=</span>
           <span data-readout="matrix">
-            <Bracket matrix={composed} size="lg" columns label="The composed matrix M" />
+            <Bracket
+              matrix={composed}
+              size="lg"
+              columns
+              label="The composed matrix M"
+            />
           </span>
         </div>
         {#if steps.length > 1}
           <p class="note">
-            Read right to left: {symbol(steps[0])} acts first, {symbol(steps[steps.length - 1])} last.
+            Read right to left: {symbol(steps[0])} acts first, {symbol(
+              steps[steps.length - 1],
+            )} last.
           </p>
         {/if}
 
@@ -554,7 +618,11 @@
           <div class="fact">
             <dt>Determinant</dt>
             <dd>
-              <strong class="det" data-readout="determinant" data-sign={sign.sign}>{format(det)}</strong>
+              <strong
+                class="det"
+                data-readout="determinant"
+                data-sign={sign.sign}>{format(det)}</strong
+              >
               <span class="sub">
                 {#if sign.sign === 0}
                   The plane is flattened onto a line: areas become 0.
@@ -571,7 +639,9 @@
               {#if inv}
                 <Bracket matrix={inv} size="sm" label="The inverse of M" />
               {:else}
-                <span class="sub">None: a flattened plane can't be unflattened.</span>
+                <span class="sub"
+                  >None: a flattened plane can't be unflattened.</span
+                >
               {/if}
             </dd>
           </div>
@@ -580,16 +650,30 @@
             <dd data-readout="eigen">
               {#if eig.kind === "complex"}
                 <span class="mono">{format(eig.re)} ± {format(eig.im)}i</span>
-                <span class="sub">Complex: every direction turns, so no real eigenvectors.</span>
+                <span class="sub"
+                  >Complex: every direction turns, so no real eigenvectors.</span
+                >
               {:else if eig.everyDirection}
                 <span class="mono">λ = {format(eig.values[0])}</span>
                 <span class="sub">Every direction is an eigenvector.</span>
               {:else if eig.vectors.length === 1}
                 <span class="mono">λ = {format(eig.values[0])} (twice)</span>
-                <span class="sub">One line stays put: along {coordinates(eig.vectors[0])}.</span>
+                <span class="sub"
+                  >One line stays put: along {coordinates(
+                    eig.vectors[0],
+                  )}.</span
+                >
               {:else}
-                <span class="mono">λ₁ = {format(eig.values[0])}, λ₂ = {format(eig.values[1])}</span>
-                <span class="sub">Along {coordinates(eig.vectors[0])} and {coordinates(eig.vectors[1])}.</span>
+                <span class="mono"
+                  >λ₁ = {format(eig.values[0])}, λ₂ = {format(
+                    eig.values[1],
+                  )}</span
+                >
+                <span class="sub"
+                  >Along {coordinates(eig.vectors[0])} and {coordinates(
+                    eig.vectors[1],
+                  )}.</span
+                >
               {/if}
             </dd>
           </div>
@@ -598,6 +682,317 @@
     </section>
   </div>
 </div>
+
+<!-- ---- examples: pages on the dev server ---- -->
+
+<!-- the explorer as it opens, in the minimal theme -->
+{#snippet explorerInMinimal(Matrix: typeof Self)}
+  <Matrix />
+{/snippet}
+
+<!-- the same form drawn by the material theme: the renderers wrap its components -->
+{#snippet explorerInMaterial(
+  Matrix: typeof Self,
+  all: typeof themes,
+  make: typeof explorer,
+)}
+  <Matrix
+    theme={all.material}
+    model={make({
+      steps: [
+        { type: "reflection", axis: "y" },
+        { type: "scale", x: 1.5, y: 0.75 },
+      ],
+    })}
+  />
+{/snippet}
+
+<!-- halfway through: the first step done, a quarter turn underway -->
+{#snippet halfwayThrough(Matrix: typeof Self, make: typeof explorer)}
+  <Matrix
+    t={0.75}
+    model={make({
+      steps: [
+        { type: "scale", x: 2, y: 1 },
+        { type: "rotation", degrees: 90 },
+      ],
+    })}
+  />
+{/snippet}
+
+<!-- a raw matrix: the tuple of tuples, set as a bracketed grid of inputs -->
+{#snippet aRawMatrix(Matrix: typeof Self, make: typeof explorer)}
+  <Matrix
+    model={make({
+      steps: [
+        {
+          type: "matrix",
+          matrix: [
+            [2, 1],
+            [1, 2],
+          ],
+        },
+      ],
+      shape: "Circle",
+    })}
+  />
+{/snippet}
+
+<!-- ---- tests: the form drives the matrix and the plot ---- -->
+
+{#snippet aQuarterTurnSendsIHatToJHat(
+  Matrix: typeof Self,
+  make: typeof explorer,
+  read: typeof entries,
+  pocket: { el: HTMLDivElement },
+  test: Test,
+)}
+  <div bind:this={pocket.el}>
+    <Matrix model={make({ steps: [{ type: "rotation", degrees: 30 }] })} />
+  </div>
+  {test(async ({ expect, user, waitFor }) => {
+    const angle = await waitFor(() => {
+      const input = pocket.el.querySelector<HTMLInputElement>(
+        '[data-path="steps.0.degrees"] input[type="number"]',
+      );
+      expect(input).not.toBeNull();
+      return input!;
+    });
+    await user.clear(angle);
+    await user.type(angle, "90");
+    expect(read(pocket.el, '[data-readout="matrix"]')).toEqual([
+      "0",
+      "−1",
+      "1",
+      "0",
+    ]);
+    const iHat = pocket.el.querySelector('[data-vector="i"]');
+    expect(iHat?.getAttribute("data-to")).toBe("(0, 1)");
+    expect(pocket.el.querySelector('[data-legend="i"]')?.textContent).toContain(
+      "(0, 1)",
+    );
+  })}
+{/snippet}
+
+{#snippet theDialTurnsWithTheArrowKeys(
+  Matrix: typeof Self,
+  make: typeof explorer,
+  pocket: { el: HTMLDivElement },
+  test: Test,
+)}
+  {@const model = make({ steps: [{ type: "rotation", degrees: 90 }] })}
+  <div bind:this={pocket.el}>
+    <Matrix {model} />
+  </div>
+  {test(async ({ expect, user, within }) => {
+    const dial = await within(pocket.el).findByRole("slider", {
+      name: "Angle",
+    });
+    dial.focus();
+    await user.keyboard("{ArrowUp}");
+    expect(model.data.steps[0]).toEqual({ type: "rotation", degrees: 95 });
+    await user.keyboard("{PageDown}");
+    expect(dial.getAttribute("aria-valuenow")).toBe("50");
+  })}
+{/snippet}
+
+{#snippet aReflectionMakesTheDeterminantNegative(
+  Matrix: typeof Self,
+  make: typeof explorer,
+  pocket: { el: HTMLDivElement },
+  test: Test,
+)}
+  <div bind:this={pocket.el}>
+    <Matrix model={make({ steps: [{ type: "rotation", degrees: 30 }] })} />
+  </div>
+  {test(async ({ expect, user, within }) => {
+    const det = () => pocket.el.querySelector('[data-readout="determinant"]');
+    expect(det()?.textContent).toBe("1");
+    const picker = await within(pocket.el).findByRole("combobox", {
+      name: "Step 1 type",
+    });
+    await user.selectOptions(picker, "reflection");
+    expect(det()?.textContent).toBe("−1");
+    expect(
+      pocket.el.querySelector('[data-readout="orientation"]')?.textContent,
+    ).toBe("orientation flipped");
+    expect(pocket.el.querySelector(".area")?.getAttribute("data-sign")).toBe(
+      "-1",
+    );
+  })}
+{/snippet}
+
+{#snippet addingAStepComposes(
+  Matrix: typeof Self,
+  make: typeof explorer,
+  read: typeof entries,
+  pocket: { el: HTMLDivElement },
+  test: Test,
+)}
+  {@const model = make({ steps: [{ type: "rotation", degrees: 90 }] })}
+  <div bind:this={pocket.el}>
+    <Matrix {model} />
+  </div>
+  {test(async ({ expect, user, within }) => {
+    await user.click(
+      await within(pocket.el).findByRole("button", { name: "Scale" }),
+    );
+    expect(model.data.steps).toHaveLength(2);
+    // a scale by (2, 1) after a quarter turn: S · R
+    expect(read(pocket.el, '[data-readout="matrix"]')).toEqual([
+      "0",
+      "−2",
+      "1",
+      "0",
+    ]);
+    expect(
+      pocket.el.querySelector('[data-readout="product"]')?.textContent,
+    ).toBe("S(2, 1) · R(90°)");
+    expect(
+      pocket.el.querySelector('[data-readout="determinant"]')?.textContent,
+    ).toBe("2");
+  })}
+{/snippet}
+
+{#snippet movingAStepChangesTheProduct(
+  Matrix: typeof Self,
+  make: typeof explorer,
+  read: typeof entries,
+  pocket: { el: HTMLDivElement },
+  test: Test,
+)}
+  <div bind:this={pocket.el}>
+    <Matrix
+      model={make({
+        steps: [
+          { type: "shear", x: 1, y: 0 },
+          { type: "rotation", degrees: 90 },
+        ],
+      })}
+    />
+  </div>
+  {test(async ({ expect, user, within }) => {
+    const matrix = () => read(pocket.el, '[data-readout="matrix"]');
+    // shear first, then turn
+    expect(matrix()).toEqual(["0", "−1", "1", "1"]);
+    await user.click(
+      await within(pocket.el).findByRole("button", { name: "Move step 2 up" }),
+    );
+    // turn first, then shear
+    expect(matrix()).toEqual(["1", "−1", "1", "0"]);
+    await user.click(
+      await within(pocket.el).findByRole("button", { name: "Remove step 1" }),
+    );
+    expect(matrix()).toEqual(["1", "1", "0", "1"]);
+  })}
+{/snippet}
+
+{#snippet theMatrixGridEditsItsEntries(
+  Matrix: typeof Self,
+  make: typeof explorer,
+  read: typeof entries,
+  pocket: { el: HTMLDivElement },
+  test: Test,
+)}
+  {@const model = make({
+    steps: [
+      {
+        type: "matrix",
+        matrix: [
+          [1, 0],
+          [0, 1],
+        ],
+      },
+    ],
+  })}
+  <div bind:this={pocket.el}>
+    <Matrix {model} />
+  </div>
+  {test(async ({ expect, user, within }) => {
+    const b = await within(pocket.el).findByRole("spinbutton", {
+      name: "b: row 1, column 2",
+    });
+    expect(pocket.el.querySelectorAll(".matrix-input input")).toHaveLength(4);
+    await user.clear(b);
+    await user.type(b, "2");
+    expect(model.data.steps[0]).toEqual({
+      type: "matrix",
+      matrix: [
+        [1, 2],
+        [0, 1],
+      ],
+    });
+    expect(read(pocket.el, '[data-readout="matrix"]')).toEqual([
+      "1",
+      "2",
+      "0",
+      "1",
+    ]);
+    // a shear: one eigenvector, along the x-axis
+    expect(
+      pocket.el.querySelector('[data-readout="eigen"]')?.textContent,
+    ).toContain("(twice)");
+    expect(pocket.el.querySelectorAll("[data-eigen]")).toHaveLength(1);
+  })}
+{/snippet}
+
+{#snippet theShapeAndTogglesDriveThePlot(
+  Matrix: typeof Self,
+  make: typeof explorer,
+  pocket: { el: HTMLDivElement },
+  test: Test,
+)}
+  <div bind:this={pocket.el}>
+    <Matrix model={make({ steps: [{ type: "scale", x: 2, y: 1 }] })} />
+  </div>
+  {test(async ({ expect, user, within }) => {
+    const plot = () => pocket.el.querySelector("svg.plane")!;
+    await user.click(
+      await within(pocket.el).findByRole("radio", { name: "Circle" }),
+    );
+    expect(plot().getAttribute("data-shape")).toBe("Circle");
+    expect(plot().querySelectorAll("[data-eigen]")).toHaveLength(2);
+    await user.click(
+      await within(pocket.el).findByRole("checkbox", { name: "Eigenvectors" }),
+    );
+    expect(plot().querySelectorAll("[data-eigen]")).toHaveLength(0);
+    await user.click(
+      await within(pocket.el).findByRole("checkbox", { name: "Basis vectors" }),
+    );
+    expect(plot().querySelector("[data-vector]")).toBeNull();
+  })}
+{/snippet}
+
+{#snippet theSliderTweensFromTheIdentity(
+  Matrix: typeof Self,
+  make: typeof explorer,
+  read: typeof entries,
+  pocket: { el: HTMLDivElement },
+  test: Test,
+)}
+  <div bind:this={pocket.el}>
+    <Matrix model={make({ steps: [{ type: "scale", x: 3, y: 1 }] })} />
+  </div>
+  {test(async ({ expect, fireEvent, within }) => {
+    const iHat = () =>
+      pocket.el.querySelector('[data-vector="i"]')?.getAttribute("data-to");
+    const slider = await within(pocket.el).findByRole("slider", {
+      name: /^Tween/,
+    });
+    expect(iHat()).toBe("(3, 0)");
+    await fireEvent.input(slider, { target: { value: "0" } });
+    expect(iHat()).toBe("(1, 0)");
+    await fireEvent.input(slider, { target: { value: "0.5" } });
+    expect(iHat()).toBe("(2, 0)");
+    // the composed matrix is the destination, whatever the tween shows
+    expect(read(pocket.el, '[data-readout="matrix"]')).toEqual([
+      "3",
+      "0",
+      "0",
+      "1",
+    ]);
+  })}
+{/snippet}
 
 <style>
   .explorer {
@@ -798,7 +1193,11 @@
   }
 
   .key.eigen {
-    background: repeating-linear-gradient(90deg, var(--eigen) 0 5px, transparent 5px 8px);
+    background: repeating-linear-gradient(
+      90deg,
+      var(--eigen) 0 5px,
+      transparent 5px 8px
+    );
   }
 
   .key.shape {
@@ -883,13 +1282,21 @@
   .scrub input::-webkit-slider-runnable-track {
     height: 4px;
     border-radius: 2px;
-    background: linear-gradient(90deg, var(--ink) var(--fill), var(--line) var(--fill));
+    background: linear-gradient(
+      90deg,
+      var(--ink) var(--fill),
+      var(--line) var(--fill)
+    );
   }
 
   .scrub input::-moz-range-track {
     height: 4px;
     border-radius: 2px;
-    background: linear-gradient(90deg, var(--ink) var(--fill), var(--line) var(--fill));
+    background: linear-gradient(
+      90deg,
+      var(--ink) var(--fill),
+      var(--line) var(--fill)
+    );
   }
 
   .scrub input::-webkit-slider-thumb {
@@ -1059,7 +1466,11 @@
     gap: 8px;
     padding: 8px 8px 8px 10px;
     border-bottom: 1px solid var(--sc-border, var(--line));
-    background: color-mix(in srgb, var(--sc-border, var(--line)) 22%, transparent);
+    background: color-mix(
+      in srgb,
+      var(--sc-border, var(--line)) 22%,
+      transparent
+    );
   }
 
   .badge {
@@ -1329,7 +1740,8 @@
   .ranged-value:focus-visible {
     outline: none;
     border-color: var(--sc-accent, var(--ink));
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--sc-accent, var(--ink)) 18%, transparent);
+    box-shadow: 0 0 0 3px
+      color-mix(in srgb, var(--sc-accent, var(--ink)) 18%, transparent);
   }
 
   /* the matrix entries, in brackets */
@@ -1440,8 +1852,10 @@
 
   .swatch.basis {
     background:
-      linear-gradient(var(--i-hat), var(--i-hat)) left 0 top 2px / 100% 3px no-repeat,
-      linear-gradient(var(--j-hat), var(--j-hat)) left 0 bottom 2px / 100% 3px no-repeat;
+      linear-gradient(var(--i-hat), var(--i-hat)) left 0 top 2px / 100% 3px
+        no-repeat,
+      linear-gradient(var(--j-hat), var(--j-hat)) left 0 bottom 2px / 100% 3px
+        no-repeat;
   }
 
   .swatch.determinant {
@@ -1450,7 +1864,12 @@
   }
 
   .swatch.eigenvectors {
-    background: repeating-linear-gradient(90deg, var(--eigen) 0 5px, transparent 5px 8px) center / 100% 3px no-repeat;
+    background: repeating-linear-gradient(
+        90deg,
+        var(--eigen) 0 5px,
+        transparent 5px 8px
+      )
+      center / 100% 3px no-repeat;
   }
 
   /* adding steps */
@@ -1511,267 +1930,3 @@
     }
   }
 </style>
-
-<!-- ---- examples: pages on the dev server ---- -->
-
-<!-- the explorer as it opens, in the minimal theme -->
-{#snippet explorerInMinimal(Matrix: typeof Self)}
-  <Matrix />
-{/snippet}
-
-<!-- the same form drawn by the material theme: the renderers wrap its components -->
-{#snippet explorerInMaterial(
-  Matrix: typeof Self,
-  all: typeof themes,
-  make: typeof explorer,
-)}
-  <Matrix
-    theme={all.material}
-    model={make({
-      steps: [
-        { type: "reflection", axis: "y" },
-        { type: "scale", x: 1.5, y: 0.75 },
-      ],
-    })}
-  />
-{/snippet}
-
-<!-- halfway through: the first step done, a quarter turn underway -->
-{#snippet halfwayThrough(Matrix: typeof Self, make: typeof explorer)}
-  <Matrix
-    t={0.75}
-    model={make({
-      steps: [
-        { type: "scale", x: 2, y: 1 },
-        { type: "rotation", degrees: 90 },
-      ],
-    })}
-  />
-{/snippet}
-
-<!-- a raw matrix: the tuple of tuples, set as a bracketed grid of inputs -->
-{#snippet aRawMatrix(Matrix: typeof Self, make: typeof explorer)}
-  <Matrix
-    model={make({
-      steps: [
-        {
-          type: "matrix",
-          matrix: [
-            [2, 1],
-            [1, 2],
-          ],
-        },
-      ],
-      shape: "Circle",
-    })}
-  />
-{/snippet}
-
-<!-- ---- tests: the form drives the matrix and the plot ---- -->
-
-{#snippet aQuarterTurnSendsIHatToJHat(
-  Matrix: typeof Self,
-  make: typeof explorer,
-  read: typeof entries,
-  pocket: { el: HTMLDivElement },
-  test: Test,
-)}
-  <div bind:this={pocket.el}>
-    <Matrix model={make({ steps: [{ type: "rotation", degrees: 30 }] })} />
-  </div>
-  {test(async ({ expect, user, waitFor }) => {
-    const angle = await waitFor(() => {
-      const input = pocket.el.querySelector<HTMLInputElement>(
-        '[data-path="steps.0.degrees"] input[type="number"]',
-      );
-      expect(input).not.toBeNull();
-      return input!;
-    });
-    await user.clear(angle);
-    await user.type(angle, "90");
-    expect(read(pocket.el, '[data-readout="matrix"]')).toEqual(["0", "−1", "1", "0"]);
-    const iHat = pocket.el.querySelector('[data-vector="i"]');
-    expect(iHat?.getAttribute("data-to")).toBe("(0, 1)");
-    expect(pocket.el.querySelector('[data-legend="i"]')?.textContent).toContain("(0, 1)");
-  })}
-{/snippet}
-
-{#snippet theDialTurnsWithTheArrowKeys(
-  Matrix: typeof Self,
-  make: typeof explorer,
-  pocket: { el: HTMLDivElement },
-  test: Test,
-)}
-  {@const model = make({ steps: [{ type: "rotation", degrees: 90 }] })}
-  <div bind:this={pocket.el}>
-    <Matrix {model} />
-  </div>
-  {test(async ({ expect, user, within }) => {
-    const dial = await within(pocket.el).findByRole("slider", { name: "Angle" });
-    dial.focus();
-    await user.keyboard("{ArrowUp}");
-    expect(model.data.steps[0]).toEqual({ type: "rotation", degrees: 95 });
-    await user.keyboard("{PageDown}");
-    expect(dial.getAttribute("aria-valuenow")).toBe("50");
-  })}
-{/snippet}
-
-{#snippet aReflectionMakesTheDeterminantNegative(
-  Matrix: typeof Self,
-  make: typeof explorer,
-  pocket: { el: HTMLDivElement },
-  test: Test,
-)}
-  <div bind:this={pocket.el}>
-    <Matrix model={make({ steps: [{ type: "rotation", degrees: 30 }] })} />
-  </div>
-  {test(async ({ expect, user, within }) => {
-    const det = () => pocket.el.querySelector('[data-readout="determinant"]');
-    expect(det()?.textContent).toBe("1");
-    const picker = await within(pocket.el).findByRole("combobox", { name: "Step 1 type" });
-    await user.selectOptions(picker, "reflection");
-    expect(det()?.textContent).toBe("−1");
-    expect(pocket.el.querySelector('[data-readout="orientation"]')?.textContent).toBe(
-      "orientation flipped",
-    );
-    expect(pocket.el.querySelector(".area")?.getAttribute("data-sign")).toBe("-1");
-  })}
-{/snippet}
-
-{#snippet addingAStepComposes(
-  Matrix: typeof Self,
-  make: typeof explorer,
-  read: typeof entries,
-  pocket: { el: HTMLDivElement },
-  test: Test,
-)}
-  {@const model = make({ steps: [{ type: "rotation", degrees: 90 }] })}
-  <div bind:this={pocket.el}>
-    <Matrix {model} />
-  </div>
-  {test(async ({ expect, user, within }) => {
-    await user.click(await within(pocket.el).findByRole("button", { name: "Scale" }));
-    expect(model.data.steps).toHaveLength(2);
-    // a scale by (2, 1) after a quarter turn: S · R
-    expect(read(pocket.el, '[data-readout="matrix"]')).toEqual(["0", "−2", "1", "0"]);
-    expect(pocket.el.querySelector('[data-readout="product"]')?.textContent).toBe(
-      "S(2, 1) · R(90°)",
-    );
-    expect(pocket.el.querySelector('[data-readout="determinant"]')?.textContent).toBe("2");
-  })}
-{/snippet}
-
-{#snippet movingAStepChangesTheProduct(
-  Matrix: typeof Self,
-  make: typeof explorer,
-  read: typeof entries,
-  pocket: { el: HTMLDivElement },
-  test: Test,
-)}
-  <div bind:this={pocket.el}>
-    <Matrix
-      model={make({
-        steps: [
-          { type: "shear", x: 1, y: 0 },
-          { type: "rotation", degrees: 90 },
-        ],
-      })}
-    />
-  </div>
-  {test(async ({ expect, user, within }) => {
-    const matrix = () => read(pocket.el, '[data-readout="matrix"]');
-    // shear first, then turn
-    expect(matrix()).toEqual(["0", "−1", "1", "1"]);
-    await user.click(await within(pocket.el).findByRole("button", { name: "Move step 2 up" }));
-    // turn first, then shear
-    expect(matrix()).toEqual(["1", "−1", "1", "0"]);
-    await user.click(await within(pocket.el).findByRole("button", { name: "Remove step 1" }));
-    expect(matrix()).toEqual(["1", "1", "0", "1"]);
-  })}
-{/snippet}
-
-{#snippet theMatrixGridEditsItsEntries(
-  Matrix: typeof Self,
-  make: typeof explorer,
-  read: typeof entries,
-  pocket: { el: HTMLDivElement },
-  test: Test,
-)}
-  {@const model = make({
-    steps: [
-      {
-        type: "matrix",
-        matrix: [
-          [1, 0],
-          [0, 1],
-        ],
-      },
-    ],
-  })}
-  <div bind:this={pocket.el}>
-    <Matrix {model} />
-  </div>
-  {test(async ({ expect, user, within }) => {
-    const b = await within(pocket.el).findByRole("spinbutton", { name: "b: row 1, column 2" });
-    expect(pocket.el.querySelectorAll(".matrix-input input")).toHaveLength(4);
-    await user.clear(b);
-    await user.type(b, "2");
-    expect(model.data.steps[0]).toEqual({
-      type: "matrix",
-      matrix: [
-        [1, 2],
-        [0, 1],
-      ],
-    });
-    expect(read(pocket.el, '[data-readout="matrix"]')).toEqual(["1", "2", "0", "1"]);
-    // a shear: one eigenvector, along the x-axis
-    expect(pocket.el.querySelector('[data-readout="eigen"]')?.textContent).toContain(
-      "(twice)",
-    );
-    expect(pocket.el.querySelectorAll("[data-eigen]")).toHaveLength(1);
-  })}
-{/snippet}
-
-{#snippet theShapeAndTogglesDriveThePlot(
-  Matrix: typeof Self,
-  make: typeof explorer,
-  pocket: { el: HTMLDivElement },
-  test: Test,
-)}
-  <div bind:this={pocket.el}>
-    <Matrix model={make({ steps: [{ type: "scale", x: 2, y: 1 }] })} />
-  </div>
-  {test(async ({ expect, user, within }) => {
-    const plot = () => pocket.el.querySelector("svg.plane")!;
-    await user.click(await within(pocket.el).findByRole("radio", { name: "Circle" }));
-    expect(plot().getAttribute("data-shape")).toBe("Circle");
-    expect(plot().querySelectorAll("[data-eigen]")).toHaveLength(2);
-    await user.click(await within(pocket.el).findByRole("checkbox", { name: "Eigenvectors" }));
-    expect(plot().querySelectorAll("[data-eigen]")).toHaveLength(0);
-    await user.click(await within(pocket.el).findByRole("checkbox", { name: "Basis vectors" }));
-    expect(plot().querySelector("[data-vector]")).toBeNull();
-  })}
-{/snippet}
-
-{#snippet theSliderTweensFromTheIdentity(
-  Matrix: typeof Self,
-  make: typeof explorer,
-  read: typeof entries,
-  pocket: { el: HTMLDivElement },
-  test: Test,
-)}
-  <div bind:this={pocket.el}>
-    <Matrix model={make({ steps: [{ type: "scale", x: 3, y: 1 }] })} />
-  </div>
-  {test(async ({ expect, fireEvent, within }) => {
-    const iHat = () => pocket.el.querySelector('[data-vector="i"]')?.getAttribute("data-to");
-    const slider = await within(pocket.el).findByRole("slider", { name: /^Tween/ });
-    expect(iHat()).toBe("(3, 0)");
-    await fireEvent.input(slider, { target: { value: "0" } });
-    expect(iHat()).toBe("(1, 0)");
-    await fireEvent.input(slider, { target: { value: "0.5" } });
-    expect(iHat()).toBe("(2, 0)");
-    // the composed matrix is the destination, whatever the tween shows
-    expect(read(pocket.el, '[data-readout="matrix"]')).toEqual(["3", "0", "0", "1"]);
-  })}
-{/snippet}

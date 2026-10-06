@@ -220,7 +220,10 @@
                 Clear
               </button>
             </div>
-            <Themed.object {...props} node={{ ...props.node, description: undefined }} />
+            <Themed.object
+              {...props}
+              node={{ ...props.node, description: undefined }}
+            />
           {/snippet}
 
           <!-- the discriminator: the cards already say which story it is -->

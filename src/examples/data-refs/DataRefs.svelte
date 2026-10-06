@@ -202,11 +202,7 @@
     {:else if model}
       {#await tree then node}
         {#key model}
-          <Schema
-            root={node}
-            {model}
-            {theme}
-          >
+          <Schema root={node} {model} {theme}>
             <!-- every object from a file: the theme's own object, badged with the file -->
             {#snippet object(props)}
               {@const origin = originOf(props.model.get(props.node))}
@@ -218,7 +214,9 @@
                     onclick={() => open(origin.file)}
                     title="show {origin.file}"
                   >
-                    {origin.pointer ? `${origin.file}#${origin.pointer}` : origin.file}
+                    {origin.pointer
+                      ? `${origin.file}#${origin.pointer}`
+                      : origin.file}
                   </button>
                   <ObjectField {...props} />
                 </div>
