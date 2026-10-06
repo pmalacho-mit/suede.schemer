@@ -1,0 +1,6 @@
+; A suede dependency record, written by extract. Do not edit by hand.
+; deps.sh recreates ../suede.sweater-vest.schemer beside this dependency wherever it is installed.
+[subrepo]
+	remote = https://github.com/pmalacho-mit/suede.sweater-vest
+	branch = release
+	commit = 7b4d9937f22e9c476a74ea6aec73a7fab9b67b55
