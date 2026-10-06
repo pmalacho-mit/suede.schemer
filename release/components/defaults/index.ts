@@ -15,8 +15,10 @@ import OptOut from "./OptOut.svelte";
 import Push from "./Push.svelte";
 import Splice from "./Splice.svelte";
 import Insert from "./Insert.svelte";
+import Container from "./Container.svelte";
 
 export const component = {
+  container: Container,
   byKind: {
     string: String,
     number: Number,
@@ -34,10 +36,7 @@ export const component = {
     opt_in__: OptIn,
     opt_out__: OptOut,
   } satisfies {
-    [K in Exclude<
-      Field.RenderActions,
-      "opted_out__"
-    >]: Component<Field.Props<any>>;
+    [K in Field.ComponentActions]: Component<Field.Props<any>>;
   },
   forArray: {
     push: Push,

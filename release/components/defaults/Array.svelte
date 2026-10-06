@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { Field } from "../Field.svelte";
+  import ArrayAction from "../ArrayAction.svelte";
   import { arrayItemAtIndex } from "../naming.js";
-  import { component } from ".";
-  import { attributes, title, tooltip } from "./common.js";
+  import { array, attributes, title, tooltip } from "./common.js";
 
   let {
     node,
@@ -13,10 +13,8 @@
     insertRenderer,
   }: Field.Props<"array"> = $props();
 
-  const items = $derived(model.get(node)!);
-  const addable = $derived(
-    model.editable && (node.maxItems == null || items!.length < node.maxItems),
-  );
+  const items = $derived(array.items(node, model));
+  const addable = $derived(array.addable(node, model));
 </script>
 
 <fieldset>
@@ -25,36 +23,18 @@
   </legend>
 
   {#each items as _, index (index)}
-    {@const child = arrayItemAtIndex(node, index)}
-
     {#if addable}
-      {#if insertRenderer}
-        {@render insertRenderer({ node, model, index })}
-      {:else}
-        {@const Component = component.forArray["insert"]}
-        <Component {node} {model} {index} />
-      {/if}
+      <ArrayAction action="insert" renderer={insertRenderer} {node} {model} {index} />
     {/if}
 
-    {@render renderChild(child, "array", index)}
+    {@render renderChild(arrayItemAtIndex(node, index), "array", index)}
 
     {#if model.editable}
-      {#if spliceRenderer}
-        {@render spliceRenderer({ node, model, index })}
-      {:else}
-        {@const Component = component.forArray["splice"]}
-        <Component {node} {model} {index} />
-      {/if}
+      <ArrayAction action="splice" renderer={spliceRenderer} {node} {model} {index} />
     {/if}
   {/each}
 
   {#if addable}
-    {@const index = items!.length}
-    {#if pushRenderer}
-      {@render pushRenderer({ node, model, index })}
-    {:else}
-      {@const Component = component.forArray["push"]}
-      <Component {node} {model} {index} />
-    {/if}
+    <ArrayAction action="push" renderer={pushRenderer} {node} {model} index={items.length} />
   {/if}
 </fieldset>
