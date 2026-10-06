@@ -4,7 +4,11 @@ import type { Context } from "../../release/types.js";
 import type { JSONSchema7 } from "json-schema";
 
 function ctx(rootSchema: object = {}): Context {
-  return { rootSchema: rootSchema as any, refStack: new Set() };
+  return {
+    rootSchema: rootSchema as any,
+    refStack: new Set(),
+    externalSchemas: new Map(),
+  };
 }
 
 // ---------------------------------------------------------------------------

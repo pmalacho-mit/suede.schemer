@@ -5,6 +5,7 @@ import type { Context } from "../../release/types.js";
 const ctx = (rootSchema: object): Context => ({
   rootSchema: rootSchema as any,
   refStack: new Set(),
+  externalSchemas: new Map(),
 });
 
 describe("resolve", () => {

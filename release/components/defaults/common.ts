@@ -27,6 +27,7 @@ export const defaults = {
     return {};
   },
   array: [],
+  tuple: [],
 } satisfies Record<Defaultable, unknown>;
 
 export const defaultable = (
@@ -38,6 +39,7 @@ export const valueForNode = (node: RenderNode): unknown => {
     const itemDefault = valueForNode(node.itemNode);
     return itemDefault !== null ? [itemDefault] : [];
   }
+  if (node.kind === "tuple") return node.itemNodes.map(valueForNode);
   if (node.kind === "object") return constDiscriminators(node.children);
   if ("default" in node)
     return node.default ?? defaults[node.kind as Defaultable];
