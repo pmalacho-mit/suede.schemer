@@ -8,6 +8,7 @@
   let {
     node,
     model,
+    parent,
     renderChild,
     pushRenderer,
     spliceRenderer,
@@ -18,7 +19,7 @@
   const addable = $derived(array.addable(node, model));
 </script>
 
-<Group {node} {model}>
+<Group {node} {model} {parent}>
   {#if items.length === 0}
     <p class="empty">No items yet.</p>
   {/if}
@@ -41,7 +42,15 @@
           {@render renderChild(arrayItemAtIndex(node, index), "array", index)}
         </div>
         {#if model.editable}
-          <ArrayAction action="splice" renderer={spliceRenderer} {node} {model} {index} />
+          <div class="trailing">
+            <ArrayAction
+              action="splice"
+              renderer={spliceRenderer}
+              {node}
+              {model}
+              {index}
+            />
+          </div>
         {/if}
       </li>
     {/each}
@@ -59,6 +68,7 @@
 </Group>
 
 <style>
+  /* a list: one row per item, its remove button trailing */
   .items {
     display: flex;
     flex-direction: column;
@@ -75,8 +85,8 @@
   .item {
     position: relative;
     display: flex;
-    align-items: flex-end;
-    gap: calc(var(--sc-spacing) / 2);
+    align-items: flex-start;
+    gap: calc(var(--sc-spacing) * 0.25);
   }
 
   .content {
@@ -84,15 +94,21 @@
     min-width: 0;
   }
 
+  /* centred on a filled field's 3.5em; level with a card's title */
+  .trailing {
+    flex: none;
+    margin-top: 0.5em;
+    margin-right: -0.5em;
+  }
+
   /* insert sits on the seam above its item, shown on hover or focus */
   .insert {
     position: absolute;
-    top: calc(var(--sc-spacing) * -0.75);
+    top: calc(var(--sc-spacing) * -0.375);
     left: 50%;
-    z-index: 1;
+    z-index: 2;
     transform: translate(-50%, -50%);
     opacity: 0;
-    transition: opacity 120ms;
   }
 
   .item:hover > .insert,
@@ -102,7 +118,14 @@
 
   .empty {
     margin: 0;
+    padding: 0 var(--sc-md-inset);
+    font-size: 0.875em;
     color: var(--sc-muted);
-    font-size: 0.9em;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .insert {
+      transition: opacity 150ms;
+    }
   }
 </style>

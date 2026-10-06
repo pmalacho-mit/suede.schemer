@@ -2,6 +2,7 @@
   import type { Field } from "../../Field.svelte";
   import { actions } from "../../defaults/common.js";
   import Button from "./Button.svelte";
+  import Icon from "./Icon.svelte";
 
   let { node, model, index }: Field.ArrayActionProps = $props();
 </script>
@@ -13,5 +14,5 @@
   variant="icon"
   onclick={() => actions.splice(node, model, index)}
 >
-  <span aria-hidden="true">✕</span>
+  <Icon name="close" />
 </Button>

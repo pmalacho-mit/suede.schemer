@@ -15,7 +15,7 @@ import Push from "./Push.svelte";
 import Splice from "./Splice.svelte";
 import Insert from "./Insert.svelte";
 
-/** PLACEHOLDER: a copy of minimal, to be redrawn. */
+/** Material Design 3: filled fields, switches, tonal and outlined cards, pill buttons; light and dark. */
 export default {
   name: "material",
   container: Container,

@@ -4,7 +4,11 @@
   import type { SchemaModel } from "../../../models.svelte.js";
   import { attributes, title, tooltip } from "../../defaults/common.js";
 
-  /** A labelled control: the field's title, the control, and its description. */
+  /**
+   * A labelled control. By default an MD3 filled field: the label is the
+   * field's tonal box, its title small inside the top, the control below it.
+   * `inline` lays the title and a switch out on one row instead.
+   */
   let {
     node,
     model,
@@ -13,19 +17,18 @@
   }: {
     node: RenderNode;
     model: SchemaModel;
-    /** the control before the title, on one line (a checkbox) */
+    /** the title, then the control at the row's end (a switch) */
     inline?: boolean;
     children: Snippet;
   } = $props();
 </script>
 
-<div class="field" class:inline>
-  <label>
-    {#if inline}{@render children()}{/if}
+<div class="md-field field" class:inline>
+  <label class={inline ? "row" : "md-box box"}>
     <span class="name" title={tooltip(node, model)} {...attributes.role("name")}>
       {title(node, model)}
     </span>
-    {#if !inline}{@render children()}{/if}
+    {@render children()}
   </label>
   <!-- outside the label, so the field's accessible name is its title alone -->
   {#if node.description}
@@ -36,73 +39,222 @@
 </div>
 
 <style>
-  .field,
-  label {
+  .field {
     display: flex;
     flex-direction: column;
-    gap: calc(var(--sc-spacing) / 2);
+    min-width: 0;
   }
 
-  .inline label {
-    flex-direction: row;
+  /* ---- the filled field ------------------------------------------------ */
+
+  .box {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 3.5em;
+    padding: 0.5em var(--sc-md-inset);
+    background: var(--sc-surface);
+    border-radius: var(--sc-radius) var(--sc-radius) 0 0;
+    box-shadow: inset 0 -1px 0 var(--sc-border);
+    cursor: text;
+  }
+
+  .box .name {
+    font-size: 0.75em;
+    line-height: 1.3333;
+    letter-spacing: 0.025em;
+    color: var(--sc-muted);
+  }
+
+  /* the state layer: a tint of the text colour over the fill */
+  .box:hover {
+    background: color-mix(in srgb, var(--sc-text) 8%, var(--sc-surface));
+    box-shadow: inset 0 -1px 0 var(--sc-text);
+  }
+
+  /* focus: the indicator thickens and takes the accent, as does the label */
+  .box:focus-within {
+    box-shadow: inset 0 -2px 0 var(--sc-accent);
+  }
+
+  .box:focus-within .name {
+    color: var(--sc-accent);
+  }
+
+  .box :global(:is(input, select)) {
+    box-sizing: border-box;
+    width: 100%;
+    height: 1.5em;
+    margin: 0;
+    padding: 0;
+    font: inherit;
+    letter-spacing: inherit;
+    color: var(--sc-text);
+    -webkit-text-fill-color: var(--sc-text);
+    opacity: 1;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    caret-color: var(--sc-accent);
+  }
+
+  .box :global(:is(input, select):focus-visible) {
+    /* the thick accent underline above is the focus indicator */
+    outline: none;
+  }
+
+  /* selects match: same box, a drawn caret in place of the native arrow */
+  .box:has(> :global(select)) {
+    cursor: pointer;
+  }
+
+  .box :global(select) {
+    appearance: none;
+    padding-right: 2em;
+    cursor: pointer;
+  }
+
+  .box :global(select option) {
+    color: var(--sc-text);
+    background: var(--sc-background);
+  }
+
+  .box:has(> :global(select))::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 1em;
+    border: 0.3125em solid transparent;
+    border-top-color: var(--sc-muted);
+    border-bottom-width: 0;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  .box:has(> :global(select)):focus-within::after {
+    border-top-color: var(--sc-accent);
+  }
+
+  /* a const in edit mode: dimmed, with a lock where the caret would be */
+  :global([data-mode="edit"]) .box:has(> :global(:disabled)) {
+    --locked: color-mix(in srgb, var(--sc-text) 38%, transparent);
+    cursor: not-allowed;
+    background: color-mix(in srgb, var(--sc-text) 4%, transparent);
+    box-shadow: inset 0 -1px 0 var(--locked);
+  }
+
+  :global([data-mode="edit"]) .box:has(> :global(:disabled)) :global(*) {
+    color: var(--locked);
+    -webkit-text-fill-color: var(--locked);
+    cursor: not-allowed;
+  }
+
+  :global([data-mode="edit"]) .box:has(> :global(:disabled))::before,
+  :global([data-mode="edit"]) .box:has(> :global(:disabled))::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    pointer-events: none;
+  }
+
+  /* shackle */
+  :global([data-mode="edit"]) .box:has(> :global(:disabled))::before {
+    right: 1.15em;
+    width: 0.45em;
+    height: 0.4em;
+    margin-top: -0.55em;
+    border: 0.125em solid var(--locked);
+    border-bottom: 0;
+    border-radius: 0.3em 0.3em 0 0;
+  }
+
+  /* body */
+  :global([data-mode="edit"]) .box:has(> :global(:disabled))::after {
+    right: 1em;
+    width: 0.95em;
+    height: 0.65em;
+    margin-top: -0.05em;
+    background: var(--locked);
+    border: 0;
+    border-radius: 0.15em;
+    transform: none;
+  }
+
+  /* view and stream modes: no fill, no line, the value reads as content */
+  :global([data-mode]:is([data-mode="view"], [data-mode="stream"])) .box {
+    min-height: 0;
+    padding-block: 0;
+    background: none;
+    box-shadow: none;
+    cursor: default;
+  }
+
+  :global([data-mode]:is([data-mode="view"], [data-mode="stream"])) .box::after {
+    display: none;
+  }
+
+  :global([data-mode]:is([data-mode="view"], [data-mode="stream"]))
+    .box
+    :global(:is(input, select)) {
+    height: auto;
+    padding-right: 0;
+    cursor: default;
+    appearance: none;
+    -moz-appearance: textfield;
+  }
+
+  :global([data-mode]:is([data-mode="view"], [data-mode="stream"]))
+    .box
+    :global(input::-webkit-calendar-picker-indicator),
+  :global([data-mode]:is([data-mode="view"], [data-mode="stream"]))
+    .box
+    :global(input::-webkit-inner-spin-button) {
+    display: none;
+  }
+
+  /* ---- a switch row ---------------------------------------------------- */
+
+  .row {
+    display: flex;
     align-items: center;
-    gap: calc(var(--sc-spacing) * 0.75);
+    gap: var(--sc-spacing);
+    min-height: 3em;
+    padding: 0 var(--sc-md-inset);
+    cursor: pointer;
+  }
+
+  .row .name {
+    flex: 1;
+    min-width: 0;
   }
 
   .inline .description {
-    padding-left: calc(2.3em + var(--sc-spacing) * 0.75);
+    margin-top: -0.35em;
+    padding-right: 4.5em;
   }
 
-  .name {
-    font-weight: 500;
-    font-size: 0.93em;
-  }
+  /* ---- supporting text ------------------------------------------------- */
 
   .description {
+    /* the inset is in the field's ems; this text is 0.75 of that size */
+    padding: 0.33em calc(var(--sc-md-inset) / 0.75) 0;
+    font-size: 0.75em;
+    line-height: 1.3333;
+    letter-spacing: 0.025em;
     color: var(--sc-muted);
-    font-size: 0.86em;
   }
 
-  .field :global(:is(input:not([type="checkbox"]), select)) {
-    box-sizing: border-box;
-    width: 100%;
-    height: 2.5em;
-    padding: 0 0.85em;
-    font: inherit;
-    color: inherit;
-    background: var(--sc-surface);
-    border: 1px solid var(--sc-border);
-    border-radius: var(--sc-radius);
-    box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
-    transition:
-      border-color 120ms,
-      box-shadow 120ms;
-  }
+  @media (prefers-reduced-motion: no-preference) {
+    .box {
+      transition:
+        background-color 150ms,
+        box-shadow 150ms;
+    }
 
-  .field :global(:is(input, select):focus-visible) {
-    outline: none;
-    border-color: var(--sc-accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--sc-accent) 18%, transparent);
-  }
-
-  /* a const in edit mode: there, but not for changing */
-  .field :global(:is(input:not([type="checkbox"]), select):disabled) {
-    cursor: not-allowed;
-    color: var(--sc-muted);
-    background: color-mix(in srgb, var(--sc-border) 35%, var(--sc-surface));
-  }
-
-  /* view and stream modes: read-only throughout, so values read as content */
-  :global(:is([data-mode="view"], [data-mode="stream"]))
-    .field
-    :global(:is(input:not([type="checkbox"]), select)) {
-    height: auto;
-    padding: 0;
-    color: var(--sc-text);
-    background: none;
-    border-color: transparent;
-    box-shadow: none;
-    appearance: none;
-    cursor: default;
+    .box .name {
+      transition: color 150ms;
+    }
   }
 </style>
