@@ -41,7 +41,13 @@
           {@render renderChild(arrayItemAtIndex(node, index), "array", index)}
         </div>
         {#if model.editable}
-          <ArrayAction action="splice" renderer={spliceRenderer} {node} {model} {index} />
+          <ArrayAction
+            action="splice"
+            renderer={spliceRenderer}
+            {node}
+            {model}
+            {index}
+          />
         {/if}
       </li>
     {/each}

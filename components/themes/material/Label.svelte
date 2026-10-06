@@ -25,7 +25,11 @@
 
 <div class="md-field field" class:inline>
   <label class={inline ? "row" : "md-box box"}>
-    <span class="name" title={tooltip(node, model)} {...attributes.role("name")}>
+    <span
+      class="name"
+      title={tooltip(node, model)}
+      {...attributes.role("name")}
+    >
       {title(node, model)}
     </span>
     {@render children()}
@@ -191,7 +195,8 @@
     cursor: default;
   }
 
-  :global([data-mode]:is([data-mode="view"], [data-mode="stream"])) .box::after {
+  :global([data-mode]:is([data-mode="view"], [data-mode="stream"]))
+    .box::after {
     display: none;
   }
 

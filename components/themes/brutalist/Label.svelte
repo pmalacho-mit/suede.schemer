@@ -22,7 +22,11 @@
 <div class="field" class:inline>
   <label>
     {#if inline}{@render children()}{/if}
-    <span class="name" title={tooltip(node, model)} {...attributes.role("name")}>
+    <span
+      class="name"
+      title={tooltip(node, model)}
+      {...attributes.role("name")}
+    >
       {title(node, model)}
     </span>
     {#if !inline}{@render children()}{/if}
@@ -95,8 +99,11 @@
     appearance: none;
     padding-right: 3.4em;
     cursor: pointer;
-    background-image:
-      linear-gradient(45deg, transparent 50%, var(--sc-accent-contrast) 50%),
+    background-image: linear-gradient(
+        45deg,
+        transparent 50%,
+        var(--sc-accent-contrast) 50%
+      ),
       linear-gradient(135deg, var(--sc-accent-contrast) 50%, transparent 50%),
       linear-gradient(var(--sc-border), var(--sc-border)),
       linear-gradient(var(--sc-accent), var(--sc-accent));
@@ -114,7 +121,11 @@
   }
 
   .field :global(select:not(:disabled):hover) {
-    background-color: color-mix(in srgb, var(--sc-accent) 35%, var(--sc-surface));
+    background-color: color-mix(
+      in srgb,
+      var(--sc-accent) 35%,
+      var(--sc-surface)
+    );
   }
 
   /* focus: the slab lifts off the page and lights up */
@@ -153,14 +164,18 @@
   }
 
   /* view and stream modes: a spec sheet, the title left and the value in bold */
-  :global(:is([data-mode="view"], [data-mode="stream"])) .field:not(.inline) label {
+  :global(:is([data-mode="view"], [data-mode="stream"]))
+    .field:not(.inline)
+    label {
     flex-flow: row wrap;
     align-items: baseline;
     column-gap: var(--sc-spacing);
     row-gap: 0.15em;
   }
 
-  :global(:is([data-mode="view"], [data-mode="stream"])) .field:not(.inline) .name {
+  :global(:is([data-mode="view"], [data-mode="stream"]))
+    .field:not(.inline)
+    .name {
     flex: 0 0 calc(var(--sc-font-size) * 9);
     color: var(--sc-muted);
   }
@@ -204,12 +219,16 @@
     display: none;
   }
 
-  :global(:is([data-mode="view"], [data-mode="stream"])) .field:not(.inline) .description {
+  :global(:is([data-mode="view"], [data-mode="stream"]))
+    .field:not(.inline)
+    .description {
     padding-left: calc(var(--sc-font-size) * 9 + var(--sc-spacing));
   }
 
   @media (max-width: 480px) {
-    :global(:is([data-mode="view"], [data-mode="stream"])) .field:not(.inline) .description {
+    :global(:is([data-mode="view"], [data-mode="stream"]))
+      .field:not(.inline)
+      .description {
       padding-left: 0;
     }
 

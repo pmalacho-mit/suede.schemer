@@ -27,7 +27,11 @@
 
 <div class="field" class:check class:item>
   <label>
-    <span class="name" title={tooltip(node, model)} {...attributes.role("name")}>
+    <span
+      class="name"
+      title={tooltip(node, model)}
+      {...attributes.role("name")}
+    >
       {title(node, model)}
     </span>
     {@render children()}
@@ -172,8 +176,11 @@
     padding-right: 1.5em;
     text-overflow: ellipsis;
     cursor: pointer;
-    background-image:
-      linear-gradient(45deg, transparent 50%, var(--sc-muted) 50%),
+    background-image: linear-gradient(
+        45deg,
+        transparent 50%,
+        var(--sc-muted) 50%
+      ),
       linear-gradient(135deg, var(--sc-muted) 50%, transparent 50%);
     background-position:
       calc(100% - 0.75em) 58%,

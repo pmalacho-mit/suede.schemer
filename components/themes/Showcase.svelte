@@ -24,7 +24,6 @@
   <Schema root={node} {model} {theme} />
 {/await}
 
-
 <!-- minimal: the showcase in edit mode, and read-only -->
 {#snippet minimal(Showcase: typeof Self, themes: typeof all)}
   <div style="display: grid; gap: 2rem;">

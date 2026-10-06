@@ -6,6 +6,11 @@
   let { node, model }: Field.Props = $props();
 </script>
 
-<Action {node} {model} onclick={() => actions.optIn(node, model)} action="opt-in">
+<Action
+  {node}
+  {model}
+  onclick={() => actions.optIn(node, model)}
+  action="opt-in"
+>
   + {title(node, model)}
 </Action>

@@ -6,7 +6,8 @@
 </script>
 
 <p class="unknown">
-  <strong>{title(node, model)}</strong> can't be shown: its schema has no type this form understands.
+  <strong>{title(node, model)}</strong> can't be shown: its schema has no type this
+  form understands.
 </p>
 
 <style>

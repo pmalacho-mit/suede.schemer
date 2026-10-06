@@ -30,18 +30,36 @@
 
   {#each items as _, index (index)}
     {#if addable}
-      <ArrayAction action="insert" renderer={insertRenderer} {node} {model} {index} />
+      <ArrayAction
+        action="insert"
+        renderer={insertRenderer}
+        {node}
+        {model}
+        {index}
+      />
     {/if}
 
     {@render renderChild(arrayItemAtIndex(node, index), "array", index)}
 
     {#if model.editable}
-      <ArrayAction action="splice" renderer={spliceRenderer} {node} {model} {index} />
+      <ArrayAction
+        action="splice"
+        renderer={spliceRenderer}
+        {node}
+        {model}
+        {index}
+      />
     {/if}
   {/each}
 
   {#if addable}
-    <ArrayAction action="push" renderer={pushRenderer} {node} {model} index={items.length} />
+    <ArrayAction
+      action="push"
+      renderer={pushRenderer}
+      {node}
+      {model}
+      index={items.length}
+    />
   {/if}
 </fieldset>
 
@@ -60,7 +78,11 @@
     <AnyField {node} {model} {parent} {index} />
   {/snippet}
   <ArrayField
-    node={{ kind: "array", path: "tags", itemNode: { kind: "string", path: "tags.*" } }}
+    node={{
+      kind: "array",
+      path: "tags",
+      itemNode: { kind: "string", path: "tags.*" },
+    }}
     {model}
     renderChild={child}
     pushRenderer={null}
@@ -87,7 +109,11 @@
     <AnyField {node} {model} {parent} {index} />
   {/snippet}
   <ArrayField
-    node={{ kind: "array", path: "tags", itemNode: { kind: "string", path: "tags.*" } }}
+    node={{
+      kind: "array",
+      path: "tags",
+      itemNode: { kind: "string", path: "tags.*" },
+    }}
     {model}
     renderChild={child}
     pushRenderer={null}
@@ -115,7 +141,11 @@
     <AnyField {node} {model} {parent} {index} />
   {/snippet}
   <ArrayField
-    node={{ kind: "array", path: "tags", itemNode: { kind: "string", path: "tags.*" } }}
+    node={{
+      kind: "array",
+      path: "tags",
+      itemNode: { kind: "string", path: "tags.*" },
+    }}
     {model}
     renderChild={child}
     pushRenderer={null}
@@ -200,7 +230,9 @@
     insertRenderer={null}
   />
   {test(async ({ expect }) => {
-    expect(document.querySelector('[data-path="people.0.name"]')).not.toBeNull();
+    expect(
+      document.querySelector('[data-path="people.0.name"]'),
+    ).not.toBeNull();
     expect(document.querySelector('[data-path="people.1.age"]')).not.toBeNull();
   })}
 {/snippet}

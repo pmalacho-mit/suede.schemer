@@ -96,8 +96,10 @@ export const readonly = (node: RenderNode, model: SchemaModel) =>
   !model.editable || is.const(node);
 
 /** A string field's value: its `const` if it has one, else the model's. */
-export const stringValue = (node: SpecificNode<"string">, model: SchemaModel) =>
-  node.const !== undefined ? String(node.const) : model.get(node);
+export const stringValue = (
+  node: SpecificNode<"string">,
+  model: SchemaModel,
+) => (node.const !== undefined ? String(node.const) : model.get(node));
 
 /** The change handler of an enum's `<select>`, mapping the chosen text back to its option. */
 export const onEnumChange = (node: SpecificNode<"enum">, model: SchemaModel) =>
@@ -130,8 +132,7 @@ export const array = {
   /** whether another item may be added: in edit mode, below `maxItems` */
   addable: (node: SpecificNode<"array">, model: SchemaModel) =>
     model.editable &&
-    (node.maxItems == null ||
-      (model.get(node)?.length ?? 0) < node.maxItems),
+    (node.maxItems == null || (model.get(node)?.length ?? 0) < node.maxItems),
 };
 
 export const variants = {

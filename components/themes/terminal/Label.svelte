@@ -22,7 +22,11 @@
 <div class="field" class:inline>
   <label>
     {#if inline}{@render children()}{/if}
-    <span class="name" title={tooltip(node, model)} {...attributes.role("name")}>
+    <span
+      class="name"
+      title={tooltip(node, model)}
+      {...attributes.role("name")}
+    >
       {title(node, model)}
     </span>
     {#if !inline}
@@ -183,12 +187,14 @@
     cursor: not-allowed;
   }
 
-  :global([data-mode="edit"]) .control:has(:global(:is(input, select):disabled))::after {
+  :global([data-mode="edit"])
+    .control:has(:global(:is(input, select):disabled))::after {
     content: "] ro";
     content: "] ro" / "";
   }
 
-  :global([data-mode="edit"]) .control:has(:global(:is(input, select):disabled))::before {
+  :global([data-mode="edit"])
+    .control:has(:global(:is(input, select):disabled))::before {
     opacity: 0.6;
   }
 
@@ -203,17 +209,23 @@
     column-gap: 2ch;
   }
 
-  :global(:is([data-mode="view"], [data-mode="stream"])) .field:not(.inline) .name {
+  :global(:is([data-mode="view"], [data-mode="stream"]))
+    .field:not(.inline)
+    .name {
     flex: 0 0 18ch;
     font-weight: 400;
     color: var(--sc-muted);
   }
 
-  :global(:is([data-mode="view"], [data-mode="stream"])) .field:not(.inline) .name::before {
+  :global(:is([data-mode="view"], [data-mode="stream"]))
+    .field:not(.inline)
+    .name::before {
     content: none;
   }
 
-  :global(:is([data-mode="view"], [data-mode="stream"])) .field:not(.inline) .name::after {
+  :global(:is([data-mode="view"], [data-mode="stream"]))
+    .field:not(.inline)
+    .name::after {
     content: ":";
     content: ":" / "";
   }
@@ -240,17 +252,23 @@
     cursor: default;
   }
 
-  :global(:is([data-mode="view"], [data-mode="stream"])) .field:not(.inline) .description {
+  :global(:is([data-mode="view"], [data-mode="stream"]))
+    .field:not(.inline)
+    .description {
     /* under the value: the name column (18ch + 2ch gap), in the description's smaller ch */
     padding-left: calc(20ch / 0.92);
   }
 
   @container (max-width: 44ch) {
-    :global(:is([data-mode="view"], [data-mode="stream"])) .field:not(.inline) .name {
+    :global(:is([data-mode="view"], [data-mode="stream"]))
+      .field:not(.inline)
+      .name {
       flex-basis: 100%;
     }
 
-    :global(:is([data-mode="view"], [data-mode="stream"])) .field:not(.inline) .description {
+    :global(:is([data-mode="view"], [data-mode="stream"]))
+      .field:not(.inline)
+      .description {
       padding-left: 0;
     }
   }

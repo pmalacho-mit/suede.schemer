@@ -6,7 +6,12 @@
   let { node, model }: Field.Props = $props();
 </script>
 
-<Button {node} action="opt-in" variant="outline" onclick={() => actions.optIn(node, model)}>
+<Button
+  {node}
+  action="opt-in"
+  variant="outline"
+  onclick={() => actions.optIn(node, model)}
+>
   <span aria-hidden="true">+</span>
   {title(node, model)}
 </Button>
