@@ -94,7 +94,9 @@
 <script lang="ts">
   import { pathToSnippetName, type PathToSnippetName } from "./naming.js";
   import { useRegistry } from "./registry.js";
-  import Self from "./Field.svelte";
+  import Child from "./Field.svelte";
+  import type Self from "./Field.svelte";
+  import type { Test } from "../../suede.sweater-vest.schemer/dsl.import.meta.vitest.ts";
   import { attributes } from "./defaults/common.js";
 
   let { node, model, renderers, parent, index }: Props = $props();
@@ -141,7 +143,7 @@
   parent: "array" | "tuple" | "object" | "oneOf",
   index?: number,
 )}
-  <Self node={childNode} {model} {renderers} {parent} {index} />
+  <Child node={childNode} {model} {renderers} {parent} {index} />
 {/snippet}
 
 <div {...attributes(node)} data-index={index}>
@@ -185,3 +187,69 @@
     {/if}
   {/if}
 </div>
+
+<!-- an optional field (one its object does not require) can be opted in and out -->
+{#snippet absentOptionalFieldShowsOptInNotAnInput(
+  Field: typeof Self,
+  Model: typeof SchemaModel,
+  test: Test,
+)}
+  {@const model = new Model("edit", {})}
+  <Field node={{ kind: "string", path: "nickname", optional: true }} {model} />
+  {test(async ({ expect }) => {
+    expect(document.querySelector('[data-action="opt-in"]')).not.toBeNull();
+    expect(document.querySelector('[data-path="nickname"] input')).toBeNull();
+  })}
+{/snippet}
+
+{#snippet clickingOptInRevealsTheInputField(
+  Field: typeof Self,
+  Model: typeof SchemaModel,
+  test: Test,
+)}
+  {@const model = new Model("edit", {})}
+  <Field node={{ kind: "string", path: "nickname", optional: true }} {model} />
+  {test(async ({ expect, user }) => {
+    await user.click(document.querySelector('[data-action="opt-in"]')!);
+    expect(document.querySelector('[data-path="nickname"] input')).not.toBeNull();
+  })}
+{/snippet}
+
+{#snippet requiredFieldHasNoOptInButton(
+  Field: typeof Self,
+  Model: typeof SchemaModel,
+  test: Test,
+)}
+  {@const model = new Model("edit", { name: "" })}
+  <Field node={{ kind: "string", path: "name", optional: false }} {model} />
+  {test(async ({ expect }) => {
+    expect(document.querySelector('[data-action="opt-in"]')).toBeNull();
+    expect(document.querySelector('[data-path="name"] input')).not.toBeNull();
+  })}
+{/snippet}
+
+{#snippet aPresentOptionalFieldShowsAnOptOutButton(
+  Field: typeof Self,
+  Model: typeof SchemaModel,
+  test: Test,
+)}
+  {@const model = new Model("edit", { nickname: "Neo" })}
+  <Field node={{ kind: "string", path: "nickname", optional: true }} {model} />
+  {test(async ({ expect }) => {
+    expect(document.querySelector('[data-action="opt-out"]')).not.toBeNull();
+  })}
+{/snippet}
+
+{#snippet clickingOptOutRemovesTheValueAndShowsOptInAgain(
+  Field: typeof Self,
+  Model: typeof SchemaModel,
+  test: Test,
+)}
+  {@const model = new Model("edit", { nickname: "Neo" })}
+  <Field node={{ kind: "string", path: "nickname", optional: true }} {model} />
+  {test(async ({ expect, user }) => {
+    await user.click(document.querySelector('[data-action="opt-out"]')!);
+    expect(model.get({ path: "nickname" })).toBeUndefined();
+    expect(document.querySelector('[data-action="opt-in"]')).not.toBeNull();
+  })}
+{/snippet}
