@@ -1,7 +1,6 @@
 <script lang="ts">
   import { SvelteMap, SvelteSet } from "svelte/reactivity";
   import { defaults, Model, root, Schema, type Theme } from "../../../release";
-  import type { Field } from "../../../release/components/Field.svelte";
   import { schema, type Shelf } from "./bookshelf.ts";
   import { dirname, join, type FileSystem } from "./files.ts";
   import {
@@ -203,32 +202,36 @@
     {:else if model}
       {#await tree then node}
         {#key model}
-          <Schema root={node} {model} {theme} {object} />
+          <Schema
+            root={node}
+            {model}
+            {theme}
+          >
+            <!-- every object from a file: the theme's own object, badged with the file -->
+            {#snippet object(props)}
+              {@const origin = originOf(props.model.get(props.node))}
+              {#if origin}
+                <div class="sourced" class:selected={origin.file === selected}>
+                  <button
+                    type="button"
+                    class="badge"
+                    onclick={() => open(origin.file)}
+                    title="show {origin.file}"
+                  >
+                    {origin.pointer ? `${origin.file}#${origin.pointer}` : origin.file}
+                  </button>
+                  <ObjectField {...props} />
+                </div>
+              {:else}
+                <ObjectField {...props} />
+              {/if}
+            {/snippet}
+          </Schema>
         {/key}
       {/await}
     {/if}
   </section>
 </div>
-
-<!-- every object from a file: the theme's own object, badged with the file -->
-{#snippet object(props: Field.Props<"object">)}
-  {@const origin = originOf(props.model.get(props.node))}
-  {#if origin}
-    <div class="sourced" class:selected={origin.file === selected}>
-      <button
-        type="button"
-        class="badge"
-        onclick={() => open(origin.file)}
-        title="show {origin.file}"
-      >
-        {origin.pointer ? `${origin.file}#${origin.pointer}` : origin.file}
-      </button>
-      <ObjectField {...props} />
-    </div>
-  {:else}
-    <ObjectField {...props} />
-  {/if}
-{/snippet}
 
 <!-- a stored document, its references links to their files -->
 {#snippet json(value: unknown, file: string)}

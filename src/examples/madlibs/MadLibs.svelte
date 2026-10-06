@@ -17,7 +17,6 @@
     themes,
     type Theme,
   } from "../../../release/index.ts";
-  import type { Field } from "../../../release/components/Field.svelte";
   import {
     clip,
     fill,
@@ -188,37 +187,6 @@
   {/if}
 {/snippet}
 
-{#snippet string(props: Field.Props<"string">)}
-  {#snippet field()}<Themed.string {...props} />{/snippet}
-  {@render asBlank(props.node.path, field)}
-{/snippet}
-
-{#snippet number(props: Field.Props<"number">)}
-  {#snippet field()}<Themed.number {...props} />{/snippet}
-  {@render asBlank(props.node.path, field)}
-{/snippet}
-
-{#snippet oneOf(props: Field.Props<"oneOf">)}
-  <StoryPicker {...props} />
-{/snippet}
-
-<!-- the chosen story's blanks: the theme's own group, under a row of tools (its blurb is on its card already) -->
-{#snippet object(props: Field.Props<"object">)}
-  <div class="tools">
-    <p>Fill in {tale.blanks.length} blanks, or let luck do it.</p>
-    <button type="button" class="primary" onclick={surpriseMe}>
-      <span aria-hidden="true">&#9733;</span> Surprise me
-    </button>
-    <button type="button" onclick={clear} disabled={filled === 0}>
-      Clear
-    </button>
-  </div>
-  <Themed.object {...props} node={{ ...props.node, description: undefined }} />
-{/snippet}
-
-<!-- the discriminator: the cards already say which story it is -->
-{#snippet story()}{/snippet}
-
 <div class="madlibs">
   <header class="masthead">
     <h1>Plot Holes</h1>
@@ -235,13 +203,39 @@
           root={node}
           model={form}
           {theme}
-          {oneOf}
-          {object}
-          {story}
-          {string}
-          {number}
           --schemer-paper-label-width="10.5em"
-        />
+        >
+          {#snippet oneOf(props)}
+            <StoryPicker {...props} />
+          {/snippet}
+
+          <!-- the chosen story's blanks: the theme's own group, under a row of tools (its blurb is on its card already) -->
+          {#snippet object(props)}
+            <div class="tools">
+              <p>Fill in {tale.blanks.length} blanks, or let luck do it.</p>
+              <button type="button" class="primary" onclick={surpriseMe}>
+                <span aria-hidden="true">&#9733;</span> Surprise me
+              </button>
+              <button type="button" onclick={clear} disabled={filled === 0}>
+                Clear
+              </button>
+            </div>
+            <Themed.object {...props} node={{ ...props.node, description: undefined }} />
+          {/snippet}
+
+          <!-- the discriminator: the cards already say which story it is -->
+          {#snippet story()}{/snippet}
+
+          {#snippet string(props)}
+            {#snippet field()}<Themed.string {...props} />{/snippet}
+            {@render asBlank(props.node.path, field)}
+          {/snippet}
+
+          {#snippet number(props)}
+            {#snippet field()}<Themed.number {...props} />{/snippet}
+            {@render asBlank(props.node.path, field)}
+          {/snippet}
+        </Schema>
       {/await}
     </section>
 

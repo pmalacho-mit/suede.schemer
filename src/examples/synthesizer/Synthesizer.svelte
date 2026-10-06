@@ -178,97 +178,9 @@
 <!-- Renderers: what <Schema> draws each field with, over the theme         -->
 <!-- ====================================================================== -->
 
-<!-- by kind: every object. The root is the rack of modules; any other object is a row of controls -->
-{#snippet object({ node, renderChild }: Field.Props<"object">)}
-  {#if node.path === ""}
-    <div class="rack">
-      {#each node.children as child (child.path)}
-        {#if child.kind === "string"}
-          <!-- the patch name: drawn by the theme, as a theme draws any text field -->
-          <div class="nameplate">{@render renderChild(child, "object")}</div>
-        {:else}
-          <section
-            class="module"
-            data-module={child.path}
-            aria-labelledby="{uid}-{child.path}-heading"
-          >
-            <header class="module-head">
-              <h3 id="{uid}-{child.path}-heading">{child.title}</h3>
-              {#if child.description}<p>{child.description}</p>{/if}
-            </header>
-            {@render renderChild(child, "object")}
-          </section>
-        {/if}
-      {/each}
-    </div>
-  {:else}
-    <div class="row">
-      {#each node.children as child (child.path)}
-        {@render renderChild(child, "object")}
-      {/each}
-    </div>
-  {/if}
-{/snippet}
-
-<!-- by kind: every number, a fader or a knob as its parameter says; the theme's own for any other -->
-{#snippet number({ node, model }: Field.Props<"number">)}
-  {@const param = paramFor(node)}
-  {#if param}
-    {@const value = model.get(node) ?? node.default ?? param.default}
-    {#if param.style === "knob"}
-      {@render dial(node, model, param, value, "medium")}
-    {:else}
-      {@render fader(node, model, param, value)}
-    {/if}
-  {:else}
-    {@const Fallback = theme.byKind?.number ?? defaults.component.byKind.number}
-    <Fallback {node} {model} />
-  {/if}
-{/snippet}
-
-<!-- by kind: every string. A const (a variant's tag) is not drawn, options are a row of buttons, and text is the theme's -->
-{#snippet string(props: Field.Props<"string">)}
-  {@const { node, model } = props}
-  {#if node.const !== undefined}
-    <!-- the variant switch above already says which this is -->
-  {:else if node.options}
-    <div class="choice">
-      <span class="name" id="{uid}-{node.path}-label">{node.title}</span>
-      <div
-        class="segmented"
-        role="radiogroup"
-        aria-labelledby="{uid}-{node.path}-label"
-      >
-        {#each node.options as option (option)}
-          <label class="segment" title={option}>
-            <input
-              type="radio"
-              name="{uid}-{node.path}"
-              value={option}
-              checked={model.get(node) === option}
-              disabled={!model.editable}
-              onchange={model.on(node)}
-            />
-            {#if isWave(option)}
-              <svg class="glyph" viewBox="0 0 24 14" aria-hidden="true">
-                <path d={glyph(option)} />
-              </svg>
-              <span class="sr-only">{option}</span>
-            {:else}
-              {option}
-            {/if}
-          </label>
-        {/each}
-      </div>
-    </div>
-  {:else}
-    {@const Fallback = theme.byKind?.string ?? defaults.component.byKind.string}
-    <Fallback {...props} />
-  {/if}
-{/snippet}
-
-<!-- by kind: every oneOf, a switch of its variants; switching fills in the new variant's defaults -->
-{#snippet oneOf({ node, model, renderChild }: Field.Props<"oneOf">)}
+<!-- the controls the renderers above share -->
+<!-- a oneOf as a switch of its variants, then the chosen one: the oneOf renderer, and the filter's -->
+{#snippet variantSwitch({ node, model, renderChild }: Field.Props<"oneOf">)}
   {@const selected = controls.variants.selected(node, model)}
   <div class="variant">
     <div
@@ -295,129 +207,6 @@
   </div>
 {/snippet}
 
-<!-- by path: the oscillators, a card each -->
-{#snippet oscillators({ node, model, renderChild }: Field.Props<"array">)}
-  {@const items = controls.array.items(node, model)}
-  <ol class="voices">
-    {#each items as _, i (i)}
-      <li class="voice">
-        <div class="tag">
-          <span>OSC {i + 1}</span>
-          {#if model.editable && items.length > (node.minItems ?? 0)}
-            <button
-              type="button"
-              class="mini"
-              aria-label="Remove oscillator {i + 1}"
-              onclick={() => controls.actions.splice(node, model, i)}>×</button
-            >
-          {/if}
-        </div>
-        {@render renderChild(controls.array.item(node, i), "array", i)}
-      </li>
-    {/each}
-  </ol>
-  {#if controls.array.addable(node, model)}
-    <button
-      type="button"
-      class="add"
-      onclick={() => controls.actions.push(node, model)}
-    >
-      <span aria-hidden="true">+</span> Add oscillator
-    </button>
-  {/if}
-{/snippet}
-
-<!-- by path: the filter, its response on a screen above the switch the oneOf renderer draws -->
-{#snippet filter(props: Field.Props<"oneOf">)}
-  <div class="scope">
-    <FilterDisplay filter={patch.filter} />
-  </div>
-  {@render oneOf(props)}
-{/snippet}
-
-<!-- by path: the envelope, as four upright faders -->
-{#snippet envelope({ node, renderChild }: Field.Props<"object">)}
-  <div class="faders">
-    {#each node.children as child (child.path)}
-      {@render renderChild(child, "object")}
-    {/each}
-  </div>
-{/snippet}
-
-<!-- by path: the effects, a pedal each, in the order the signal passes through them -->
-{#snippet effects({ node, model, renderChild }: Field.Props<"array">)}
-  {@const items = controls.array.items(node, model)}
-  {@const kinds = node.itemNode.kind === "oneOf" ? node.itemNode.variants : []}
-  {#if items.length === 0}
-    <p class="empty">No effects: the filter goes straight to the master.</p>
-  {/if}
-  <ol class="pedals">
-    {#each items as _, i (i)}
-      <li class="pedal">
-        <div class="tag">
-          <span>FX {i + 1}</span>
-          {#if model.editable}
-            <span class="tools">
-              <button
-                type="button"
-                class="mini"
-                aria-label="Move effect {i + 1} earlier"
-                disabled={i === 0}
-                onclick={() => model.set(node, moved(items, i, -1))}>◂</button
-              >
-              <button
-                type="button"
-                class="mini"
-                aria-label="Move effect {i + 1} later"
-                disabled={i === items.length - 1}
-                onclick={() => model.set(node, moved(items, i, 1))}>▸</button
-              >
-              <button
-                type="button"
-                class="mini"
-                aria-label="Remove effect {i + 1}"
-                onclick={() => controls.actions.splice(node, model, i)}
-                >×</button
-              >
-            </span>
-          {/if}
-        </div>
-        {@render renderChild(controls.array.item(node, i), "array", i)}
-      </li>
-    {/each}
-  </ol>
-  {#if controls.array.addable(node, model)}
-    <div class="adders">
-      {#each kinds as kind, k (k)}
-        <button
-          type="button"
-          class="add"
-          onclick={() => model.get(node)?.push(controls.valueForNode(kind))}
-        >
-          <span aria-hidden="true">+</span><span class="sr-only">Add</span>
-          {controls.variants.label(kind, k)}
-        </button>
-      {/each}
-    </div>
-  {/if}
-{/snippet}
-
-<!-- by path: the master volume, the big knob, with a level meter that lights while notes sound -->
-{#snippet volume({ node, model }: Field.Props<"number">)}
-  {@const param = paramFor(node) ?? params.volume}
-  {@const value = model.get(node) ?? param.default}
-  {@const lit = held.size ? Math.round(value * 8) : 0}
-  <div class="master">
-    {@render dial(node, model, param, value, "large")}
-    <div class="meter" aria-hidden="true">
-      {#each Array.from({ length: 8 }, (_, i) => 7 - i) as i (i)}
-        <span class="segment-led" class:lit={i < lit} class:hot={i >= 6}></span>
-      {/each}
-    </div>
-  </div>
-{/snippet}
-
-<!-- the controls the renderers above share -->
 {#snippet fader(
   node: Field.Props<"number">["node"],
   model: Model,
@@ -534,16 +323,223 @@
           root={node}
           {model}
           {theme}
-          {object}
-          {number}
-          {string}
-          {oneOf}
-          {oscillators}
-          {envelope}
-          {filter}
-          {effects}
-          {volume}
-        />
+        >
+          <!-- by kind: every object. The root is the rack of modules; any other object is a row of controls -->
+          {#snippet object({ node, renderChild })}
+            {#if node.path === ""}
+              <div class="rack">
+                {#each node.children as child (child.path)}
+                  {#if child.kind === "string"}
+                    <!-- the patch name: drawn by the theme, as a theme draws any text field -->
+                    <div class="nameplate">{@render renderChild(child, "object")}</div>
+                  {:else}
+                    <section
+                      class="module"
+                      data-module={child.path}
+                      aria-labelledby="{uid}-{child.path}-heading"
+                    >
+                      <header class="module-head">
+                        <h3 id="{uid}-{child.path}-heading">{child.title}</h3>
+                        {#if child.description}<p>{child.description}</p>{/if}
+                      </header>
+                      {@render renderChild(child, "object")}
+                    </section>
+                  {/if}
+                {/each}
+              </div>
+            {:else}
+              <div class="row">
+                {#each node.children as child (child.path)}
+                  {@render renderChild(child, "object")}
+                {/each}
+              </div>
+            {/if}
+          {/snippet}
+
+          <!-- by kind: every number, a fader or a knob as its parameter says; the theme's own for any other -->
+          {#snippet number({ node, model })}
+            {@const param = paramFor(node)}
+            {#if param}
+              {@const value = model.get(node) ?? node.default ?? param.default}
+              {#if param.style === "knob"}
+                {@render dial(node, model, param, value, "medium")}
+              {:else}
+                {@render fader(node, model, param, value)}
+              {/if}
+            {:else}
+              {@const Fallback = theme.byKind?.number ?? defaults.component.byKind.number}
+              <Fallback {node} {model} />
+            {/if}
+          {/snippet}
+
+          <!-- by kind: every string. A const (a variant's tag) is not drawn, options are a row of buttons, and text is the theme's -->
+          {#snippet string(props)}
+            {@const { node, model } = props}
+            {#if node.const !== undefined}
+              <!-- the variant switch above already says which this is -->
+            {:else if node.options}
+              <div class="choice">
+                <span class="name" id="{uid}-{node.path}-label">{node.title}</span>
+                <div
+                  class="segmented"
+                  role="radiogroup"
+                  aria-labelledby="{uid}-{node.path}-label"
+                >
+                  {#each node.options as option (option)}
+                    <label class="segment" title={option}>
+                      <input
+                        type="radio"
+                        name="{uid}-{node.path}"
+                        value={option}
+                        checked={model.get(node) === option}
+                        disabled={!model.editable}
+                        onchange={model.on(node)}
+                      />
+                      {#if isWave(option)}
+                        <svg class="glyph" viewBox="0 0 24 14" aria-hidden="true">
+                          <path d={glyph(option)} />
+                        </svg>
+                        <span class="sr-only">{option}</span>
+                      {:else}
+                        {option}
+                      {/if}
+                    </label>
+                  {/each}
+                </div>
+              </div>
+            {:else}
+              {@const Fallback = theme.byKind?.string ?? defaults.component.byKind.string}
+              <Fallback {...props} />
+            {/if}
+          {/snippet}
+
+          <!-- by kind: every oneOf, a switch of its variants; switching fills in the new variant's defaults -->
+          {#snippet oneOf(props)}
+            {@render variantSwitch(props)}
+          {/snippet}
+
+          <!-- by path: the oscillators, a card each -->
+          {#snippet oscillators({ node, model, renderChild })}
+            {@const items = controls.array.items(node, model)}
+            <ol class="voices">
+              {#each items as _, i (i)}
+                <li class="voice">
+                  <div class="tag">
+                    <span>OSC {i + 1}</span>
+                    {#if model.editable && items.length > (node.minItems ?? 0)}
+                      <button
+                        type="button"
+                        class="mini"
+                        aria-label="Remove oscillator {i + 1}"
+                        onclick={() => controls.actions.splice(node, model, i)}>×</button
+                      >
+                    {/if}
+                  </div>
+                  {@render renderChild(controls.array.item(node, i), "array", i)}
+                </li>
+              {/each}
+            </ol>
+            {#if controls.array.addable(node, model)}
+              <button
+                type="button"
+                class="add"
+                onclick={() => controls.actions.push(node, model)}
+              >
+                <span aria-hidden="true">+</span> Add oscillator
+              </button>
+            {/if}
+          {/snippet}
+
+          <!-- by path: the envelope, as four upright faders -->
+          {#snippet envelope({ node, renderChild })}
+            <div class="faders">
+              {#each node.children as child (child.path)}
+                {@render renderChild(child, "object")}
+              {/each}
+            </div>
+          {/snippet}
+
+          <!-- by path: the filter, its response on a screen above the switch the oneOf renderer draws -->
+          {#snippet filter(props)}
+            <div class="scope">
+              <FilterDisplay filter={patch.filter} />
+            </div>
+            {@render variantSwitch(props)}
+          {/snippet}
+
+          <!-- by path: the effects, a pedal each, in the order the signal passes through them -->
+          {#snippet effects({ node, model, renderChild })}
+            {@const items = controls.array.items(node, model)}
+            {@const kinds = node.itemNode.kind === "oneOf" ? node.itemNode.variants : []}
+            {#if items.length === 0}
+              <p class="empty">No effects: the filter goes straight to the master.</p>
+            {/if}
+            <ol class="pedals">
+              {#each items as _, i (i)}
+                <li class="pedal">
+                  <div class="tag">
+                    <span>FX {i + 1}</span>
+                    {#if model.editable}
+                      <span class="tools">
+                        <button
+                          type="button"
+                          class="mini"
+                          aria-label="Move effect {i + 1} earlier"
+                          disabled={i === 0}
+                          onclick={() => model.set(node, moved(items, i, -1))}>◂</button
+                        >
+                        <button
+                          type="button"
+                          class="mini"
+                          aria-label="Move effect {i + 1} later"
+                          disabled={i === items.length - 1}
+                          onclick={() => model.set(node, moved(items, i, 1))}>▸</button
+                        >
+                        <button
+                          type="button"
+                          class="mini"
+                          aria-label="Remove effect {i + 1}"
+                          onclick={() => controls.actions.splice(node, model, i)}
+                          >×</button
+                        >
+                      </span>
+                    {/if}
+                  </div>
+                  {@render renderChild(controls.array.item(node, i), "array", i)}
+                </li>
+              {/each}
+            </ol>
+            {#if controls.array.addable(node, model)}
+              <div class="adders">
+                {#each kinds as kind, k (k)}
+                  <button
+                    type="button"
+                    class="add"
+                    onclick={() => model.get(node)?.push(controls.valueForNode(kind))}
+                  >
+                    <span aria-hidden="true">+</span><span class="sr-only">Add</span>
+                    {controls.variants.label(kind, k)}
+                  </button>
+                {/each}
+              </div>
+            {/if}
+          {/snippet}
+
+          <!-- by path: the master volume, the big knob, with a level meter that lights while notes sound -->
+          {#snippet volume({ node, model })}
+            {@const param = paramFor(node) ?? params.volume}
+            {@const value = model.get(node) ?? param.default}
+            {@const lit = held.size ? Math.round(value * 8) : 0}
+            <div class="master">
+              {@render dial(node, model, param, value, "large")}
+              <div class="meter" aria-hidden="true">
+                {#each Array.from({ length: 8 }, (_, i) => 7 - i) as i (i)}
+                  <span class="segment-led" class:lit={i < lit} class:hot={i >= 6}></span>
+                {/each}
+              </div>
+            </div>
+          {/snippet}
+        </Schema>
       {/await}
     </div>
 
