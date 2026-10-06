@@ -24,6 +24,7 @@
   <Schema root={node} {model} {theme} />
 {/await}
 
+
 <!-- minimal: the showcase in edit mode, and read-only -->
 {#snippet minimal(Showcase: typeof Self, themes: typeof all)}
   <Showcase theme={themes.minimal} />
@@ -41,4 +42,80 @@
   {@const model = new Model("edit", structuredClone(seed))}
   <Showcase theme={themes.minimal} {model} />
   {test((payload) => check(payload, model, "minimal"))}
+{/snippet}
+
+<!-- material: the showcase in edit mode, and read-only -->
+{#snippet material(Showcase: typeof Self, themes: typeof all)}
+  <Showcase theme={themes.material} />
+  <Showcase theme={themes.material} mode="view" />
+{/snippet}
+
+{#snippet materialEditsEveryKind(
+  Showcase: typeof Self,
+  themes: typeof all,
+  Model: typeof SchemaModel,
+  seed: typeof data,
+  check: typeof editsEveryKind,
+  test: Test,
+)}
+  {@const model = new Model("edit", structuredClone(seed))}
+  <Showcase theme={themes.material} {model} />
+  {test((payload) => check(payload, model, "material"))}
+{/snippet}
+
+<!-- paper: the showcase in edit mode, and read-only -->
+{#snippet paper(Showcase: typeof Self, themes: typeof all)}
+  <Showcase theme={themes.paper} />
+  <Showcase theme={themes.paper} mode="view" />
+{/snippet}
+
+{#snippet paperEditsEveryKind(
+  Showcase: typeof Self,
+  themes: typeof all,
+  Model: typeof SchemaModel,
+  seed: typeof data,
+  check: typeof editsEveryKind,
+  test: Test,
+)}
+  {@const model = new Model("edit", structuredClone(seed))}
+  <Showcase theme={themes.paper} {model} />
+  {test((payload) => check(payload, model, "paper"))}
+{/snippet}
+
+<!-- terminal: the showcase in edit mode, and read-only -->
+{#snippet terminal(Showcase: typeof Self, themes: typeof all)}
+  <Showcase theme={themes.terminal} />
+  <Showcase theme={themes.terminal} mode="view" />
+{/snippet}
+
+{#snippet terminalEditsEveryKind(
+  Showcase: typeof Self,
+  themes: typeof all,
+  Model: typeof SchemaModel,
+  seed: typeof data,
+  check: typeof editsEveryKind,
+  test: Test,
+)}
+  {@const model = new Model("edit", structuredClone(seed))}
+  <Showcase theme={themes.terminal} {model} />
+  {test((payload) => check(payload, model, "terminal"))}
+{/snippet}
+
+<!-- brutalist: the showcase in edit mode, and read-only -->
+{#snippet brutalist(Showcase: typeof Self, themes: typeof all)}
+  <Showcase theme={themes.brutalist} />
+  <Showcase theme={themes.brutalist} mode="view" />
+{/snippet}
+
+{#snippet brutalistEditsEveryKind(
+  Showcase: typeof Self,
+  themes: typeof all,
+  Model: typeof SchemaModel,
+  seed: typeof data,
+  check: typeof editsEveryKind,
+  test: Test,
+)}
+  {@const model = new Model("edit", structuredClone(seed))}
+  <Showcase theme={themes.brutalist} {model} />
+  {test((payload) => check(payload, model, "brutalist"))}
 {/snippet}
