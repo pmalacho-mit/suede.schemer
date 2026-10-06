@@ -67,17 +67,63 @@ declare namespace valueForNode {
 
   /** a string starts as its const, else its default, else empty */
   export type Strings = [
-    Expect<Invoke<typeof valueForNode, [node: { kind: "string"; path: "a"; const: "card" }]>, "=", "card">,
-    Expect<Invoke<typeof valueForNode, [node: { kind: "string"; path: "a"; default: "Ada" }]>, "=", "Ada">,
-    Expect<Invoke<typeof valueForNode, [node: { kind: "string"; path: "a" }]>, "=", "">,
+    Expect<
+      Invoke<
+        typeof valueForNode,
+        [node: { kind: "string"; path: "a"; const: "card" }]
+      >,
+      "=",
+      "card"
+    >,
+    Expect<
+      Invoke<
+        typeof valueForNode,
+        [node: { kind: "string"; path: "a"; default: "Ada" }]
+      >,
+      "=",
+      "Ada"
+    >,
+    Expect<
+      Invoke<typeof valueForNode, [node: { kind: "string"; path: "a" }]>,
+      "=",
+      ""
+    >,
   ];
 
   /** a number starts at its default, else 0, else the bound of its range nearest 0 */
   export type Numbers = [
-    Expect<Invoke<typeof valueForNode, [node: { kind: "number"; path: "n"; default: 7 }]>, "=", 7>,
-    Expect<Invoke<typeof valueForNode, [node: { kind: "number"; path: "n"; min: -2; max: 2 }]>, "=", 0>,
-    Expect<Invoke<typeof valueForNode, [node: { kind: "number"; path: "n"; min: 20 }]>, "=", 20>,
-    Expect<Invoke<typeof valueForNode, [node: { kind: "number"; path: "n"; max: -5 }]>, "=", -5>,
+    Expect<
+      Invoke<
+        typeof valueForNode,
+        [node: { kind: "number"; path: "n"; default: 7 }]
+      >,
+      "=",
+      7
+    >,
+    Expect<
+      Invoke<
+        typeof valueForNode,
+        [node: { kind: "number"; path: "n"; min: -2; max: 2 }]
+      >,
+      "=",
+      0
+    >,
+    Expect<
+      Invoke<
+        typeof valueForNode,
+        [node: { kind: "number"; path: "n"; min: 20 }]
+      >,
+      "=",
+      20
+    >,
+    Expect<
+      Invoke<
+        typeof valueForNode,
+        [node: { kind: "number"; path: "n"; max: -5 }]
+      >,
+      "=",
+      -5
+    >,
   ];
 
   /** an object starts with every field it requires, and none it doesn't */
@@ -122,7 +168,10 @@ declare namespace valueForNode {
 
   /** an enum starts unchosen */
   export type Enums = Expect<
-    Invoke<typeof valueForNode, [node: { kind: "enum"; path: "e"; options: [1, 2] }]>,
+    Invoke<
+      typeof valueForNode,
+      [node: { kind: "enum"; path: "e"; options: [1, 2] }]
+    >,
     "=",
     null
   >;
@@ -176,7 +225,9 @@ export const inputType = ({ format }: SpecificNode<"string">) =>
  * What an input takes from its schema beyond its value: its first example as
  * a placeholder, and a number's step (any, unless the schema gives one).
  */
-export const hints = (node: SpecificNode<"string"> | SpecificNode<"number">) => ({
+export const hints = (
+  node: SpecificNode<"string"> | SpecificNode<"number">,
+) => ({
   placeholder: node.examples?.length ? String(node.examples[0]) : undefined,
   ...(node.kind === "number" && { step: node.step ?? "any" }),
 });
