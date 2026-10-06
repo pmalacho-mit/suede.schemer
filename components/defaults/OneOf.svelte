@@ -42,7 +42,7 @@
 
 {#snippet rendersAVariantSelectorDropdown(
   OneOfField: typeof Self,
-  Field: typeof FieldComponent,
+  AnyField: typeof FieldComponent,
   Model: typeof SchemaModel,
   test: Test,
 )}
@@ -52,7 +52,7 @@
     parent: "object" | "array" | "tuple" | "oneOf",
     index?: number,
   )}
-    <Field {node} {model} {parent} {index} />
+    <AnyField {node} {model} {parent} {index} />
   {/snippet}
   <OneOfField
     node={{
@@ -89,7 +89,7 @@
 
 {#snippet optionLabelsInTheSelectorMatchSchemaTitles(
   OneOfField: typeof Self,
-  Field: typeof FieldComponent,
+  AnyField: typeof FieldComponent,
   Model: typeof SchemaModel,
   test: Test,
 )}
@@ -99,7 +99,7 @@
     parent: "object" | "array" | "tuple" | "oneOf",
     index?: number,
   )}
-    <Field {node} {model} {parent} {index} />
+    <AnyField {node} {model} {parent} {index} />
   {/snippet}
   <OneOfField
     node={{
@@ -125,7 +125,7 @@
 
 {#snippet selectingAVariantRendersItsFields(
   OneOfField: typeof Self,
-  Field: typeof FieldComponent,
+  AnyField: typeof FieldComponent,
   Model: typeof SchemaModel,
   test: Test,
 )}
@@ -135,7 +135,7 @@
     parent: "object" | "array" | "tuple" | "oneOf",
     index?: number,
   )}
-    <Field {node} {model} {parent} {index} />
+    <AnyField {node} {model} {parent} {index} />
   {/snippet}
   <OneOfField
     node={{
@@ -157,7 +157,7 @@
 
 {#snippet preSelectsTheVariantThatMatchesExistingData(
   OneOfField: typeof Self,
-  Field: typeof FieldComponent,
+  AnyField: typeof FieldComponent,
   Model: typeof SchemaModel,
   test: Test,
 )}
@@ -167,7 +167,7 @@
     parent: "object" | "array" | "tuple" | "oneOf",
     index?: number,
   )}
-    <Field {node} {model} {parent} {index} />
+    <AnyField {node} {model} {parent} {index} />
   {/snippet}
   <OneOfField
     node={{

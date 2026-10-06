@@ -23,7 +23,7 @@
 
 {#snippet eachTuplePositionIsRenderedWithItsConcretePath(
   TupleField: typeof Self,
-  Field: typeof FieldComponent,
+  AnyField: typeof FieldComponent,
   Model: typeof SchemaModel,
   test: Test,
 )}
@@ -33,7 +33,7 @@
     parent: "object" | "array" | "tuple" | "oneOf",
     index?: number,
   )}
-    <Field {node} {model} {parent} {index} />
+    <AnyField {node} {model} {parent} {index} />
   {/snippet}
   <TupleField
     node={{
@@ -55,7 +55,7 @@
 
 {#snippet tuplePositionsRenderInputsMatchingTheirSchemaTypes(
   TupleField: typeof Self,
-  Field: typeof FieldComponent,
+  AnyField: typeof FieldComponent,
   Model: typeof SchemaModel,
   test: Test,
 )}
@@ -65,7 +65,7 @@
     parent: "object" | "array" | "tuple" | "oneOf",
     index?: number,
   )}
-    <Field {node} {model} {parent} {index} />
+    <AnyField {node} {model} {parent} {index} />
   {/snippet}
   <TupleField
     node={{
@@ -93,7 +93,7 @@
 
 {#snippet noPushOrSpliceButtonsAreRenderedForTuples(
   TupleField: typeof Self,
-  Field: typeof FieldComponent,
+  AnyField: typeof FieldComponent,
   Model: typeof SchemaModel,
   test: Test,
 )}
@@ -103,7 +103,7 @@
     parent: "object" | "array" | "tuple" | "oneOf",
     index?: number,
   )}
-    <Field {node} {model} {parent} {index} />
+    <AnyField {node} {model} {parent} {index} />
   {/snippet}
   <TupleField
     node={{
@@ -126,7 +126,7 @@
 <!-- a tuple as an array's item: drawn through Field, which picks the array's component -->
 {#snippet tupleNestedInsideAnArrayResolvesItemPathsCorrectly(
   TupleField: typeof Self,
-  Field: typeof FieldComponent,
+  AnyField: typeof FieldComponent,
   Model: typeof SchemaModel,
   test: Test,
 )}
@@ -136,7 +136,7 @@
       [3, 4],
     ],
   })}
-  <Field
+  <AnyField
     node={{
       kind: "array",
       path: "points",

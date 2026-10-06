@@ -21,7 +21,7 @@
 
 {#snippet rendersAFieldsetWithItsTitleAsTheLegend(
   ObjectField: typeof Self,
-  Field: typeof FieldComponent,
+  AnyField: typeof FieldComponent,
   Model: typeof SchemaModel,
   test: Test,
 )}
@@ -31,7 +31,7 @@
     parent: "object" | "array" | "tuple" | "oneOf",
     index?: number,
   )}
-    <Field {node} {model} {parent} {index} />
+    <AnyField {node} {model} {parent} {index} />
   {/snippet}
   <ObjectField
     node={{
@@ -55,7 +55,7 @@
 
 {#snippet allPropertiesAreRenderedAsChildren(
   ObjectField: typeof Self,
-  Field: typeof FieldComponent,
+  AnyField: typeof FieldComponent,
   Model: typeof SchemaModel,
   test: Test,
 )}
@@ -65,7 +65,7 @@
     parent: "object" | "array" | "tuple" | "oneOf",
     index?: number,
   )}
-    <Field {node} {model} {parent} {index} />
+    <AnyField {node} {model} {parent} {index} />
   {/snippet}
   <ObjectField
     node={{
@@ -89,7 +89,7 @@
 
 {#snippet nestedObjectsRenderAsNestedFieldsetsWithCorrectPaths(
   ObjectField: typeof Self,
-  Field: typeof FieldComponent,
+  AnyField: typeof FieldComponent,
   Model: typeof SchemaModel,
   test: Test,
 )}
@@ -99,7 +99,7 @@
     parent: "object" | "array" | "tuple" | "oneOf",
     index?: number,
   )}
-    <Field {node} {model} {parent} {index} />
+    <AnyField {node} {model} {parent} {index} />
   {/snippet}
   <ObjectField
     node={{
