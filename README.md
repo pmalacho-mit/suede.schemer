@@ -104,9 +104,24 @@ ancestor:
 A theme may add knobs of its own, named `--schemer-<theme>-*`, and documents them in its
 `Container.svelte`.
 
-What draws a field, highest first: a renderer snippet passed to `<Schema>` (by path, like
-`address__city`, or by kind, like `string`), then the theme, then the defaults. So a theme
-never stops you replacing one field by hand.
+To match the active theme in a renderer of your own, read its colours rather than setting
+them: inside a theme's container, `--sc-<name>` (`--sc-accent`, `--sc-border`, …, one for each
+variable above) holds the value the theme draws with, whether its own or one you set.
+
+What draws a field, highest first: a renderer snippet passed to `<Schema>`, then the theme,
+then the defaults. So a theme never stops you replacing one field by hand. A renderer is
+named for what it draws, `.` in a path becoming `__`:
+
+| Name                                             | Draws                                             |
+| ------------------------------------------------ | ------------------------------------------------- |
+| `address__city`                                  | the field at that path                            |
+| `steps___item__degrees`                          | that field of every item of `steps` (`*` → `_item`) |
+| `push__steps`, `splice__steps`, `insert__steps`  | an array's add, remove and insert buttons          |
+| `string`, `object`, `oneOf`, …                   | every field of that kind not named otherwise       |
+
+A renderer is handed what a component is: `{ node, model, parent, index, renderChild }`. A
+`oneOf`'s path renderer draws the `oneOf` alone; its chosen variant (which has the same path)
+is drawn by kind.
 
 ### Writing a theme
 
@@ -114,7 +129,8 @@ A theme is an object with a `name` and any of `container`, `byKind`, `byAction` 
 `forArray` (see `Theme` and `Registry`). Whatever it leaves out, the defaults draw. Each
 component takes the same props as the default it replaces, and gets its behavior from
 `controls` (input types, read-only rules, enum mapping, the actions, array and variant
-logic) and `ArrayAction`, so a theme is markup and styles. `themes/minimal` is the reference.
+logic, with `controls.array.item(node, index)` for an array's item) and `ArrayAction`, so a
+theme is markup and styles. `themes/minimal` is the reference.
 
 This design follows the libraries that render forms from JSON Schema in other frameworks:
 [react-jsonschema-form](https://github.com/rjsf-team/react-jsonschema-form)'s themes (widgets,
