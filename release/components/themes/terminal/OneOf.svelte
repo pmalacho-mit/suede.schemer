@@ -11,18 +11,21 @@
 
 <Group {node} {model}>
   {#if model.editable}
+    <!-- a switch on the command line: `--type [ Card ▾ ]` -->
     <label class="selector" {...attributes.role("variant-selector")}>
-      <span {...attributes.role("name")}>Type</span>
-      <select
-        value={selected}
-        onchange={({ currentTarget: { value } }) =>
-          variants.select(node, model, value)}
-      >
-        <PlaceholderOption />
-        {#each node.variants as variant, i}
-          <option value={i}>{variants.label(variant, i)}</option>
-        {/each}
-      </select>
+      <span class="flag" {...attributes.role("name")}>Type</span>
+      <span class="control">
+        <select
+          value={selected}
+          onchange={({ currentTarget: { value } }) =>
+            variants.select(node, model, value)}
+        >
+          <PlaceholderOption />
+          {#each node.variants as variant, i}
+            <option value={i}>{variants.label(variant, i)}</option>
+          {/each}
+        </select>
+      </span>
     </label>
   {/if}
 
@@ -33,29 +36,76 @@
 
 <style>
   .selector {
-    display: inline-flex;
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 0.6em;
+    column-gap: 1ch;
     align-self: flex-start;
-    padding: 0.2em 0.2em 0.2em 0.75em;
-    font-size: 0.9em;
+    max-width: 100%;
+  }
+
+  /* `Type`, printed as a flag */
+  .flag {
     color: var(--sc-muted);
-    background: color-mix(in srgb, var(--sc-border) 45%, transparent);
-    border-radius: var(--sc-radius);
+    text-transform: lowercase;
+  }
+
+  .flag::before {
+    content: "--";
+    content: "--" / "";
+  }
+
+  .control {
+    display: flex;
+    align-items: center;
+    gap: 0.5ch;
+    color: var(--sc-muted);
+  }
+
+  .control::before {
+    content: "[";
+    content: "[" / "";
+  }
+
+  .control::after {
+    content: "▾ ]";
+    content: "▾ ]" / "";
+  }
+
+  .control:focus-within {
+    color: var(--sc-accent);
+    text-shadow: var(--sc-glow);
   }
 
   select {
-    height: 2em;
-    padding: 0 0.6em;
+    min-width: 12ch;
+    height: 1.9em;
+    margin: 0;
+    padding: 0 0.75ch;
     font: inherit;
-    color: var(--sc-text);
-    background: var(--sc-surface);
-    border: 1px solid var(--sc-border);
-    border-radius: calc(var(--sc-radius) * 0.75);
+    font-weight: 600;
+    color: var(--sc-accent);
+    text-shadow: none;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px dashed var(--sc-border);
+    border-radius: 0;
+    appearance: none;
+    cursor: pointer;
+  }
+
+  select:hover {
+    border-bottom-color: var(--sc-muted);
   }
 
   select:focus-visible {
-    outline: 2px solid var(--sc-accent);
-    outline-offset: 1px;
+    outline: none;
+    background: color-mix(in srgb, var(--sc-accent) 9%, transparent);
+    border-bottom: 1px solid var(--sc-accent);
+  }
+
+  option {
+    color: var(--sc-text);
+    background: var(--sc-surface);
   }
 </style>
