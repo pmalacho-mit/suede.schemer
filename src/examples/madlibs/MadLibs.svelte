@@ -136,7 +136,8 @@
   // svelte-ignore state_referenced_locally
   const luck = seed;
   /** a word for every blank, written straight into the model */
-  const surpriseMe = () => model.applyPartial(surprise(tale, luck + surprises++));
+  const surpriseMe = () =>
+    model.applyPartial(surprise(tale, luck + surprises++));
   /** this story, with no words */
   const clear = () => model.set({ path: "" }, { story: tale.id });
 
@@ -317,6 +318,181 @@
   </div>
 </div>
 
+<!-- the paper theme: a story filled in and read -->
+{#snippet paper(MadLibs: typeof Self, answers: typeof dragon)}
+  <MadLibs initial={answers} revealed seed={7} />
+{/snippet}
+
+<!-- the same app in the terminal theme, half done and still folded -->
+{#snippet terminal(
+  MadLibs: typeof Self,
+  answers: typeof horoscope,
+  all: typeof themes,
+)}
+  <MadLibs theme={all.terminal} initial={answers} seed={7} />
+{/snippet}
+
+<!-- picking another story swaps the form's blanks for that story's -->
+{#snippet pickingAStoryChangesTheBlanks(
+  MadLibs: typeof Self,
+  Status: typeof Sweater.Status,
+  pocket: { el: HTMLDivElement },
+  test: Test,
+)}
+  <Status {test} />
+  <div bind:this={pocket.el}><MadLibs /></div>
+  {test(async ({ expect, user, within, waitFor }) => {
+    const view = within(pocket.el);
+    await waitFor(() => expect(view.getByLabelText("Celebrity")).toBeTruthy());
+    expect(
+      pocket.el.querySelector('[data-path="dentist"] input'),
+    ).not.toBeNull();
+    expect(view.queryByLabelText("Silly noise")).toBeNull();
+
+    await user.click(view.getByRole("radio", { name: /Space Station Log/ }));
+
+    expect(view.getByLabelText("Silly noise")).toBeTruthy();
+    expect(pocket.el.querySelector('[data-path="dentist"]')).toBeNull();
+    expect(
+      pocket.el.querySelector('[data-path="presses"] input'),
+    ).not.toBeNull();
+    expect(
+      view.getByRole("heading", { name: "Space Station Log" }),
+    ).toBeTruthy();
+  })}
+{/snippet}
+
+<!-- each story keeps its words while you try another -->
+{#snippet aStoryKeepsItsWordsWhileYouTryAnother(
+  MadLibs: typeof Self,
+  Status: typeof Sweater.Status,
+  pocket: { el: HTMLDivElement },
+  test: Test,
+)}
+  <Status {test} />
+  <div bind:this={pocket.el}><MadLibs /></div>
+  {test(async ({ expect, user, within, waitFor }) => {
+    const view = within(pocket.el);
+    await waitFor(() => expect(view.getByLabelText("Noun")).toBeTruthy());
+    await user.type(view.getByLabelText("Noun"), "kazoo");
+    await user.click(view.getByRole("radio", { name: /Your Horoscope/ }));
+    expect((view.getByLabelText("Noun") as HTMLInputElement).value).toBe("");
+    await user.click(view.getByRole("radio", { name: /The Dragon's Dentist/ }));
+    expect((view.getByLabelText("Noun") as HTMLInputElement).value).toBe(
+      "kazoo",
+    );
+  })}
+{/snippet}
+
+<!-- a word typed into a blank appears, highlighted, in the revealed story -->
+{#snippet fillingABlankShowsItInTheRevealedStory(
+  MadLibs: typeof Self,
+  Status: typeof Sweater.Status,
+  read: typeof prose,
+  pocket: { el: HTMLDivElement },
+  test: Test,
+)}
+  <Status {test} />
+  <div bind:this={pocket.el}><MadLibs /></div>
+  {test(async ({ expect, user, within, waitFor }) => {
+    const view = within(pocket.el);
+    await waitFor(() => expect(view.getByLabelText("Adjective")).toBeTruthy());
+    const article = view.getByRole("article");
+    // folded: the story keeps its secrets
+    expect(article.querySelector("mark")).toBeNull();
+
+    await user.type(view.getByLabelText("Adjective"), "wobbly");
+    await user.click(view.getByRole("button", { name: "Reveal the story" }));
+
+    const word = article.querySelector('mark[data-key="adjective"]');
+    expect(word?.firstChild?.textContent).toBe("wobbly");
+    expect(word?.querySelector('[role="tooltip"]')?.textContent).toContain(
+      "adjective",
+    );
+    expect(read(article)).toContain("a wobbly old beast called Gerald");
+    // the blanks still empty print as their kind
+    expect(read(article)).toContain("Dr. ____ (celebrity) had polished");
+  })}
+{/snippet}
+
+<!-- "Surprise me" writes a word into every blank, through the model -->
+{#snippet surpriseMeFillsEveryBlank(
+  MadLibs: typeof Self,
+  Status: typeof Sweater.Status,
+  pocket: { el: HTMLDivElement },
+  test: Test,
+)}
+  <Status {test} />
+  <div bind:this={pocket.el}><MadLibs revealed seed={3} /></div>
+  {test(async ({ expect, user, within, waitFor }) => {
+    const view = within(pocket.el);
+    await waitFor(() => expect(view.getByLabelText("Celebrity")).toBeTruthy());
+    await user.click(view.getByRole("radio", { name: /Grandma's Casserole/ }));
+    await user.click(view.getByRole("button", { name: /Surprise me/ }));
+
+    const fields = pocket.el.querySelectorAll<
+      HTMLInputElement | HTMLSelectElement
+    >(".blank input, .blank select");
+    expect(fields.length).toBe(17);
+    for (const field of fields) expect(field.value).not.toBe("");
+    const article = view.getByRole("article");
+    expect(article.textContent).not.toContain("____");
+    expect(article.querySelectorAll("mark").length).toBe(18);
+    expect(view.getByText(/All 17 words in/)).toBeTruthy();
+  })}
+{/snippet}
+
+<!-- the story stays folded until revealed; peeking shows it only while held -->
+{#snippet peekingShowsTheStoryOnlyWhileHeld(
+  MadLibs: typeof Self,
+  Status: typeof Sweater.Status,
+  answers: typeof dragon,
+  pocket: { el: HTMLDivElement },
+  test: Test,
+)}
+  <Status {test} />
+  <div bind:this={pocket.el}><MadLibs initial={answers} /></div>
+  {test(async ({ expect, user, within }) => {
+    const view = within(pocket.el);
+    const article = view.getByRole("article");
+    const peek = view.getByRole("button", { name: /Peek/ });
+    expect(article.dataset.mode).toBe("folded");
+    expect(article.textContent).not.toContain("walrus");
+
+    await user.pointer({ keys: "[MouseLeft>]", target: peek });
+    expect(article.dataset.mode).toBe("open");
+    expect(article.textContent).toContain("walrus");
+
+    await user.pointer({ keys: "[/MouseLeft]", target: peek });
+    expect(article.dataset.mode).toBe("folded");
+  })}
+{/snippet}
+
+<!-- reading aloud streams the words in and ends on the whole story -->
+{#snippet readingAloudEndsOnTheWholeStory(
+  MadLibs: typeof Self,
+  Status: typeof Sweater.Status,
+  read: typeof prose,
+  answers: typeof dragon,
+  pocket: { el: HTMLDivElement },
+  test: Test,
+)}
+  <Status {test} />
+  <div bind:this={pocket.el}><MadLibs initial={answers} tick={1} /></div>
+  {test(async ({ expect, user, within, waitFor }) => {
+    const view = within(pocket.el);
+    const article = view.getByRole("article");
+    await user.click(view.getByRole("button", { name: "Read it aloud" }));
+    expect(article.dataset.mode).toBe("reading");
+    expect(view.getByRole("button", { name: "Skip to the end" })).toBeTruthy();
+    await waitFor(() => expect(article.dataset.mode).toBe("open"), {
+      timeout: 10_000,
+    });
+    expect(read(article)).toContain("Dr. Dolly Parton has since put up a sign");
+    expect(view.getByText("The End")).toBeTruthy();
+  })}
+{/snippet}
+
 <style>
   .madlibs {
     --desk: #efe6d6;
@@ -335,10 +511,10 @@
     box-sizing: border-box;
     min-height: 100%;
     padding: clamp(16px, 4vw, 40px);
-    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
+      serif;
     color: var(--desk-ink);
-    background:
-      radial-gradient(
+    background: radial-gradient(
         ellipse at 20% 0%,
         rgb(255 255 255 / 0.5),
         transparent 55%
@@ -355,8 +531,11 @@
       --button-edge: #54473b;
       --primary: #e0763f;
       --primary-ink: #1f1a16;
-      background:
-        radial-gradient(ellipse at 20% 0%, rgb(255 220 180 / 0.06), transparent 55%),
+      background: radial-gradient(
+          ellipse at 20% 0%,
+          rgb(255 220 180 / 0.06),
+          transparent 55%
+        ),
         var(--desk);
     }
   }
@@ -615,170 +794,3 @@
     }
   }
 </style>
-
-<!-- the paper theme: a story filled in and read -->
-{#snippet paper(MadLibs: typeof Self, answers: typeof dragon)}
-  <MadLibs initial={answers} revealed seed={7} />
-{/snippet}
-
-<!-- the same app in the terminal theme, half done and still folded -->
-{#snippet terminal(
-  MadLibs: typeof Self,
-  answers: typeof horoscope,
-  all: typeof themes,
-)}
-  <MadLibs theme={all.terminal} initial={answers} seed={7} />
-{/snippet}
-
-<!-- picking another story swaps the form's blanks for that story's -->
-{#snippet pickingAStoryChangesTheBlanks(
-  MadLibs: typeof Self,
-  Status: typeof Sweater.Status,
-  pocket: { el: HTMLDivElement },
-  test: Test,
-)}
-  <Status {test} />
-  <div bind:this={pocket.el}><MadLibs /></div>
-  {test(async ({ expect, user, within, waitFor }) => {
-    const view = within(pocket.el);
-    await waitFor(() => expect(view.getByLabelText("Celebrity")).toBeTruthy());
-    expect(pocket.el.querySelector('[data-path="dentist"] input')).not.toBeNull();
-    expect(view.queryByLabelText("Silly noise")).toBeNull();
-
-    await user.click(view.getByRole("radio", { name: /Space Station Log/ }));
-
-    expect(view.getByLabelText("Silly noise")).toBeTruthy();
-    expect(pocket.el.querySelector('[data-path="dentist"]')).toBeNull();
-    expect(pocket.el.querySelector('[data-path="presses"] input')).not.toBeNull();
-    expect(view.getByRole("heading", { name: "Space Station Log" })).toBeTruthy();
-  })}
-{/snippet}
-
-<!-- each story keeps its words while you try another -->
-{#snippet aStoryKeepsItsWordsWhileYouTryAnother(
-  MadLibs: typeof Self,
-  Status: typeof Sweater.Status,
-  pocket: { el: HTMLDivElement },
-  test: Test,
-)}
-  <Status {test} />
-  <div bind:this={pocket.el}><MadLibs /></div>
-  {test(async ({ expect, user, within, waitFor }) => {
-    const view = within(pocket.el);
-    await waitFor(() => expect(view.getByLabelText("Noun")).toBeTruthy());
-    await user.type(view.getByLabelText("Noun"), "kazoo");
-    await user.click(view.getByRole("radio", { name: /Your Horoscope/ }));
-    expect((view.getByLabelText("Noun") as HTMLInputElement).value).toBe("");
-    await user.click(view.getByRole("radio", { name: /The Dragon's Dentist/ }));
-    expect((view.getByLabelText("Noun") as HTMLInputElement).value).toBe("kazoo");
-  })}
-{/snippet}
-
-<!-- a word typed into a blank appears, highlighted, in the revealed story -->
-{#snippet fillingABlankShowsItInTheRevealedStory(
-  MadLibs: typeof Self,
-  Status: typeof Sweater.Status,
-  read: typeof prose,
-  pocket: { el: HTMLDivElement },
-  test: Test,
-)}
-  <Status {test} />
-  <div bind:this={pocket.el}><MadLibs /></div>
-  {test(async ({ expect, user, within, waitFor }) => {
-    const view = within(pocket.el);
-    await waitFor(() => expect(view.getByLabelText("Adjective")).toBeTruthy());
-    const article = view.getByRole("article");
-    // folded: the story keeps its secrets
-    expect(article.querySelector("mark")).toBeNull();
-
-    await user.type(view.getByLabelText("Adjective"), "wobbly");
-    await user.click(view.getByRole("button", { name: "Reveal the story" }));
-
-    const word = article.querySelector('mark[data-key="adjective"]');
-    expect(word?.firstChild?.textContent).toBe("wobbly");
-    expect(word?.querySelector('[role="tooltip"]')?.textContent).toContain("adjective");
-    expect(read(article)).toContain("a wobbly old beast called Gerald");
-    // the blanks still empty print as their kind
-    expect(read(article)).toContain("Dr. ____ (celebrity) had polished");
-  })}
-{/snippet}
-
-<!-- "Surprise me" writes a word into every blank, through the model -->
-{#snippet surpriseMeFillsEveryBlank(
-  MadLibs: typeof Self,
-  Status: typeof Sweater.Status,
-  pocket: { el: HTMLDivElement },
-  test: Test,
-)}
-  <Status {test} />
-  <div bind:this={pocket.el}><MadLibs revealed seed={3} /></div>
-  {test(async ({ expect, user, within, waitFor }) => {
-    const view = within(pocket.el);
-    await waitFor(() => expect(view.getByLabelText("Celebrity")).toBeTruthy());
-    await user.click(view.getByRole("radio", { name: /Grandma's Casserole/ }));
-    await user.click(view.getByRole("button", { name: /Surprise me/ }));
-
-    const fields = pocket.el.querySelectorAll<HTMLInputElement | HTMLSelectElement>(
-      ".blank input, .blank select",
-    );
-    expect(fields.length).toBe(17);
-    for (const field of fields) expect(field.value).not.toBe("");
-    const article = view.getByRole("article");
-    expect(article.textContent).not.toContain("____");
-    expect(article.querySelectorAll("mark").length).toBe(18);
-    expect(view.getByText(/All 17 words in/)).toBeTruthy();
-  })}
-{/snippet}
-
-<!-- the story stays folded until revealed; peeking shows it only while held -->
-{#snippet peekingShowsTheStoryOnlyWhileHeld(
-  MadLibs: typeof Self,
-  Status: typeof Sweater.Status,
-  answers: typeof dragon,
-  pocket: { el: HTMLDivElement },
-  test: Test,
-)}
-  <Status {test} />
-  <div bind:this={pocket.el}><MadLibs initial={answers} /></div>
-  {test(async ({ expect, user, within }) => {
-    const view = within(pocket.el);
-    const article = view.getByRole("article");
-    const peek = view.getByRole("button", { name: /Peek/ });
-    expect(article.dataset.mode).toBe("folded");
-    expect(article.textContent).not.toContain("walrus");
-
-    await user.pointer({ keys: "[MouseLeft>]", target: peek });
-    expect(article.dataset.mode).toBe("open");
-    expect(article.textContent).toContain("walrus");
-
-    await user.pointer({ keys: "[/MouseLeft]", target: peek });
-    expect(article.dataset.mode).toBe("folded");
-  })}
-{/snippet}
-
-<!-- reading aloud streams the words in and ends on the whole story -->
-{#snippet readingAloudEndsOnTheWholeStory(
-  MadLibs: typeof Self,
-  Status: typeof Sweater.Status,
-  read: typeof prose,
-  answers: typeof dragon,
-  pocket: { el: HTMLDivElement },
-  test: Test,
-)}
-  <Status {test} />
-  <div bind:this={pocket.el}><MadLibs initial={answers} tick={1} /></div>
-  {test(async ({ expect, user, within, waitFor }) => {
-    const view = within(pocket.el);
-    const article = view.getByRole("article");
-    await user.click(view.getByRole("button", { name: "Read it aloud" }));
-    expect(article.dataset.mode).toBe("reading");
-    expect(view.getByRole("button", { name: "Skip to the end" })).toBeTruthy();
-    await waitFor(() => expect(article.dataset.mode).toBe("open"), {
-      timeout: 10_000,
-    });
-    expect(read(article)).toContain(
-      "Dr. Dolly Parton has since put up a sign",
-    );
-    expect(view.getByText("The End")).toBeTruthy();
-  })}
-{/snippet}

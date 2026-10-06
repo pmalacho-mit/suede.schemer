@@ -425,7 +425,6 @@ declare namespace normalize {
   >;
 }
 
-
 /** The list with the item at `from` moved `by` places (an effect earlier or later in the chain); a move off either end changes nothing. */
 export const moved = <T>(list: readonly T[], from: number, by: number): T[] => {
   const to = from + by;
