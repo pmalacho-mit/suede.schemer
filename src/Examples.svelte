@@ -14,10 +14,16 @@
   class Parameters {
     rate = $state(300);
     size = $state(5);
+    /** a theme's name, or "" for the defaults */
+    theme = $state("");
+    /** a CSS colour for --schemer-accent, or "" for the theme's own */
+    accent = $state("");
 
     readonly tracking = URLParameterize<Parameters>(this, {
       rate: Number,
       size: Number,
+      theme: (query) => (typeof query === "string" ? query : ""),
+      accent: (query) => (typeof query === "string" ? query : ""),
     });
   }
 </script>
@@ -28,11 +34,11 @@
   // examples need no Test, but the DSL import is what marks this file as having them
   import type {} from "../suede.sweater-vest/dsl.import.meta.vitest.ts";
   import { flushSync, onDestroy } from "svelte";
-  import { Model, root, Schema } from "../release";
+  import { Model, root, Schema, themes } from "../release";
   import type { Mode } from "../release/models.svelte";
   import { streamSteps } from "./utils";
 
-  /** Every example under public/, rendered in `mode`; "stream" streams each one's data in. */
+  /** Every example under public/, rendered in `mode` and the chosen theme; "stream" streams each one's data in. */
   let { mode }: { mode: Mode } = $props();
 
   const parameters = new Parameters();
@@ -68,10 +74,32 @@
   };
 </script>
 
-{#if mode === "stream"}
-  <div
-    style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap;"
-  >
+<div
+  style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap;"
+>
+  <label>
+    theme
+    <select bind:value={parameters.theme}>
+      <option value="">defaults</option>
+      {#each Object.keys(themes.all) as name}
+        <option value={name}>{name}</option>
+      {/each}
+    </select>
+  </label>
+  {#if parameters.theme}
+    <label>
+      accent
+      <input
+        type="color"
+        value={parameters.accent || "#000000"}
+        oninput={({ currentTarget }) => (parameters.accent = currentTarget.value)}
+      />
+    </label>
+    {#if parameters.accent}
+      <button onclick={() => (parameters.accent = "")}>theme's accent</button>
+    {/if}
+  {/if}
+  {#if mode === "stream"}
     {@render parameter("rate", "stream rate (ms / step)", {
       min: 50,
       max: 5000,
@@ -82,17 +110,24 @@
       max: 20,
       step: 1,
     })}
-  </div>
-{/if}
+  {/if}
+</div>
 
-{#each examples as example (example)}
-  <section>
-    <h3>{example}</h3>
-    {#await load(example) then { model, node }}
-      <Schema root={node} {model} />
-    {/await}
-  </section>
-{/each}
+<!-- the accent is set on an ancestor: every theme reads --schemer-* from wherever it is set -->
+<div style:--schemer-accent={parameters.accent || undefined}>
+  {#each examples as example (example)}
+    <section>
+      <h3>{example}</h3>
+      {#await load(example) then { model, node }}
+        <Schema
+          root={node}
+          {model}
+          theme={themes.all[parameters.theme as keyof typeof themes.all]}
+        />
+      {/await}
+    </section>
+  {/each}
+</div>
 
 {#snippet parameter(
   key: "rate" | "size",
