@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# suede test libraries: extracted tests are scratch
+*.temp.ts
+*.vest.temp.svelte
