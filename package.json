@@ -1,0 +1,11 @@
+{
+  "name": "suede.schemer",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@types/json-schema": "^7.0.15"
+  },
+  "peerDependencies": {
+    "svelte": "^5.0.0"
+  }
+}
