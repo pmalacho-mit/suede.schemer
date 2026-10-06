@@ -112,28 +112,34 @@
   const registry = useRegistry();
   const components = $derived(registry());
 
-  const snippetKey = $derived(pathToSnippetName(node.path));
-  /** the path's key with every item and position a wildcard, as renderers for array items are named: "steps___item__degrees" */
-  const itemKey = $derived(
-    pathToSnippetName(node.path.replace(/(^|\.)\d+(?=\.|$)/g, "$1*")),
+  /**
+   * The names a renderer for this node goes by through its path, most specific
+   * first: the path ("steps__0__degrees"), then the path with every index a
+   * wildcard ("steps___item__degrees", for every item). A variant has its
+   * oneOf's path, so it goes by none: a path names the oneOf.
+   */
+  const pathNames = $derived(
+    parent === "oneOf"
+      ? []
+      : [
+          pathToSnippetName(node.path),
+          pathToSnippetName(node.path.replace(/(^|\.)\d+(?=\.|$)/g, "$1*")),
+        ],
   );
-  /** a variant has its oneOf's path: a renderer for that path is the oneOf's */
-  const byPath = $derived(parent !== "oneOf");
   const value = $derived(model.get(node));
   const resolved = $derived(value !== undefined && value !== null);
   const optedOut = $derived(node.optional && !resolved);
   const canOptOut = $derived(!optedOut && node.optional && model.editable);
   const editableArray = $derived(node.kind === "array" && model.editable);
 
-  const renderer = <T extends Field.RenderKeys | Field.ArrayActions>(
-    prefix: T | "" = "",
-  ) =>
-    ((byPath
-      ? (renderers?.[prefix + snippetKey] ?? // this path: "steps__0__degrees"
-        renderers?.[prefix + itemKey]) // any item's: "steps___item__degrees"
-      : undefined) ??
-      renderers?.[prefix ? prefix : node.kind] ?? // every node of the kind
-      null) as Snippet<[Field.Props<any>]> | null;
+  /** The renderer given for this node (or one of its actions): the first of its names, by path then by kind. */
+  const renderer = (prefix: Field.RenderKeys | Field.ArrayActions = "") => {
+    const names = [...pathNames.map((name) => prefix + name), prefix || node.kind];
+    const name = names.find((name) => renderers?.[name]);
+    return (name ? renderers![name] : null) as Snippet<
+      [Field.Props<any>]
+    > | null;
+  };
 
   const nodeRenderer = $derived(!optedOut ? renderer() : null);
   const optInRenderer = $derived(
