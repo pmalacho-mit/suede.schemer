@@ -123,7 +123,9 @@
   />
   {test(async ({ expect, screen }) => {
     expect(screen.getAllByRole("group").length).toBeGreaterThanOrEqual(2);
-    expect(document.querySelector('[data-path="address.street"]')).not.toBeNull();
+    expect(
+      document.querySelector('[data-path="address.street"]'),
+    ).not.toBeNull();
     expect(document.querySelector('[data-path="address.city"]')).not.toBeNull();
   })}
 {/snippet}

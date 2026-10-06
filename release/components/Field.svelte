@@ -211,7 +211,9 @@
   <Field node={{ kind: "string", path: "nickname", optional: true }} {model} />
   {test(async ({ expect, user }) => {
     await user.click(document.querySelector('[data-action="opt-in"]')!);
-    expect(document.querySelector('[data-path="nickname"] input')).not.toBeNull();
+    expect(
+      document.querySelector('[data-path="nickname"] input'),
+    ).not.toBeNull();
   })}
 {/snippet}
 

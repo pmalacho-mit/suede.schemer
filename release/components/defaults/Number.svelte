@@ -57,7 +57,10 @@
   test: Test,
 )}
   {@const model = new Model("edit", { rating: 5 })}
-  <NumberField node={{ kind: "number", path: "rating", min: 1, max: 10 }} {model} />
+  <NumberField
+    node={{ kind: "number", path: "rating", min: 1, max: 10 }}
+    {model}
+  />
   {test(async ({ expect, screen }) => {
     const input = screen.getByLabelText("rating") as HTMLInputElement;
     expect(Number(input.min)).toBe(1);
@@ -71,9 +74,14 @@
   test: Test,
 )}
   {@const model = new Model("edit", { priority: 1 })}
-  <NumberField node={{ kind: "number", path: "priority", options: [1, 2, 3] }} {model} />
+  <NumberField
+    node={{ kind: "number", path: "priority", options: [1, 2, 3] }}
+    {model}
+  />
   {test(async ({ expect, screen }) => {
     const select = screen.getByRole("combobox") as HTMLSelectElement;
-    expect(Array.from(select.options).filter((o) => !o.disabled)).toHaveLength(3);
+    expect(Array.from(select.options).filter((o) => !o.disabled)).toHaveLength(
+      3,
+    );
   })}
 {/snippet}
