@@ -47,7 +47,7 @@
 
 {#snippet existingItemsAreRendered(
   ArrayField: typeof Self,
-  Field: typeof FieldComponent,
+  AnyField: typeof FieldComponent,
   Model: typeof SchemaModel,
   test: Test,
 )}
@@ -57,7 +57,7 @@
     parent: "object" | "array" | "tuple" | "oneOf",
     index?: number,
   )}
-    <Field {node} {model} {parent} {index} />
+    <AnyField {node} {model} {parent} {index} />
   {/snippet}
   <ArrayField
     node={{ kind: "array", path: "tags", itemNode: { kind: "string", path: "tags.*" } }}
@@ -74,7 +74,7 @@
 
 {#snippet pushButtonAddsANewItem(
   ArrayField: typeof Self,
-  Field: typeof FieldComponent,
+  AnyField: typeof FieldComponent,
   Model: typeof SchemaModel,
   test: Test,
 )}
@@ -84,7 +84,7 @@
     parent: "object" | "array" | "tuple" | "oneOf",
     index?: number,
   )}
-    <Field {node} {model} {parent} {index} />
+    <AnyField {node} {model} {parent} {index} />
   {/snippet}
   <ArrayField
     node={{ kind: "array", path: "tags", itemNode: { kind: "string", path: "tags.*" } }}
@@ -102,7 +102,7 @@
 
 {#snippet spliceButtonRemovesAnItem(
   ArrayField: typeof Self,
-  Field: typeof FieldComponent,
+  AnyField: typeof FieldComponent,
   Model: typeof SchemaModel,
   test: Test,
 )}
@@ -112,7 +112,7 @@
     parent: "object" | "array" | "tuple" | "oneOf",
     index?: number,
   )}
-    <Field {node} {model} {parent} {index} />
+    <AnyField {node} {model} {parent} {index} />
   {/snippet}
   <ArrayField
     node={{ kind: "array", path: "tags", itemNode: { kind: "string", path: "tags.*" } }}
@@ -130,7 +130,7 @@
 
 {#snippet pushButtonIsAbsentWhenMaxItemsIsReached(
   ArrayField: typeof Self,
-  Field: typeof FieldComponent,
+  AnyField: typeof FieldComponent,
   Model: typeof SchemaModel,
   test: Test,
 )}
@@ -140,7 +140,7 @@
     parent: "object" | "array" | "tuple" | "oneOf",
     index?: number,
   )}
-    <Field {node} {model} {parent} {index} />
+    <AnyField {node} {model} {parent} {index} />
   {/snippet}
   <ArrayField
     node={{
@@ -162,7 +162,7 @@
 
 {#snippet arrayOfObjectsRendersFieldsetsWithCorrectChildPaths(
   ArrayField: typeof Self,
-  Field: typeof FieldComponent,
+  AnyField: typeof FieldComponent,
   Model: typeof SchemaModel,
   test: Test,
 )}
@@ -177,7 +177,7 @@
     parent: "object" | "array" | "tuple" | "oneOf",
     index?: number,
   )}
-    <Field {node} {model} {parent} {index} />
+    <AnyField {node} {model} {parent} {index} />
   {/snippet}
   <ArrayField
     node={{
