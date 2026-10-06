@@ -3,4 +3,4 @@
 [subrepo]
 	remote = https://github.com/pmalacho-mit/suede.sweater-vest
 	branch = release
-	commit = dccf764732dc7d34aef36f1b78128c440782d74d
+	commit = ece6a15136891f3534c416b4c3c3413e4b775b5e
