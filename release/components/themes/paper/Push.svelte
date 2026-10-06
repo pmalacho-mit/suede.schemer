@@ -6,6 +6,20 @@
   let { node, model }: Field.ArrayActionProps = $props();
 </script>
 
-<Button {node} action="push" variant="outline" onclick={() => actions.push(node, model)}>
-  <span aria-hidden="true">+</span> Add item
-</Button>
+<div class="push">
+  <Button {node} action="push" onclick={() => actions.push(node, model)}>
+    <span class="mark" aria-hidden="true">+</span> add an entry
+  </Button>
+</div>
+
+<style>
+  .push {
+    align-self: flex-start;
+    margin-left: calc(2.1em - 0.15em);
+  }
+
+  .mark {
+    font-style: normal;
+    color: var(--sc-accent);
+  }
+</style>

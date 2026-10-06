@@ -6,16 +6,25 @@
 </script>
 
 <p class="unknown">
-  <strong>{title(node, model)}</strong> can't be shown: its schema has no type this form understands.
+  <span class="name">{title(node, model)}</span> can't be shown: its schema has no
+  type this form understands.
 </p>
 
 <style>
+  /* an editor's marginal note */
   .unknown {
     margin: 0;
-    padding: 0.6em 0.85em;
-    font-size: 0.9em;
+    padding: 0.15em 0 0.15em 0.9em;
+    font-size: 0.92em;
+    font-style: italic;
     color: var(--sc-muted);
-    border: 1px dashed var(--sc-border);
-    border-radius: var(--sc-radius);
+    border-left: 2px solid color-mix(in srgb, var(--sc-accent) 55%, transparent);
+  }
+
+  .name {
+    font-style: normal;
+    font-variant-caps: all-small-caps;
+    letter-spacing: 0.08em;
+    color: var(--sc-text);
   }
 </style>

@@ -2,13 +2,13 @@
   import type { Field } from "../../Field.svelte";
   import Label from "./Label.svelte";
 
-  let { node, model }: Field.Props<"boolean"> = $props();
+  let { node, model, parent }: Field.Props<"boolean"> = $props();
 </script>
 
-<Label {node} {model} inline>
+<Label {node} {model} check item={parent === "array"}>
   <input
     type="checkbox"
-    class="switch"
+    class="box"
     checked={model.get(node) ?? false}
     disabled={!model.editable}
     onchange={({ currentTarget: { checked } }) => model.set(node, checked)}
@@ -16,52 +16,60 @@
 </Label>
 
 <style>
-  /* a checkbox drawn as a switch: still a checkbox to forms and screen readers */
-  .switch {
+  /* a small printed square, ticked in ink: still a checkbox to forms and screen readers */
+  .box {
     appearance: none;
     position: relative;
     flex: none;
-    width: 2.3em;
-    height: 1.3em;
+    box-sizing: border-box;
+    width: 1.08em;
+    height: 1.08em;
     margin: 0;
-    border-radius: 999px;
-    background: var(--sc-border);
+    background: var(--sc-surface);
+    border: 1.25px solid var(--sc-text);
+    border-radius: 1px;
     cursor: pointer;
-    transition: background 150ms;
   }
 
-  .switch::after {
+  .box::after {
     content: "";
     position: absolute;
-    top: 0.15em;
-    left: 0.15em;
-    width: 1em;
-    height: 1em;
-    border-radius: 50%;
-    background: var(--sc-background);
-    box-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
-    transition: transform 150ms;
+    left: 0.33em;
+    top: 0.05em;
+    width: 0.26em;
+    height: 0.6em;
+    border: solid var(--sc-text);
+    border-width: 0 0.13em 0.13em 0;
+    transform: rotate(42deg) scale(0);
+    transform-origin: 60% 60%;
   }
 
-  .switch:checked {
-    background: var(--sc-accent);
+  .box:checked::after {
+    transform: rotate(42deg) scale(1);
   }
 
-  .switch:checked::after {
-    transform: translateX(1em);
+  .box:enabled:hover {
+    border-color: var(--sc-accent);
   }
 
-  .switch:focus-visible {
-    outline: 2px solid var(--sc-accent);
+  .box:focus-visible {
+    outline: 1.5px solid var(--sc-accent);
     outline-offset: 2px;
   }
 
-  .switch:disabled {
+  .box:disabled {
     cursor: default;
   }
 
-  :global([data-mode="edit"]) .switch:disabled {
+  :global([data-mode="edit"]) .box:disabled {
     cursor: not-allowed;
-    opacity: 0.55;
+    border-style: dotted;
+    opacity: 0.6;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .box::after {
+      transition: transform 120ms ease-out;
+    }
   }
 </style>

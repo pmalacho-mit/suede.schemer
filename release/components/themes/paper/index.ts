@@ -15,7 +15,7 @@ import Push from "./Push.svelte";
 import Splice from "./Splice.svelte";
 import Insert from "./Insert.svelte";
 
-/** PLACEHOLDER: a copy of minimal, to be redrawn. */
+/** A printed form: off-white paper, serif ink, small-caps labels on ruled lines, hairline section rules and a terracotta accent; light only. */
 export default {
   name: "paper",
   container: Container,
