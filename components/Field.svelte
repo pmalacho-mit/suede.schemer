@@ -29,6 +29,12 @@
 
     export type RenderActions = "opt_in__" | "opt_out__" | "opted_out__";
 
+    /** The actions drawn by a component (an opted-out field in view mode draws nothing by default). */
+    export type ComponentActions = Exclude<RenderActions, "opted_out__">;
+
+    /** An array's item actions. */
+    export type ArrayAction = "push" | "splice" | "insert";
+
     export type RenderKeys = "" | RenderActions;
 
     type RendererByPath<TData extends Data = Data> = {
@@ -87,11 +93,14 @@
 
 <script lang="ts">
   import { pathToSnippetName, type PathToSnippetName } from "./naming.js";
-  import { component } from "./defaults";
+  import { useRegistry } from "./registry.js";
   import Self from "./Field.svelte";
   import { attributes } from "./defaults/common.js";
 
   let { node, model, renderers, parent, index }: Props = $props();
+
+  const registry = useRegistry();
+  const components = $derived(registry());
 
   const snippetKey = $derived(pathToSnippetName(node.path));
   const value = $derived(model.get(node));
@@ -144,7 +153,7 @@
     {:else if optInRenderer}
       {@render optInRenderer(rendererArgs!)}
     {:else}
-      {@const Component = component.byAction["opt_in__"]}
+      {@const Component = components.byAction["opt_in__"]}
       <Component {node} {model} />
     {/if}
   {:else}
@@ -152,7 +161,7 @@
       {#if optOutRenderer}
         {@render optOutRenderer(rendererArgs!)}
       {:else}
-        {@const Component = component.byAction["opt_out__"]}
+        {@const Component = components.byAction["opt_out__"]}
         <Component {node} {model} />
       {/if}
     {/if}
@@ -160,7 +169,7 @@
     {#if nodeRenderer}
       {@render nodeRenderer(rendererArgs!)}
     {:else}
-      {@const Component = component.byKind[node.kind] as Component<
+      {@const Component = components.byKind[node.kind] as Component<
         Field.Props<any>
       >}
       <Component

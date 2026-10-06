@@ -23,6 +23,13 @@
       {/each}
     </select>
   {:else}
-    <input type="number" {disabled} {...node} {value} oninput={on} />
+    <input
+      type="number"
+      min={node.min}
+      max={node.max}
+      {disabled}
+      {value}
+      oninput={on}
+    />
   {/if}
 </label>
