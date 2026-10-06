@@ -21,8 +21,18 @@ export const schema: JSONSchema7 = {
       properties: {
         street: { type: "string", title: "Street" },
         city: { type: "string", title: "City" },
+        coordinates: {
+          type: "object",
+          title: "Coordinates",
+          description: "A group inside a group.",
+          properties: {
+            latitude: { type: "number", title: "Latitude", minimum: -90, maximum: 90 },
+            longitude: { type: "number", title: "Longitude", minimum: -180, maximum: 180 },
+          },
+          required: ["latitude", "longitude"],
+        },
       },
-      required: ["street", "city"],
+      required: ["street", "city", "coordinates"],
     },
     topics: {
       type: "array",
@@ -102,7 +112,11 @@ export const data = {
   guests: 1,
   workshop: true,
   shirt: "M",
-  address: { street: "12 St James's Square", city: "London" },
+  address: {
+    street: "12 St James's Square",
+    city: "London",
+    coordinates: { latitude: 51.5074, longitude: -0.1357 },
+  },
   topics: ["Runes", "Snippets"],
   sessions: [{ title: "Notes on the Analytical Engine", minutes: 45 }],
   seat: ["F", 12],

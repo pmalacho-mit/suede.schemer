@@ -126,6 +126,8 @@
     optedOut && !model.editable ? renderer("opted_out__") : null,
   );
   const optOutRenderer = $derived(canOptOut ? renderer("opt_out__") : null);
+  /** an absent optional field outside edit mode, with nothing to say so: draws nothing at all */
+  const absent = $derived(optedOut && !model.editable && !optedOutRenderer);
 
   const rendererArgs = $derived(
     nodeRenderer || optInRenderer || optedOutRenderer || optOutRenderer
@@ -146,12 +148,11 @@
   <Child node={childNode} {model} {renderers} {parent} {index} />
 {/snippet}
 
+{#if !absent}
 <div {...attributes(node)} data-index={index}>
   {#if optedOut}
-    {#if !model.editable}
-      {#if optedOutRenderer}
-        {@render optedOutRenderer(rendererArgs!)}
-      {/if}
+    {#if optedOutRenderer}
+      {@render optedOutRenderer(rendererArgs!)}
     {:else if optInRenderer}
       {@render optInRenderer(rendererArgs!)}
     {:else}
@@ -187,6 +188,7 @@
     {/if}
   {/if}
 </div>
+{/if}
 
 <!-- an optional field (one its object does not require) can be opted in and out -->
 {#snippet absentOptionalFieldShowsOptInNotAnInput(
@@ -253,5 +255,17 @@
     await user.click(document.querySelector('[data-action="opt-out"]')!);
     expect(model.get({ path: "nickname" })).toBeUndefined();
     expect(document.querySelector('[data-action="opt-in"]')).not.toBeNull();
+  })}
+{/snippet}
+
+{#snippet anAbsentOptionalFieldDrawsNothingOutsideEditMode(
+  Field: typeof Self,
+  Model: typeof SchemaModel,
+  test: Test,
+)}
+  {@const model = new Model("view", {})}
+  <Field node={{ kind: "string", path: "nickname", optional: true }} {model} />
+  {test(async ({ expect }) => {
+    expect(document.querySelector('[data-path="nickname"]')).toBeNull();
   })}
 {/snippet}
