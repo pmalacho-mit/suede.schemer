@@ -2,19 +2,24 @@
   import type { Snippet } from "svelte";
   import type { RenderNode } from "../../../types.js";
 
-  /** Every action button: `data-action` names it, for tests and styles alike. */
+  /**
+   * Every action button: understated text, as a printed form would set an
+   * instruction, turning to the accent on hover. `data-action` names it, for
+   * tests and styles alike.
+   */
   let {
     node,
     action,
     detail,
-    variant = "ghost",
+    variant = "italic",
     onclick,
     children,
   }: {
     node: RenderNode;
     action: "opt-in" | "opt-out" | "push" | "splice" | "insert";
     detail?: string;
-    variant?: "ghost" | "outline" | "icon" | "danger";
+    /** italic for instructions, caps to match the labels */
+    variant?: "italic" | "caps";
     onclick: () => void;
     children: Snippet;
   } = $props();
@@ -33,55 +38,50 @@
 <style>
   button {
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.35em;
-    height: 2.15em;
-    padding: 0 0.8em;
+    align-items: baseline;
+    gap: 0.3em;
+    min-height: 1.9em;
+    margin: 0;
+    padding: 0.2em 0.15em;
     font: inherit;
-    font-size: 0.9em;
-    font-weight: 500;
-    color: var(--sc-text);
+    line-height: 1.3;
+    color: var(--sc-muted);
     background: transparent;
-    border: 1px solid transparent;
+    border: 0;
     border-radius: var(--sc-radius);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
     cursor: pointer;
-    transition:
-      background 120ms,
-      border-color 120ms,
-      color 120ms;
+  }
+
+  .italic {
+    font-style: italic;
+  }
+
+  .caps {
+    font-variant-caps: all-small-caps;
+    letter-spacing: 0.065em;
+    font-size: 1.14em;
   }
 
   button:hover {
-    background: color-mix(in srgb, var(--sc-border) 55%, transparent);
+    color: var(--sc-accent);
+    text-decoration-color: currentColor;
   }
 
   button:focus-visible {
-    outline: 2px solid var(--sc-accent);
-    outline-offset: 2px;
+    outline: 1.5px solid var(--sc-accent);
+    outline-offset: 1px;
+    color: var(--sc-accent);
   }
 
-  .outline {
-    align-self: flex-start;
-    border-color: var(--sc-border);
-    border-style: dashed;
-    color: var(--sc-muted);
-  }
-
-  .outline:hover {
-    color: var(--sc-text);
-    border-style: solid;
-  }
-
-  .icon {
-    width: 2.15em;
-    padding: 0;
-    color: var(--sc-muted);
-  }
-
-  .danger:hover,
-  .icon:hover {
-    color: var(--sc-danger);
-    background: color-mix(in srgb, var(--sc-danger) 10%, transparent);
+  @media (prefers-reduced-motion: no-preference) {
+    button {
+      transition:
+        color 120ms ease,
+        text-decoration-color 120ms ease;
+    }
   }
 </style>

@@ -4,13 +4,13 @@
   import PlaceholderOption from "../../defaults/PlaceholderOption.svelte";
   import Label from "./Label.svelte";
 
-  let { node, model }: Field.Props<"string"> = $props();
+  let { node, model, parent }: Field.Props<"string"> = $props();
 
   const value = $derived(stringValue(node, model));
   const disabled = $derived(readonly(node, model));
 </script>
 
-<Label {node} {model}>
+<Label {node} {model} item={parent === "array"}>
   {#if node.options}
     <select {value} {disabled} onchange={model.on(node)}>
       <PlaceholderOption />

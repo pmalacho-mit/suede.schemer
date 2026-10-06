@@ -3,12 +3,12 @@
   import PlaceholderOption from "../../defaults/PlaceholderOption.svelte";
   import Label from "./Label.svelte";
 
-  let { node, model }: Field.Props<"number"> = $props();
+  let { node, model, parent }: Field.Props<"number"> = $props();
 
   const on = $derived(model.on(node, Number));
 </script>
 
-<Label {node} {model}>
+<Label {node} {model} item={parent === "array"}>
   {#if node.options}
     <select value={model.get(node)} disabled={!model.editable} onchange={on}>
       <PlaceholderOption />

@@ -4,10 +4,10 @@
   import PlaceholderOption from "../../defaults/PlaceholderOption.svelte";
   import Label from "./Label.svelte";
 
-  let { node, model }: Field.Props<"enum"> = $props();
+  let { node, model, parent }: Field.Props<"enum"> = $props();
 </script>
 
-<Label {node} {model}>
+<Label {node} {model} item={parent === "array"}>
   <select
     value={model.get(node)}
     disabled={!model.editable}

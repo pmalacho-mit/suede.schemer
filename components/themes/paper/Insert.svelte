@@ -6,30 +6,28 @@
   let { node, model, index }: Field.ArrayActionProps = $props();
 </script>
 
-<div class="pill">
+<!-- a proofreader's caret on the seam above an item: insert here -->
+<span class="caret">
   <Button
     {node}
     action="insert"
     detail={`at ${index}`}
     onclick={() => actions.insert(node, model, index)}
   >
-    <span aria-hidden="true">+</span>
+    <span class="mark" aria-hidden="true">+</span> insert
   </Button>
-</div>
+</span>
 
 <style>
-  .pill {
+  .caret {
+    display: inline-block;
+    padding: 0 0.3em;
     font-size: 0.8em;
     background: var(--sc-background);
-    border: 1px solid var(--sc-border);
-    border-radius: 999px;
-    box-shadow: 0 1px 3px rgb(0 0 0 / 0.08);
   }
 
-  .pill :global(button) {
-    height: 1.8em;
-    width: 1.8em;
-    padding: 0;
-    border-radius: 999px;
+  .mark {
+    font-style: normal;
+    color: var(--sc-accent);
   }
 </style>
