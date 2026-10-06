@@ -206,6 +206,9 @@ export const editsEveryKind = async (
     within("payment", '[data-role="variant-selector"] select'),
     "Invoice",
   );
-  expect(model.get({ path: "payment" })).toEqual({ method: "invoice" });
+  expect(model.get({ path: "payment" })).toEqual({
+    method: "invoice",
+    company: "",
+  });
   expect(await screen.findByLabelText("Company")).toBeDefined();
 };

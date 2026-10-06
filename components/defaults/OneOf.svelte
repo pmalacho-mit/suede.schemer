@@ -234,3 +234,73 @@
     }),
   )}
 {/snippet}
+
+<!-- a new variant starts with its defaults, keeping what the old one had for a field both have -->
+{#snippet switchingVariantsKeepsTheFieldsTheyShare(
+  OneOfField: typeof Self,
+  AnyField: typeof FieldComponent,
+  Model: typeof SchemaModel,
+  themes: typeof acrossThemes,
+  test: Test,
+)}
+  {@const variants = themes.variants(
+    OneOfField,
+    () => new Model("edit", { filter: { type: "lowpass", cutoff: 800 } }),
+    "oneOf",
+  )}
+  <themes.Across {variants}>
+    {#snippet variant({ Component, model })}
+      {#snippet child(
+        node: Node,
+        parent: "object" | "array" | "tuple" | "oneOf",
+        index?: number,
+      )}
+        <AnyField {node} {model} {parent} {index} />
+      {/snippet}
+      <Component
+        node={{
+          kind: "oneOf",
+          path: "filter",
+          variants: [
+            {
+              kind: "object",
+              path: "filter",
+              title: "Low-pass",
+              children: [
+                { kind: "string", path: "filter.type", const: "lowpass" },
+                { kind: "number", path: "filter.cutoff" },
+              ],
+              required: new Set(["type", "cutoff"]),
+            },
+            {
+              kind: "object",
+              path: "filter",
+              title: "High-pass",
+              children: [
+                { kind: "string", path: "filter.type", const: "highpass" },
+                { kind: "number", path: "filter.cutoff" },
+                { kind: "number", path: "filter.resonance", default: 1 },
+              ],
+              required: new Set(["type", "cutoff", "resonance"]),
+            },
+          ],
+        }}
+        {model}
+        renderChild={child}
+      />
+    {/snippet}
+  </themes.Across>
+  {test(async ({ expect, user }) =>
+    themes.each(variants, async ({ element, model }) => {
+      await user.selectOptions(
+        element.querySelector('[data-role="variant-selector"] select')!,
+        "High-pass",
+      );
+      expect(model.get({ path: "filter" })).toEqual({
+        type: "highpass",
+        cutoff: 800,
+        resonance: 1,
+      });
+    }),
+  )}
+{/snippet}
