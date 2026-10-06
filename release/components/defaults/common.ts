@@ -1,6 +1,11 @@
 import type { Model } from "../..";
-import type { Kind, RenderNode, SpecificNode } from "../../types";
+import type { RenderNode, SpecificNode } from "../../types";
 import type { SchemaModel } from "../../models.svelte.js";
+import type {
+  Construct,
+  Expect,
+  Invoke,
+} from "../../../suede.nests.schemer/dsl.import.meta.vitest.ts";
 import { basename } from "../naming.js";
 
 export const is = {
@@ -8,44 +13,120 @@ export const is = {
     node.kind === "string" && node.const !== undefined,
 };
 
-/** Extracts const-valued string children as a key→value map, keyed by field basename. */
+/** A field's key in its object: the last segment of its path. */
+const keyOf = ({ path }: RenderNode) => path.slice(path.lastIndexOf(".") + 1);
+
+/** Extracts const-valued string children as a key→value map, keyed by field name. */
 export const constDiscriminators = (
   children: SpecificNode<"object">["children"],
 ): Record<string, unknown> => {
   const result: Record<string, unknown> = {};
   for (const child of children)
-    if (is.const(child)) result[basename(child.path)] = child.const;
+    if (is.const(child)) result[keyOf(child)] = child.const;
   return result;
 };
 
-type Defaultable = Exclude<Kind, "oneOf" | "enum" | "unknown">;
-
-export const defaults = {
-  string: "",
-  number: 0,
-  boolean: false,
-  get object() {
-    return {};
-  },
-  array: [],
-  tuple: [],
-} satisfies Record<Defaultable, unknown>;
-
-export const defaultable = (
-  node: RenderNode,
-): node is RenderNode & { kind: Defaultable } => node.kind in defaults;
-
+/**
+ * The value a new field starts with (opted in, pushed onto an array, or a
+ * variant just chosen): its schema's `const` or `default`, else the plainest
+ * value of its kind. An object starts with every field it requires, a oneOf
+ * as its first variant, an enum unchosen (null).
+ */
 export const valueForNode = (node: RenderNode): unknown => {
-  if (node.kind === "array") {
-    const itemDefault = valueForNode(node.itemNode);
-    return itemDefault !== null ? [itemDefault] : [];
+  switch (node.kind) {
+    case "string":
+      return node.const ?? node.default ?? "";
+    case "number":
+      // 0, unless the range excludes it: then the nearest bound
+      return (
+        node.default ??
+        Math.min(Math.max(0, node.min ?? -Infinity), node.max ?? Infinity)
+      );
+    case "boolean":
+      return node.default ?? false;
+    case "object":
+      return Object.fromEntries(
+        node.children
+          .filter((child) => !child.optional)
+          .map((child) => [keyOf(child), valueForNode(child)]),
+      );
+    case "array":
+      const item = valueForNode(node.itemNode);
+      return item !== null ? [item] : [];
+    case "tuple":
+      return node.itemNodes.map(valueForNode);
+    case "oneOf":
+      return node.variants.length ? valueForNode(node.variants[0]) : null;
+    default:
+      return null;
   }
-  if (node.kind === "tuple") return node.itemNodes.map(valueForNode);
-  if (node.kind === "object") return constDiscriminators(node.children);
-  if ("default" in node)
-    return node.default ?? defaults[node.kind as Defaultable];
-  return defaultable(node) ? defaults[node.kind] : null;
 };
+
+declare namespace valueForNode {
+  type Required = Construct<typeof Set<string>, [values: ["name", "type"]]>;
+
+  /** a string starts as its const, else its default, else empty */
+  export type Strings = [
+    Expect<Invoke<typeof valueForNode, [node: { kind: "string"; path: "a"; const: "card" }]>, "=", "card">,
+    Expect<Invoke<typeof valueForNode, [node: { kind: "string"; path: "a"; default: "Ada" }]>, "=", "Ada">,
+    Expect<Invoke<typeof valueForNode, [node: { kind: "string"; path: "a" }]>, "=", "">,
+  ];
+
+  /** a number starts at its default, else 0, else the bound of its range nearest 0 */
+  export type Numbers = [
+    Expect<Invoke<typeof valueForNode, [node: { kind: "number"; path: "n"; default: 7 }]>, "=", 7>,
+    Expect<Invoke<typeof valueForNode, [node: { kind: "number"; path: "n"; min: -2; max: 2 }]>, "=", 0>,
+    Expect<Invoke<typeof valueForNode, [node: { kind: "number"; path: "n"; min: 20 }]>, "=", 20>,
+    Expect<Invoke<typeof valueForNode, [node: { kind: "number"; path: "n"; max: -5 }]>, "=", -5>,
+  ];
+
+  /** an object starts with every field it requires, and none it doesn't */
+  export type Objects = Expect<
+    Invoke<
+      typeof valueForNode,
+      [
+        node: {
+          kind: "object";
+          path: "card";
+          children: [
+            { kind: "string"; path: "card.type"; const: "card" },
+            { kind: "string"; path: "card.name" },
+            { kind: "number"; path: "card.limit"; optional: true },
+          ];
+          required: Required;
+        },
+      ]
+    >,
+    "=",
+    { type: "card"; name: "" }
+  >;
+
+  /** a oneOf starts as its first variant */
+  export type OneOfs = Expect<
+    Invoke<
+      typeof valueForNode,
+      [
+        node: {
+          kind: "oneOf";
+          path: "pay";
+          variants: [
+            { kind: "number"; path: "pay"; default: 10 },
+            { kind: "string"; path: "pay" },
+          ];
+        },
+      ]
+    >,
+    "=",
+    10
+  >;
+
+  /** an enum starts unchosen */
+  export type Enums = Expect<
+    Invoke<typeof valueForNode, [node: { kind: "enum"; path: "e"; options: [1, 2] }]>,
+    "=",
+    null
+  >;
+}
 
 export const title = (node: RenderNode, model: Model) =>
   node.title ?? (model.abbreviatePaths ? basename(node.path) : node.path);
@@ -135,6 +216,9 @@ export const array = {
     (node.maxItems == null || (model.get(node)?.length ?? 0) < node.maxItems),
 };
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  value !== null && typeof value === "object" && !Array.isArray(value);
+
 export const variants = {
   /**
    * Exact structural match: checks whether the current value is described
@@ -201,12 +285,27 @@ export const variants = {
     return exact >= 0 ? exact : variants.fuzzy(value, node.variants);
   },
 
-  /** Switches the value to the variant at `index`, with its default value. */
+  /**
+   * Switches the value to the variant at `index`: its value for a new field,
+   * keeping what the old value had for a field both variants have (when it
+   * is the same type).
+   */
   select: (
     node: SpecificNode<"oneOf">,
     model: SchemaModel,
     index: string | number,
-  ) => model.set(node, valueForNode(node.variants[Number(index)])),
+  ) => {
+    const variant = node.variants[Number(index)];
+    const next = valueForNode(variant);
+    const current = model.get(node);
+    if (variant.kind === "object" && isRecord(current) && isRecord(next))
+      for (const child of variant.children) {
+        const key = keyOf(child);
+        if (!is.const(child) && typeof current[key] === typeof next[key])
+          next[key] = current[key];
+      }
+    model.set(node, next);
+  },
 
   /** A variant's label: its title, else a const discriminator, else its position. */
   label: (variant: RenderNode, index: number): string => {

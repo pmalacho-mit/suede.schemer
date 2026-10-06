@@ -4,9 +4,8 @@
 
   /**
    * The story's `oneOf`, drawn as a row of cards rather than a dropdown. It
-   * picks a variant with the library's own `controls.variants` (the same
-   * behaviour every theme's selector has), then draws the chosen story's
-   * blanks with `renderChild`. Each story keeps its own words: switching
+   * reads the chosen variant with the library's own `controls.variants`, then
+   * draws the chosen story's blanks with `renderChild`. Each story keeps its own words: switching
    * away and back again finds them where you left them.
    */
   let { node, model, renderChild }: Field.Props<"oneOf"> = $props();
@@ -22,7 +21,9 @@
     const current = model.get(node);
     if (selected >= 0 && current && typeof current === "object")
       drafts.set(selected, $state.snapshot(current) as Record<string, unknown>);
-    controls.variants.select(node, model, index);
+    // each story starts with its own blanks: `variants.select` would carry over
+    // the words two stories share a blank for
+    model.set(node, controls.valueForNode(node.variants[index]));
     const draft = drafts.get(index);
     if (draft) model.applyPartial(draft);
   };
