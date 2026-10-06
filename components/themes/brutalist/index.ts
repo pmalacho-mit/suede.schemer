@@ -15,7 +15,7 @@ import Push from "./Push.svelte";
 import Splice from "./Splice.svelte";
 import Insert from "./Insert.svelte";
 
-/** PLACEHOLDER: a copy of minimal, to be redrawn. */
+/** Neo-brutalism: thick black strokes, hard offset shadows, square corners, yellow and pink; inverts in dark mode. */
 export default {
   name: "brutalist",
   container: Container,

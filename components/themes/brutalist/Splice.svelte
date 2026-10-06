@@ -10,8 +10,15 @@
   {node}
   action="splice"
   detail={`at ${index}`}
-  variant="icon"
+  variant="remove"
   onclick={() => actions.splice(node, model, index)}
 >
-  <span aria-hidden="true">✕</span>
+  <span aria-hidden="true" class="cross">✕</span>
 </Button>
+
+<style>
+  .cross {
+    font-size: 1.15em;
+    font-weight: 900;
+  }
+</style>

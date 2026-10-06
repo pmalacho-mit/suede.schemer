@@ -6,6 +6,19 @@
   let { node, model }: Field.ArrayActionProps = $props();
 </script>
 
-<Button {node} action="push" variant="outline" onclick={() => actions.push(node, model)}>
-  <span aria-hidden="true">+</span> Add item
-</Button>
+<div class="push">
+  <Button {node} action="push" variant="primary" onclick={() => actions.push(node, model)}>
+    <span aria-hidden="true" class="plus">+</span> Add item
+  </Button>
+</div>
+
+<style>
+  .push {
+    display: flex;
+  }
+
+  .plus {
+    font-size: 1.35em;
+    line-height: 0;
+  }
+</style>

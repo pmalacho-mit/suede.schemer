@@ -2,10 +2,10 @@
   import type { Field } from "../../Field.svelte";
   import Group from "./Group.svelte";
 
-  let { node, model, renderChild }: Field.Props<"tuple"> = $props();
+  let { node, model, parent, renderChild }: Field.Props<"tuple"> = $props();
 </script>
 
-<Group {node} {model}>
+<Group {node} {model} {parent}>
   <div class="positions">
     {#each node.itemNodes as itemNode, index (index)}
       {@render renderChild(itemNode, "tuple", index)}
@@ -16,7 +16,7 @@
 <style>
   .positions {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(8em, 1fr));
-    gap: var(--sc-spacing);
+    grid-template-columns: repeat(auto-fit, minmax(9em, 1fr));
+    gap: calc(var(--sc-spacing) * 1.25);
   }
 </style>
