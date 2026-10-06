@@ -5,13 +5,9 @@ description: Take and inspect screenshots of this repo's components in headless 
 
 # Screenshots of components
 
-Tests say whether a component works; only a screenshot says whether it looks
-right. This repo's dev server renders every sweater-vest snippet on a page of
-its own, so any component, in any state a snippet sets up, can be photographed
-in headless Chromium and then looked at with the Read tool (it shows images).
+Tests say whether a component works; only a screenshot says whether it looks right. This repo's dev server renders every sweater-vest snippet on a page of its own, so any component, in any state a snippet sets up, can be photographed in headless Chromium and then looked at with the Read tool (it shows images).
 
-`playwright` is already installed: it comes with `suede.sweater-vest`'s
-dependencies. What it needs is a browser, and the browser's system libraries.
+`playwright` is already installed: it comes with `suede.sweater-vest`'s dependencies. What it needs is a browser, and the browser's system libraries.
 
 ## 1. Install Chromium (once per container)
 
@@ -19,18 +15,14 @@ dependencies. What it needs is a browser, and the browser's system libraries.
 npx playwright install chromium
 ```
 
-That downloads the browser to `~/.cache/ms-playwright/`. If launching it then fails with
-`error while loading shared libraries: libglib-2.0.so.0` (or any other `.so`),
-the container lacks the browser's system libraries. Install them:
+That downloads the browser to `~/.cache/ms-playwright/`. If launching it then fails with `error while loading shared libraries: libglib-2.0.so.0` (or any other `.so`), the container lacks the browser's system libraries. Install them:
 
 ```bash
 sudo -n true && echo "sudo ok"                              # check sudo needs no password
 sudo env "PATH=$PATH" npx playwright install-deps chromium  # apt-installs the libraries
 ```
 
-`sudo` resets `PATH`, so a bare `sudo npx …` fails with `npx: command not found`;
-`env "PATH=$PATH"` passes yours through. This changes the container's system
-packages: say that you did it when you report back.
+`sudo` resets `PATH`, so a bare `sudo npx …` fails with `npx: command not found`; `env "PATH=$PATH"` passes yours through. This changes the container's system packages: say that you did it when you report back.
 
 ## 2. Start the dev server
 
@@ -42,25 +34,18 @@ agent's:
 for i in $(seq 1 40); do curl -sf http://localhost:5199/ >/dev/null && break; sleep 0.5; done
 ```
 
-Every snippet's page key is its component's path without `.svelte`, then the
-snippet's name: `release/components/themes/Showcase.svelte` > `paper` is
-`release/components/themes/Showcase/paper`. List them all from the server:
+Every snippet's page key is its component's path without `.svelte`, then the snippet's name: `release/_internal/Showcase.svelte` > `paper` is `release/_internal/Showcase/paper`. List them all from the server:
 
 ```bash
 curl -s http://localhost:5199/__sweater-vest/tests.json \
   | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>JSON.parse(s).forEach(t=>console.log(t.key)))'
 ```
 
-A page is `http://localhost:5199/#<key>` (`/vests/<key>` works too: `src/main.ts`
-moves it into the hash). Query parameters before the `#` reach the page, for
-components that read them (the `src/Examples` gallery takes
-`?theme=%22paper%22`).
+A page is `http://localhost:5199/#<key>`. `/vests/<key>` (the editor extension's "Open page" form) works too: with no hash, the sweater-vest page opens the snippet whose key ends the path. Query parameters before the `#` reach the page, for components that read them (the `src/Examples` gallery takes `?theme=%22paper%22`).
 
 ## 3. Take screenshots
 
-Write the scripts **inside the project**, so Node resolves `playwright` from its
-`node_modules` (a script in `/tmp` cannot import it). Name them `.<name>.tmp.mjs`
-at the root, which `.gitignore` ignores, and delete them when done.
+Write the scripts **inside the project**, so Node resolves `playwright` from its `node_modules` (a script in `/tmp` cannot import it). Name them `.<name>.tmp.mjs` at the root, which `.gitignore` ignores, and delete them when done.
 
 ### A whole page
 
@@ -82,7 +67,7 @@ await browser.close();
 ```
 
 ```bash
-K=release/components/themes/Showcase/paper
+K=release/_internal/Showcase/paper
 node .shot.tmp.mjs "http://localhost:5199/#$K" /tmp/shots/paper-light.png 1000 light
 node .shot.tmp.mjs "http://localhost:5199/#$K" /tmp/shots/paper-dark.png 1000 dark
 node .shot.tmp.mjs "http://localhost:5199/#$K" /tmp/shots/paper-narrow.png 400 light
