@@ -26,3 +26,6 @@ dist-ssr
 # suede test libraries: extracted tests are scratch
 *.temp.ts
 *.vest.temp.svelte
+
+# scratch scripts (see skills/SCREENSHOT.md)
+.*.tmp.mjs
