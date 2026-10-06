@@ -8,7 +8,7 @@
 <Label {node} {model} inline>
   <input
     type="checkbox"
-    class="switch"
+    class="box"
     checked={model.get(node) ?? false}
     disabled={!model.editable}
     onchange={({ currentTarget: { checked } }) => model.set(node, checked)}
@@ -16,51 +16,54 @@
 </Label>
 
 <style>
-  /* a checkbox drawn as a switch: still a checkbox to forms and screen readers */
-  .switch {
+  /* a checkbox drawn as [ ] / [x]: still a checkbox to forms and screen readers */
+  .box {
     appearance: none;
-    position: relative;
+    display: inline-grid;
+    place-items: center;
     flex: none;
-    width: 2.3em;
-    height: 1.3em;
+    width: 3ch;
+    height: 1.55em;
     margin: 0;
-    border-radius: 999px;
-    background: var(--sc-border);
+    font: inherit;
+    color: var(--sc-muted);
+    background: transparent;
+    border: 0;
+    border-radius: 0;
     cursor: pointer;
-    transition: background 150ms;
   }
 
-  .switch::after {
-    content: "";
-    position: absolute;
-    top: 0.15em;
-    left: 0.15em;
-    width: 1em;
-    height: 1em;
-    border-radius: 50%;
-    background: var(--sc-background);
-    box-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
-    transition: transform 150ms;
+  .box::after {
+    content: "[ ]";
+    white-space: pre;
   }
 
-  .switch:checked {
+  .box:checked {
+    color: var(--sc-accent);
+    text-shadow: var(--sc-glow);
+  }
+
+  .box:checked::after {
+    content: "[x]";
+  }
+
+  .box:hover:not(:disabled) {
+    color: var(--sc-accent);
+  }
+
+  .box:focus-visible {
+    outline: none;
+    color: var(--sc-accent-contrast);
+    text-shadow: none;
     background: var(--sc-accent);
   }
 
-  .switch:checked::after {
-    transform: translateX(1em);
-  }
-
-  .switch:focus-visible {
-    outline: 2px solid var(--sc-accent);
-    outline-offset: 2px;
-  }
-
-  .switch:disabled {
+  .box:disabled {
     cursor: default;
   }
 
-  :global([data-mode="edit"]) .switch:disabled {
+  /* read-only in edit mode (not in view, where [x] is simply the answer) */
+  :global([data-mode="edit"]) .box:disabled {
     cursor: not-allowed;
     opacity: 0.55;
   }

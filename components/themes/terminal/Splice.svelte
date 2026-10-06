@@ -10,8 +10,8 @@
   {node}
   action="splice"
   detail={`at ${index}`}
-  variant="icon"
+  variant="danger"
   onclick={() => actions.splice(node, model, index)}
 >
-  <span aria-hidden="true">✕</span>
+  rm
 </Button>

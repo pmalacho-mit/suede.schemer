@@ -20,12 +20,13 @@
 
 <Group {node} {model}>
   {#if items.length === 0}
-    <p class="empty">No items yet.</p>
+    <p class="empty">(empty)</p>
   {/if}
 
   <ol class="items">
     {#each items as _, index (index)}
       <li class="item">
+        <span class="index" aria-hidden="true">{index}</span>
         {#if addable}
           <div class="insert">
             <ArrayAction
@@ -41,7 +42,9 @@
           {@render renderChild(arrayItemAtIndex(node, index), "array", index)}
         </div>
         {#if model.editable}
-          <ArrayAction action="splice" renderer={spliceRenderer} {node} {model} {index} />
+          <div class="splice">
+            <ArrayAction action="splice" renderer={spliceRenderer} {node} {model} {index} />
+          </div>
         {/if}
       </li>
     {/each}
@@ -62,7 +65,7 @@
   .items {
     display: flex;
     flex-direction: column;
-    gap: calc(var(--sc-spacing) * 0.75);
+    gap: calc(var(--sc-spacing) * 0.9);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -72,27 +75,69 @@
     display: none;
   }
 
+  /* index │ item [ rm ] */
   .item {
     position: relative;
-    display: flex;
-    align-items: flex-end;
-    gap: calc(var(--sc-spacing) / 2);
+    display: grid;
+    /* items as wide as a control, so [ rm ] sits beside its item */
+    grid-template-columns: 3ch minmax(0, 64ch) auto;
+    justify-content: start;
+    align-items: start;
+    column-gap: 1ch;
+  }
+
+  .index {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: stretch;
+    padding-top: 0.2em;
+    padding-right: 1ch;
+    font-size: 0.9em;
+    text-align: right;
+    color: var(--sc-muted);
+    border-right: 1px solid var(--sc-border);
   }
 
   .content {
-    flex: 1;
+    grid-column: 2;
+    grid-row: 1;
     min-width: 0;
   }
 
-  /* insert sits on the seam above its item, shown on hover or focus */
+  /*
+    an item's own title ("Item 1") repeats what the index gutter says: it
+    stays the item's accessible name, but is not drawn
+  */
+  .content > :global(div[data-kind] > div > label > [data-role="name"]),
+  .content > :global(div[data-kind] > fieldset > legend) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .content > :global(div[data-kind] > div > label > .control) {
+    padding-left: 0;
+  }
+
+  .splice {
+    grid-column: 3;
+    grid-row: 1;
+    font-size: 0.85em;
+  }
+
+  /* insert sits on the seam above its item, in the index gutter, shown on hover or focus */
   .insert {
     position: absolute;
-    top: calc(var(--sc-spacing) * -0.75);
-    left: 50%;
+    top: calc(var(--sc-spacing) * -0.45);
+    left: -0.5ch;
     z-index: 1;
-    transform: translate(-50%, -50%);
+    font-size: 0.8em;
+    background: var(--sc-background);
+    transform: translateY(-50%);
     opacity: 0;
-    transition: opacity 120ms;
   }
 
   .item:hover > .insert,
@@ -103,6 +148,11 @@
   .empty {
     margin: 0;
     color: var(--sc-muted);
-    font-size: 0.9em;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .insert {
+      transition: opacity 100ms;
+    }
   }
 </style>

@@ -6,7 +6,22 @@
   let { node, model }: Field.Props = $props();
 </script>
 
-<Button {node} action="opt-in" variant="outline" onclick={() => actions.optIn(node, model)}>
-  <span aria-hidden="true">+</span>
-  {title(node, model)}
-</Button>
+<!-- an absent optional field: a command to set it -->
+<div class="unset">
+  <Button
+    {node}
+    action="opt-in"
+    variant="quiet"
+    onclick={() => actions.optIn(node, model)}
+  >
+    <span aria-hidden="true">+</span>
+    {title(node, model)}
+  </Button>
+</div>
+
+<style>
+  .unset {
+    display: flex;
+    margin-left: -0.5ch;
+  }
+</style>

@@ -2,19 +2,23 @@
   import type { Snippet } from "svelte";
   import type { RenderNode } from "../../../types.js";
 
-  /** Every action button: `data-action` names it, for tests and styles alike. */
+  /**
+   * Every action button, drawn as a bracketed command: `[ + add ]`, `[ rm ]`.
+   * `data-action` names it, for tests and styles alike.
+   */
   let {
     node,
     action,
     detail,
-    variant = "ghost",
+    variant = "command",
     onclick,
     children,
   }: {
     node: RenderNode;
     action: "opt-in" | "opt-out" | "push" | "splice" | "insert";
     detail?: string;
-    variant?: "ghost" | "outline" | "icon" | "danger";
+    /** command: an accent call to action; quiet: muted until hovered; danger: removes something */
+    variant?: "command" | "quiet" | "danger";
     onclick: () => void;
     children: Snippet;
   } = $props();
@@ -34,54 +38,58 @@
   button {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 0.35em;
-    height: 2.15em;
-    padding: 0 0.8em;
+    flex: none;
+    gap: 1ch;
+    height: 1.9em;
+    margin: 0;
+    padding: 0 0.5ch;
     font: inherit;
-    font-size: 0.9em;
-    font-weight: 500;
-    color: var(--sc-text);
+    line-height: 1;
+    white-space: nowrap;
+    color: var(--sc-muted);
     background: transparent;
-    border: 1px solid transparent;
-    border-radius: var(--sc-radius);
+    border: 0;
+    border-radius: 0;
     cursor: pointer;
-    transition:
-      background 120ms,
-      border-color 120ms,
-      color 120ms;
   }
 
-  button:hover {
-    background: color-mix(in srgb, var(--sc-border) 55%, transparent);
+  /* the brackets are drawn, and given empty alt text so they are never read out */
+  button::before {
+    content: "[";
+    content: "[" / "";
   }
 
-  button:focus-visible {
-    outline: 2px solid var(--sc-accent);
-    outline-offset: 2px;
+  button::after {
+    content: "]";
+    content: "]" / "";
   }
 
-  .outline {
-    align-self: flex-start;
-    border-color: var(--sc-border);
-    border-style: dashed;
-    color: var(--sc-muted);
+  .command {
+    color: var(--sc-accent);
+    text-shadow: var(--sc-glow);
   }
 
-  .outline:hover {
-    color: var(--sc-text);
-    border-style: solid;
+  /* hover and focus invert, like a highlighted menu entry */
+  button:is(:hover, :focus-visible) {
+    color: var(--sc-accent-contrast);
+    text-shadow: none;
+    background: var(--sc-accent);
+    outline: none;
   }
 
-  .icon {
-    width: 2.15em;
-    padding: 0;
-    color: var(--sc-muted);
+  .danger:is(:hover, :focus-visible) {
+    background: var(--sc-danger);
   }
 
-  .danger:hover,
-  .icon:hover {
-    color: var(--sc-danger);
-    background: color-mix(in srgb, var(--sc-danger) 10%, transparent);
+  button:active {
+    filter: brightness(0.85);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    button {
+      transition:
+        background 80ms,
+        color 80ms;
+    }
   }
 </style>

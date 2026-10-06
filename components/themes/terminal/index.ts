@@ -15,7 +15,7 @@ import Push from "./Push.svelte";
 import Splice from "./Splice.svelte";
 import Insert from "./Insert.svelte";
 
-/** PLACEHOLDER: a copy of minimal, to be redrawn. */
+/** A monospace command line: near-black, phosphor green, prompts, [x] boxes and TUI panels; always dark. */
 export default {
   name: "terminal",
   container: Container,

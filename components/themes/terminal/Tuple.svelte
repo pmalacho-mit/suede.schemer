@@ -14,9 +14,10 @@
 </Group>
 
 <style>
+  /* fixed positions, side by side as columns when there is room */
   .positions {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(8em, 1fr));
-    gap: var(--sc-spacing);
+    grid-template-columns: repeat(auto-fit, minmax(18ch, 1fr));
+    gap: var(--sc-spacing) calc(var(--sc-spacing) * 1.5);
   }
 </style>
