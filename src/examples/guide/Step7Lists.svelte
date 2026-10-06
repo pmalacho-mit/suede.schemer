@@ -28,7 +28,11 @@
     {/snippet}
 
     {#snippet push__harmonics({ node, model })}
-      <button type="button" class="add" onclick={() => controls.actions.push(node, model)}>
+      <button
+        type="button"
+        class="add"
+        onclick={() => controls.actions.push(node, model)}
+      >
         + Add a harmonic
       </button>
     {/snippet}

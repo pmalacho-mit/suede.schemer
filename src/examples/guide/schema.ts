@@ -90,11 +90,24 @@ export const schema: JSONSchema7 = {
     filter: {
       title: "Filter",
       oneOf: [
-        { type: "object", title: "Off", properties: { type: { const: "off" } }, required: ["type"] },
+        {
+          type: "object",
+          title: "Off",
+          properties: { type: { const: "off" } },
+          required: ["type"],
+        },
         filter("lowpass", "Low-pass"),
         filter("highpass", "High-pass"),
       ],
     },
   },
-  required: ["name", "wave", "octave", "volume", "envelope", "harmonics", "filter"],
+  required: [
+    "name",
+    "wave",
+    "octave",
+    "volume",
+    "envelope",
+    "harmonics",
+    "filter",
+  ],
 };
