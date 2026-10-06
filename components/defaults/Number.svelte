@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Field } from "../Field.svelte";
-  import { attributes, title, tooltip } from "./common.js";
+  import { attributes, title, tooltip, hints } from "./common.js";
   import PlaceholderOption from "./PlaceholderOption.svelte";
 
   let { node, model }: Field.Props<"number"> = $props();
@@ -30,6 +30,7 @@
   {:else}
     <input
       type="number"
+      {...hints(node)}
       min={node.min}
       max={node.max}
       {disabled}
@@ -119,6 +120,39 @@
       expect(
         Array.from(select.options).filter((o) => !o.disabled),
       ).toHaveLength(3);
+    }),
+  )}
+{/snippet}
+
+<!-- the input takes its step and placeholder from the schema (an integer steps by 1) -->
+{#snippet aStepAndAnExampleShapeTheInput(
+  NumberField: typeof Self,
+  Model: typeof SchemaModel,
+  themes: typeof acrossThemes,
+  test: Test,
+)}
+  {@const variants = themes.variants(
+    NumberField,
+    () => new Model("edit", { guests: 1, price: 2.5 }),
+    "number",
+  )}
+  <themes.Across {variants}>
+    {#snippet variant({ Component, model })}
+      <Component
+        node={{ kind: "number", path: "guests", step: 1, examples: [2] }}
+        {model}
+      />
+      <Component node={{ kind: "number", path: "price" }} {model} />
+    {/snippet}
+  </themes.Across>
+  {test(async ({ expect, within }) =>
+    themes.each(variants, async ({ element }) => {
+      const view = within(element);
+      const guests = view.getByLabelText("guests") as HTMLInputElement;
+      const price = view.getByLabelText("price") as HTMLInputElement;
+      expect(guests.step).toBe("1");
+      expect(guests.placeholder).toBe("2");
+      expect(price.step).toBe("any");
     }),
   )}
 {/snippet}

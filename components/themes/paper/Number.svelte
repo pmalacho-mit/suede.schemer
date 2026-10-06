@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { hints } from "../../defaults/common.js";
   import type { Field } from "../../Field.svelte";
   import PlaceholderOption from "../../defaults/PlaceholderOption.svelte";
   import Label from "./Label.svelte";
@@ -19,6 +20,7 @@
   {:else}
     <input
       type="number"
+      {...hints(node)}
       min={node.min}
       max={node.max}
       value={model.get(node)}

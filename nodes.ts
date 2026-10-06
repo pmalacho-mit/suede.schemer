@@ -61,6 +61,18 @@ const prefetchExternalRefs = async (
   );
 };
 
+/** The schema's `examples` that are of `kind`, if any. */
+const examplesOf = <K extends "string" | "number">(
+  kind: K,
+  { examples }: JSONSchema7,
+) => {
+  const matching = (Array.isArray(examples) ? examples : [examples]).filter(
+    (example): example is K extends "string" ? string : number =>
+      typeof example === kind,
+  );
+  return matching.length ? matching : undefined;
+};
+
 const node = (raw: JSONSchema7, path: string, ctx: Context): RenderNode => {
   const schema = merge(resolve(raw, ctx), ctx);
   const { oneOf, anyOf, title, description, enum: options } = schema;
@@ -91,6 +103,7 @@ const node = (raw: JSONSchema7, path: string, ctx: Context): RenderNode => {
         options,
         format: schema.format,
         default: schema.default,
+        examples: examplesOf("string", schema),
         const: schema.const as string | number | boolean | undefined,
       };
     case "number":
@@ -112,6 +125,8 @@ const node = (raw: JSONSchema7, path: string, ctx: Context): RenderNode => {
         description,
         options,
         default: schema.default,
+        examples: examplesOf("number", schema),
+        step: schema.multipleOf ?? (kind === "integer" ? 1 : undefined),
       };
 
     case "boolean":

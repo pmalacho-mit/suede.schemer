@@ -6,7 +6,7 @@
     readonly,
     stringValue,
     title,
-    tooltip,
+    tooltip, hints
   } from "./common.js";
   import PlaceholderOption from "./PlaceholderOption.svelte";
 
@@ -34,7 +34,13 @@
       {/each}
     </select>
   {:else}
-    <input {value} type={inputType(node)} {disabled} oninput={model.on(node)} />
+    <input
+      {value}
+      type={inputType(node)}
+      {...hints(node)}
+      {disabled}
+      oninput={model.on(node)}
+    />
   {/if}
 </label>
 
@@ -256,6 +262,34 @@
     themes.each(variants, async ({ element }) => {
       const name = element.querySelector('[data-role="name"]');
       expect(name?.textContent?.trim()).toBe("streetName");
+    }),
+  )}
+{/snippet}
+
+<!-- the schema's first example is the input's placeholder -->
+{#snippet itsFirstExampleIsThePlaceholder(
+  StringField: typeof Self,
+  Model: typeof SchemaModel,
+  themes: typeof acrossThemes,
+  test: Test,
+)}
+  {@const variants = themes.variants(
+    StringField,
+    () => new Model("edit", { name: "" }),
+    "string",
+  )}
+  <themes.Across {variants}>
+    {#snippet variant({ Component, model })}
+      <Component
+        node={{ kind: "string", path: "name", examples: ["Ada Lovelace"] }}
+        {model}
+      />
+    {/snippet}
+  </themes.Across>
+  {test(async ({ expect, within }) =>
+    themes.each(variants, async ({ element }) => {
+      const input = within(element).getByLabelText("name") as HTMLInputElement;
+      expect(input.placeholder).toBe("Ada Lovelace");
     }),
   )}
 {/snippet}
