@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/pmalacho-mit/suede.schemer.git
 	branch = release
-	commit = 3569d1b3010fd834c3619c8d4ffb7eaf288725d0
-	parent = 3e3f6f24a907300dd25e045a0b412af868c31ea1
+	commit = 98347a6631bc35aca2cad466714bf61f0d4f3757
+	parent = d079b832d97c96acc1cf93f64a77a21c4f3bcf94
 	method = merge
 	cmdver = 0.4.9
