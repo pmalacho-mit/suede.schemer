@@ -129,4 +129,12 @@ The components carry their own tests and examples as
 [suede.sweater-vest](https://github.com/pmalacho-mit/suede.sweater-vest) snippets, and the
 TypeScript modules as [suede.nests](https://github.com/pmalacho-mit/suede.nests) namespace
 tests, so each file documents how it is used. `npx vitest run` runs them all; `npm run dev`
-lists every snippet as a page, including each theme's showcase (`themes/Showcase.svelte`).
+lists every snippet as a page, including each theme's showcase (`_internal/Showcase.svelte`).
+
+A component's tests run in the defaults and in every theme: each draws the component once per
+theme (each theme's own component for that kind of field) and checks every copy, so a theme
+that breaks what a default does fails the test, by name. On the dev server, each of those
+pages shows the component in every theme side by side.
+
+What the tests use and nothing else does (the helpers they import as types, the showcase)
+lives in `_internal/`. It is not part of the API: don't import it.
