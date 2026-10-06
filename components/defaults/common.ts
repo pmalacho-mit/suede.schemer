@@ -6,7 +6,7 @@ import type {
   Expect,
   Invoke,
 } from "../../../suede.nests.schemer/dsl.import.meta.vitest.ts";
-import { basename } from "../naming.js";
+import { arrayItemAtIndex, basename } from "../naming.js";
 
 export const is = {
   const: (node: RenderNode): node is SpecificNode<"string"> =>
@@ -216,6 +216,8 @@ export const actions = {
 };
 
 export const array = {
+  /** the node for the item at `index`: the item schema's node, its paths made concrete ("tags.*" → "tags.2") */
+  item: arrayItemAtIndex,
   /** the array's current items */
   items: (node: SpecificNode<"array">, model: SchemaModel): unknown[] =>
     model.get(node) ?? [],
