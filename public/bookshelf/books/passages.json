@@ -1,0 +1,6 @@
+{
+  "title": "Passages from the Life of a Philosopher",
+  "year": 1864,
+  "author": { "$ref": "../people/charles.json" },
+  "tags": ["memoir"]
+}

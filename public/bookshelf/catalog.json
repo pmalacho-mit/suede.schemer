@@ -1,0 +1,10 @@
+{
+  "books": [
+    {
+      "title": "On the Economy of Machinery and Manufactures",
+      "year": 1832,
+      "author": { "$ref": "people/charles.json" },
+      "tags": ["economics", "industry"]
+    }
+  ]
+}

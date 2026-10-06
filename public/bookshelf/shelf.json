@@ -1,0 +1,9 @@
+{
+  "name": "The engine room",
+  "curator": { "$ref": "people/ada.json" },
+  "books": [
+    { "$ref": "books/notes.json" },
+    { "$ref": "books/passages.json" },
+    { "$ref": "catalog.json#/books/0" }
+  ]
+}

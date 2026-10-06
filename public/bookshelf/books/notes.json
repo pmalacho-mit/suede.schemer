@@ -1,0 +1,6 @@
+{
+  "title": "Notes on the Analytical Engine",
+  "year": 1843,
+  "author": { "$ref": "../people/ada.json" },
+  "tags": ["computing", "mathematics"]
+}
