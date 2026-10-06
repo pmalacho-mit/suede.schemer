@@ -1,0 +1,121 @@
+// @vitest-environment node
+import type {
+  Expect,
+  Invoke,
+} from "../suede.nests.slurp/dsl.import.meta.vitest.ts";
+import type URLParameterize from "./URLParameterize.svelte";
+import type { getter, undefinedGetter } from "./_internal/harness.svelte.ts";
+
+export const isBrowser = typeof window !== "undefined";
+
+declare namespace isBrowser {
+  /** false under Node, where there is no `window` */
+  export type OutsideABrowser = Expect<typeof isBrowser, "=", false>;
+}
+
+/**
+ * Detects whether the current environment supports the History API.
+ */
+export const supportsHistory =
+  isBrowser &&
+  typeof history !== "undefined" &&
+  typeof history.pushState === "function" &&
+  typeof history.replaceState === "function";
+
+declare namespace supportsHistory {
+  /** false without a browser's History API */
+  export type OutsideABrowser = Expect<typeof supportsHistory, "=", false>;
+
+  type Tracked = Invoke<
+    typeof URLParameterize,
+    [target: { page: 1 }, handlers: { page: typeof Number }]
+  >;
+
+  /** and so URLParameterize does nothing (on a server, say): importing and calling it does not throw */
+  export type URLParameterizeDisabled = [
+    Expect<Tracked, "hasKey", "cleanup">,
+    Expect<Invoke<Tracked["cleanup"]>, "undefined">,
+    Expect<Invoke<Tracked["prefix"], [prefix: "v2_"]>, "undefined">,
+  ];
+
+  /** key still tells where a property would be stored, so a server can read it from a request's URL */
+  export type KeyOutsideABrowser = Expect<
+    Invoke<
+      Invoke<
+        typeof URLParameterize,
+        [
+          target: { page: 1 },
+          handlers: { page: { resolve: typeof Number; key: "p" } },
+          options: { prefix: "app_" },
+        ]
+      >["key"],
+      [property: "page"]
+    >,
+    "=",
+    "app_p"
+  >;
+}
+
+export type Expand<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
+
+export type ExpandRecursively<T> = T extends object
+  ? T extends infer O
+    ? { [K in keyof O]: ExpandRecursively<O[K]> }
+    : never
+  : T;
+
+export type MaybeGetter<T> = T | (() => T);
+
+export const resolve = <T>(value: MaybeGetter<T>, fallback?: T): T => {
+  if (typeof value === "function") {
+    const result = (value as () => T)();
+    return result === undefined ? (fallback as T) : result;
+  } else return value === undefined ? (fallback as T) : value;
+};
+
+declare namespace resolve {
+  /** a value is returned as it is */
+  export type Value = Expect<Invoke<typeof resolve, [value: 3]>, "=", 3>;
+
+  /** a getter is called, and its result returned */
+  export type Getter = Expect<
+    Invoke<typeof resolve, [value: typeof getter]>,
+    "=",
+    "from getter"
+  >;
+
+  /** an undefined value falls back */
+  export type UndefinedFallsBack = Expect<
+    Invoke<typeof resolve, [value: undefined, fallback: "fallback"]>,
+    "=",
+    "fallback"
+  >;
+
+  /** a getter that returns undefined falls back */
+  export type UndefinedGetterFallsBack = Expect<
+    Invoke<
+      typeof resolve,
+      [value: typeof undefinedGetter, fallback: "fallback"]
+    >,
+    "=",
+    "fallback"
+  >;
+
+  /** only undefined falls back: other falsy values are kept */
+  export type FalsyKept = [
+    Expect<
+      Invoke<typeof resolve, [value: null, fallback: "fallback"]>,
+      "=",
+      null
+    >,
+    Expect<Invoke<typeof resolve, [value: 0, fallback: 1]>, "=", 0>,
+    Expect<Invoke<typeof resolve, [value: "", fallback: "fallback"]>, "=", "">,
+    Expect<Invoke<typeof resolve, [value: false, fallback: true]>, "=", false>,
+  ];
+
+  /** with nothing to fall back to, undefined stays undefined */
+  export type NoFallback = Expect<
+    Invoke<typeof resolve, [value: undefined]>,
+    "undefined"
+  >;
+}

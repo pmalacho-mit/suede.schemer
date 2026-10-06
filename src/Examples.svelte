@@ -1,5 +1,5 @@
 <script lang="ts" module>
-  import { URLParameterize } from "../.suede/svelte-url-parameterizer-suede";
+  import { URLParameterize } from "../suede.slurp";
 
   const fixtures = import.meta.glob<Record<string, unknown>>(
     "/public/*/{data,schema}.json",
