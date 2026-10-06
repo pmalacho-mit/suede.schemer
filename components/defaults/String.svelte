@@ -69,7 +69,10 @@
   test: Test,
 )}
   {@const model = new Model("edit", { email: "" })}
-  <StringField node={{ kind: "string", path: "email", format: "email" }} {model} />
+  <StringField
+    node={{ kind: "string", path: "email", format: "email" }}
+    {model}
+  />
   {test(async ({ expect, screen }) => {
     const input = screen.getByLabelText("email") as HTMLInputElement;
     expect(input.type).toBe("email");
@@ -82,7 +85,10 @@
   test: Test,
 )}
   {@const model = new Model("edit", { birthday: "" })}
-  <StringField node={{ kind: "string", path: "birthday", format: "date" }} {model} />
+  <StringField
+    node={{ kind: "string", path: "birthday", format: "date" }}
+    {model}
+  />
   {test(async ({ expect, screen }) => {
     const input = screen.getByLabelText("birthday") as HTMLInputElement;
     expect(input.type).toBe("date");
@@ -95,7 +101,10 @@
   test: Test,
 )}
   {@const model = new Model("edit", {})}
-  <StringField node={{ kind: "string", path: "status", const: "active" }} {model} />
+  <StringField
+    node={{ kind: "string", path: "status", const: "active" }}
+    {model}
+  />
   {test(async ({ expect, screen }) => {
     const input = screen.getByLabelText("status") as HTMLInputElement;
     expect(input.disabled).toBe(true);

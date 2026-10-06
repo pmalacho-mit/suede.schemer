@@ -41,7 +41,9 @@
   {@const model = new Model("edit", { active: true })}
   <BooleanField node={{ kind: "boolean", path: "active" }} {model} />
   {test(async ({ expect, screen }) => {
-    expect((screen.getByRole("checkbox") as HTMLInputElement).checked).toBe(true);
+    expect((screen.getByRole("checkbox") as HTMLInputElement).checked).toBe(
+      true,
+    );
   })}
 {/snippet}
 

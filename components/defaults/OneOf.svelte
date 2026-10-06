@@ -54,7 +54,8 @@
   )}
     <Field {node} {model} {parent} {index} />
   {/snippet}
-  <OneOfField node={{
+  <OneOfField
+    node={{
       kind: "oneOf",
       path: "contact",
       variants: [
@@ -62,7 +63,9 @@
           kind: "object",
           path: "contact",
           title: "Email",
-          children: [{ kind: "string", path: "contact.email", format: "email" }],
+          children: [
+            { kind: "string", path: "contact.email", format: "email" },
+          ],
           required: new Set(["email"]),
         },
         {
@@ -73,9 +76,14 @@
           required: new Set(["phone"]),
         },
       ],
-    }} {model} renderChild={child} />
+    }}
+    {model}
+    renderChild={child}
+  />
   {test(async ({ expect }) => {
-    expect(document.querySelector('[data-role="variant-selector"] select')).not.toBeNull();
+    expect(
+      document.querySelector('[data-role="variant-selector"] select'),
+    ).not.toBeNull();
   })}
 {/snippet}
 
@@ -93,7 +101,8 @@
   )}
     <Field {node} {model} {parent} {index} />
   {/snippet}
-  <OneOfField node={{
+  <OneOfField
+    node={{
       kind: "oneOf",
       path: "",
       variants: [
@@ -101,7 +110,10 @@
         { kind: "number", path: "", title: "Count" },
         { kind: "boolean", path: "", title: "Flag" },
       ],
-    }} {model} renderChild={child} />
+    }}
+    {model}
+    renderChild={child}
+  />
   {test(async ({ expect, screen }) => {
     const select = screen.getByRole("combobox") as HTMLSelectElement;
     const labels = Array.from(select.options)
@@ -125,14 +137,18 @@
   )}
     <Field {node} {model} {parent} {index} />
   {/snippet}
-  <OneOfField node={{
+  <OneOfField
+    node={{
       kind: "oneOf",
       path: "",
       variants: [
         { kind: "string", path: "", title: "Text" },
         { kind: "number", path: "", title: "Count" },
       ],
-    }} {model} renderChild={child} />
+    }}
+    {model}
+    renderChild={child}
+  />
   {test(async ({ expect, screen, user }) => {
     await user.selectOptions(screen.getByRole("combobox"), "Text");
     expect(document.querySelector('[data-kind="string"]')).not.toBeNull();
@@ -153,14 +169,18 @@
   )}
     <Field {node} {model} {parent} {index} />
   {/snippet}
-  <OneOfField node={{
+  <OneOfField
+    node={{
       kind: "oneOf",
       path: "",
       variants: [
         { kind: "string", path: "", title: "Text" },
         { kind: "number", path: "", title: "Count" },
       ],
-    }} {model} renderChild={child} />
+    }}
+    {model}
+    renderChild={child}
+  />
   {test(async ({ expect }) => {
     expect(document.querySelector('[data-kind="number"] input')).not.toBeNull();
   })}

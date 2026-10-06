@@ -33,13 +33,21 @@
 )}
   {@const model = new Model("edit", {})}
   <EnumField
-    node={{ kind: "enum", path: "status", options: ["draft", "published", "archived"] }}
+    node={{
+      kind: "enum",
+      path: "status",
+      options: ["draft", "published", "archived"],
+    }}
     {model}
   />
   {test(async ({ expect, screen }) => {
     const select = screen.getByRole("combobox") as HTMLSelectElement;
     const options = Array.from(select.options).filter((o) => !o.disabled);
-    expect(options.map((o) => o.value)).toEqual(["draft", "published", "archived"]);
+    expect(options.map((o) => o.value)).toEqual([
+      "draft",
+      "published",
+      "archived",
+    ]);
   })}
 {/snippet}
 
@@ -50,7 +58,11 @@
 )}
   {@const model = new Model("edit", {})}
   <EnumField
-    node={{ kind: "enum", path: "status", options: ["draft", "published", "archived"] }}
+    node={{
+      kind: "enum",
+      path: "status",
+      options: ["draft", "published", "archived"],
+    }}
     {model}
   />
   {test(async ({ expect, screen, user }) => {

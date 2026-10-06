@@ -54,7 +54,7 @@
   test: Test,
 )}
   {@const model = new Model("edit", { name: "" })}
-  {#await build({ type: "object", properties: { name: { type: "string" } }, required: ["name"] }) then tree}
+  {#await build( { type: "object", properties: { name: { type: "string" } }, required: ["name"] }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, waitFor }) => {
@@ -70,14 +70,16 @@
   test: Test,
 )}
   {@const model = new Model("edit", { address: { city: "" } })}
-  {#await build({ type: "object", properties: { address: { type: "object", properties: { city: { type: "string" } }, required: ["city"] } }, required: ["address"] }) then tree}
+  {#await build( { type: "object", properties: { address: { type: "object", properties: { city: { type: "string" } }, required: ["city"] } }, required: ["address"] }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, waitFor }) => {
     await waitFor(() =>
       expect(model.element({ path: "address.city" })).toBeDefined(),
     );
-    expect(model.element({ path: "address.city" })?.dataset.path).toBe("address.city");
+    expect(model.element({ path: "address.city" })?.dataset.path).toBe(
+      "address.city",
+    );
   })}
 {/snippet}
 
@@ -88,11 +90,13 @@
   test: Test,
 )}
   {@const model = new Model("edit", { tags: ["alpha", "beta"] })}
-  {#await build({ type: "object", properties: { tags: { type: "array", items: { type: "string" } } }, required: ["tags"] }) then tree}
+  {#await build( { type: "object", properties: { tags: { type: "array", items: { type: "string" } } }, required: ["tags"] }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, waitFor }) => {
-    await waitFor(() => expect(model.element({ path: "tags.1" })).toBeDefined());
+    await waitFor(() =>
+      expect(model.element({ path: "tags.1" })).toBeDefined(),
+    );
     expect(model.element({ path: "tags.0" })?.dataset.path).toBe("tags.0");
     expect(model.element({ path: "tags.1" })?.dataset.path).toBe("tags.1");
   })}
@@ -104,16 +108,22 @@
   Model: typeof SchemaModel,
   test: Test,
 )}
-  {@const model = new Model("edit", { people: [{ name: "Alice" }, { name: "Bob" }] })}
-  {#await build({ type: "object", properties: { people: { type: "array", items: { type: "object", properties: { name: { type: "string" } }, required: ["name"] } } }, required: ["people"] }) then tree}
+  {@const model = new Model("edit", {
+    people: [{ name: "Alice" }, { name: "Bob" }],
+  })}
+  {#await build( { type: "object", properties: { people: { type: "array", items: { type: "object", properties: { name: { type: "string" } }, required: ["name"] } } }, required: ["people"] }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, waitFor }) => {
     await waitFor(() =>
       expect(model.element({ path: "people.1.name" })).toBeDefined(),
     );
-    expect(model.element({ path: "people.0.name" })?.dataset.path).toBe("people.0.name");
-    expect(model.element({ path: "people.1.name" })?.dataset.path).toBe("people.1.name");
+    expect(model.element({ path: "people.0.name" })?.dataset.path).toBe(
+      "people.0.name",
+    );
+    expect(model.element({ path: "people.1.name" })?.dataset.path).toBe(
+      "people.1.name",
+    );
   })}
 {/snippet}
 
@@ -124,11 +134,13 @@
   test: Test,
 )}
   {@const model = new Model("edit", { tags: ["alpha"] })}
-  {#await build({ type: "object", properties: { tags: { type: "array", items: { type: "string" } } }, required: ["tags"] }) then tree}
+  {#await build( { type: "object", properties: { tags: { type: "array", items: { type: "string" } } }, required: ["tags"] }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, waitFor }) => {
-    await waitFor(() => expect(model.element({ path: "tags.0" })).toBeDefined());
+    await waitFor(() =>
+      expect(model.element({ path: "tags.0" })).toBeDefined(),
+    );
     expect(model.element({ path: "tags.5" })).toBeUndefined();
   })}
 {/snippet}
@@ -140,7 +152,7 @@
   test: Test,
 )}
   {@const model = new Model("edit", { name: "" })}
-  {#await build({ type: "object", properties: { name: { type: "string" } }, required: ["name"] }) then tree}
+  {#await build( { type: "object", properties: { name: { type: "string" } }, required: ["name"] }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, waitFor }) => {
@@ -157,12 +169,7 @@
   test: Test,
 )}
   {@const model = new Model("edit", { name: "", age: 0 })}
-  {#await build({
-      allOf: [
-        { type: "object", properties: { name: { type: "string" } }, required: ["name"] },
-        { type: "object", properties: { age: { type: "number" } }, required: ["age"] },
-      ],
-    }) then tree}
+  {#await build( { allOf: [{ type: "object", properties: { name: { type: "string" } }, required: ["name"] }, { type: "object", properties: { age: { type: "number" } }, required: ["age"] }] }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, waitFor }) => {
@@ -180,12 +187,7 @@
   test: Test,
 )}
   {@const model = new Model("edit", { name: "" })}
-  {#await build({
-      definitions: { Name: { type: "string", title: "Full Name" } },
-      type: "object",
-      properties: { name: { $ref: "#/definitions/Name" } },
-      required: ["name"],
-    }) then tree}
+  {#await build( { definitions: { Name: { type: "string", title: "Full Name" } }, type: "object", properties: { name: { $ref: "#/definitions/Name" } }, required: ["name"] }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, screen }) => {
@@ -201,7 +203,7 @@
   test: Test,
 )}
   {@const model = new Model("edit", { name: "", age: 0, active: false })}
-  {#await build({ type: "object", properties: { name: { type: "string" }, age: { type: "number" }, active: { type: "boolean" } }, required: ["name", "age", "active"] }) then tree}
+  {#await build( { type: "object", properties: { name: { type: "string" }, age: { type: "number" }, active: { type: "boolean" } }, required: ["name", "age", "active"] }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, screen }) => {
@@ -219,7 +221,7 @@
   test: Test,
 )}
   {@const model = new Model("edit", { tags: ["alpha"] })}
-  {#await build({ type: "object", properties: { tags: { type: "array", items: { type: "string" } } }, required: ["tags"] }) then tree}
+  {#await build( { type: "object", properties: { tags: { type: "array", items: { type: "string" } } }, required: ["tags"] }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, waitFor }) => {
@@ -237,7 +239,7 @@
   test: Test,
 )}
   {@const model = new Model("edit", { name: "Alice" })}
-  {#await build({ type: "object", properties: { name: { type: "string" } }, required: ["name"] }) then tree}
+  {#await build( { type: "object", properties: { name: { type: "string" } }, required: ["name"] }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, screen, flushSync }) => {
@@ -256,7 +258,7 @@
   test: Test,
 )}
   {@const model = new Model("stream", { name: "Alice" })}
-  {#await build({ type: "object", properties: { name: { type: "string" } }, required: ["name"] }) then tree}
+  {#await build( { type: "object", properties: { name: { type: "string" } }, required: ["name"] }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, screen }) => {
@@ -272,11 +274,13 @@
   test: Test,
 )}
   {@const model = new Model("stream", { tags: ["alpha"] })}
-  {#await build({ type: "object", properties: { tags: { type: "array", items: { type: "string" } } }, required: ["tags"] }) then tree}
+  {#await build( { type: "object", properties: { tags: { type: "array", items: { type: "string" } } }, required: ["tags"] }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, waitFor }) => {
-    await waitFor(() => expect(model.element({ path: "tags.0" })).toBeDefined());
+    await waitFor(() =>
+      expect(model.element({ path: "tags.0" })).toBeDefined(),
+    );
     expect(document.querySelector('[data-action="push"]')).toBeNull();
     expect(document.querySelector('[data-action="splice"]')).toBeNull();
   })}
@@ -289,7 +293,7 @@
   test: Test,
 )}
   {@const model = new Model("stream", {})}
-  {#await build({ type: "object", properties: { name: { type: "string" }, age: { type: "number" } }, required: ["name", "age"] }) then tree}
+  {#await build( { type: "object", properties: { name: { type: "string" }, age: { type: "number" } }, required: ["name", "age"] }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, screen }) => {
@@ -305,7 +309,7 @@
   test: Test,
 )}
   {@const model = new Model("stream", {})}
-  {#await build({ type: "object", properties: { name: { type: "string" } }, required: ["name"] }) then tree}
+  {#await build( { type: "object", properties: { name: { type: "string" } }, required: ["name"] }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, screen, flushSync }) => {
@@ -323,7 +327,7 @@
   test: Test,
 )}
   {@const model = new Model("stream", {})}
-  {#await build({ type: "object", properties: { age: { type: "number" } }, required: ["age"] }) then tree}
+  {#await build( { type: "object", properties: { age: { type: "number" } }, required: ["age"] }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, screen, flushSync }) => {
@@ -340,7 +344,7 @@
   test: Test,
 )}
   {@const model = new Model("stream", { address: { city: "Boston" } })}
-  {#await build({ type: "object", properties: { address: { type: "object", properties: { street: { type: "string" }, city: { type: "string" } }, required: ["street", "city"] } }, required: ["address"] }) then tree}
+  {#await build( { type: "object", properties: { address: { type: "object", properties: { street: { type: "string" }, city: { type: "string" } }, required: ["street", "city"] } }, required: ["address"] }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, screen, flushSync }) => {
@@ -359,7 +363,7 @@
   test: Test,
 )}
   {@const model = new Model("stream", { tags: [] })}
-  {#await build({ type: "object", properties: { tags: { type: "array", items: { type: "string" } } }, required: ["tags"] }) then tree}
+  {#await build( { type: "object", properties: { tags: { type: "array", items: { type: "string" } } }, required: ["tags"] }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, waitFor, flushSync }) => {
@@ -380,7 +384,7 @@
   test: Test,
 )}
   {@const model = new Model("stream", {})}
-  {#await build({ type: "object", properties: { first: { type: "string" }, last: { type: "string" } }, required: ["first", "last"] }) then tree}
+  {#await build( { type: "object", properties: { first: { type: "string" }, last: { type: "string" } }, required: ["first", "last"] }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, screen, flushSync }) => {
@@ -403,7 +407,7 @@
   test: Test,
 )}
   {@const model = new Model("view", { name: "Alice" })}
-  {#await build({ type: "object", properties: { name: { type: "string" } }, required: ["name"] }) then tree}
+  {#await build( { type: "object", properties: { name: { type: "string" } }, required: ["name"] }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, screen }) => {
@@ -419,7 +423,7 @@
   test: Test,
 )}
   {@const model = new Model("view", { active: true })}
-  {#await build({ type: "object", properties: { active: { type: "boolean" } }, required: ["active"] }) then tree}
+  {#await build( { type: "object", properties: { active: { type: "boolean" } }, required: ["active"] }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, screen }) => {
@@ -435,7 +439,7 @@
   test: Test,
 )}
   {@const model = new Model("view", { nickname: "Neo" })}
-  {#await build({ type: "object", properties: { nickname: { type: "string" } } }) then tree}
+  {#await build( { type: "object", properties: { nickname: { type: "string" } } }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, screen }) => {
@@ -452,11 +456,13 @@
   test: Test,
 )}
   {@const model = new Model("view", { tags: ["alpha", "beta"] })}
-  {#await build({ type: "object", properties: { tags: { type: "array", items: { type: "string" } } }, required: ["tags"] }) then tree}
+  {#await build( { type: "object", properties: { tags: { type: "array", items: { type: "string" } } }, required: ["tags"] }, ) then tree}
     <Schema root={tree} {model} />
   {/await}
   {test(async ({ expect, waitFor }) => {
-    await waitFor(() => expect(model.element({ path: "tags.1" })).toBeDefined());
+    await waitFor(() =>
+      expect(model.element({ path: "tags.1" })).toBeDefined(),
+    );
     expect(document.querySelector('[data-action="push"]')).toBeNull();
     expect(document.querySelector('[data-action="splice"]')).toBeNull();
   })}
