@@ -1,13 +1,13 @@
 <script lang="ts">
   import type Self from "./Showcase.svelte";
-  import type { Test } from "../../../suede.sweater-vest.schemer/dsl.import.meta.vitest.ts";
-  import type { all } from "./index.js";
-  import type { editsEveryKind } from "./harness.ts";
-  import type { Mode } from "../../models.svelte.js";
-  import type { Theme } from "../registry.js";
-  import { SchemaModel } from "../../models.svelte.js";
-  import { root } from "../../nodes.js";
-  import Schema from "../Root.svelte";
+  import type { Test } from "../../suede.sweater-vest.schemer/dsl.import.meta.vitest.ts";
+  import type { all } from "../components/themes/index.js";
+  import type { editsEveryKind } from "./showcase.ts";
+  import type { Mode } from "../models.svelte.js";
+  import type { Theme } from "../components/registry.js";
+  import { SchemaModel } from "../models.svelte.js";
+  import { root } from "../nodes.js";
+  import Schema from "../components/Root.svelte";
   import { schema, data } from "./showcase.js";
 
   /** The showcase form (every kind of field) drawn in `theme`. */

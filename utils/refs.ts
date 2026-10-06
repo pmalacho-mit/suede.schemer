@@ -7,7 +7,7 @@ import type {
   Given,
   Invoke,
 } from "../../suede.nests.schemer/dsl.import.meta.vitest.ts";
-import type { consoleWarnings } from "./harness.ts";
+import type { consoleWarnings } from "../_internal/console.ts";
 
 export const warnings = {
   circularRef: (ref: string) => `Circular $ref detected: ${ref}`,

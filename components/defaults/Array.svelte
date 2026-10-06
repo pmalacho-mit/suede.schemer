@@ -19,6 +19,7 @@
   import type Self from "./Array.svelte";
   import type FieldComponent from "../Field.svelte";
   import type { Test } from "../../../suede.sweater-vest.schemer/dsl.import.meta.vitest.ts";
+  import type { acrossThemes } from "../../_internal/across.ts";
   import type { SchemaModel } from "../../models.svelte.js";
   import type { RenderNode as Node } from "../../types.js";
 </script>
@@ -67,172 +68,207 @@
   ArrayField: typeof Self,
   AnyField: typeof FieldComponent,
   Model: typeof SchemaModel,
+  themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const model = new Model("edit", { tags: ["alpha", "beta"] })}
-  {#snippet child(
-    node: Node,
-    parent: "object" | "array" | "tuple" | "oneOf",
-    index?: number,
+  {@const variants = themes.variants(ArrayField, () => new Model("edit", { tags: ["alpha", "beta"] }), "array")}
+  <themes.Across {variants}>
+    {#snippet variant({ Component, model })}
+      {#snippet child(
+        node: Node,
+        parent: "object" | "array" | "tuple" | "oneOf",
+        index?: number,
+      )}
+        <AnyField {node} {model} {parent} {index} />
+      {/snippet}
+      <Component
+        node={{
+          kind: "array",
+          path: "tags",
+          itemNode: { kind: "string", path: "tags.*" },
+        }}
+        {model}
+        renderChild={child}
+        pushRenderer={null}
+        spliceRenderer={null}
+        insertRenderer={null}
+      />
+    {/snippet}
+  </themes.Across>
+  {test(async ({ expect }) =>
+    themes.each(variants, async ({ element }) => {
+      expect(element.querySelectorAll('[data-path^="tags."]')).toHaveLength(2);
+    }),
   )}
-    <AnyField {node} {model} {parent} {index} />
-  {/snippet}
-  <ArrayField
-    node={{
-      kind: "array",
-      path: "tags",
-      itemNode: { kind: "string", path: "tags.*" },
-    }}
-    {model}
-    renderChild={child}
-    pushRenderer={null}
-    spliceRenderer={null}
-    insertRenderer={null}
-  />
-  {test(async ({ expect }) => {
-    expect(document.querySelectorAll('[data-path^="tags."]')).toHaveLength(2);
-  })}
 {/snippet}
 
 {#snippet pushButtonAddsANewItem(
   ArrayField: typeof Self,
   AnyField: typeof FieldComponent,
   Model: typeof SchemaModel,
+  themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const model = new Model("edit", { tags: [] })}
-  {#snippet child(
-    node: Node,
-    parent: "object" | "array" | "tuple" | "oneOf",
-    index?: number,
+  {@const variants = themes.variants(ArrayField, () => new Model("edit", { tags: [] }), "array")}
+  <themes.Across {variants}>
+    {#snippet variant({ Component, model })}
+      {#snippet child(
+        node: Node,
+        parent: "object" | "array" | "tuple" | "oneOf",
+        index?: number,
+      )}
+        <AnyField {node} {model} {parent} {index} />
+      {/snippet}
+      <Component
+        node={{
+          kind: "array",
+          path: "tags",
+          itemNode: { kind: "string", path: "tags.*" },
+        }}
+        {model}
+        renderChild={child}
+        pushRenderer={null}
+        spliceRenderer={null}
+        insertRenderer={null}
+      />
+    {/snippet}
+  </themes.Across>
+  {test(async ({ expect, user }) =>
+    themes.each(variants, async ({ element, model }) => {
+      await user.click(element.querySelector('[data-action="push"]')!);
+      expect(model.get({ path: "tags" })).toEqual([""]);
+    }),
   )}
-    <AnyField {node} {model} {parent} {index} />
-  {/snippet}
-  <ArrayField
-    node={{
-      kind: "array",
-      path: "tags",
-      itemNode: { kind: "string", path: "tags.*" },
-    }}
-    {model}
-    renderChild={child}
-    pushRenderer={null}
-    spliceRenderer={null}
-    insertRenderer={null}
-  />
-  {test(async ({ expect, user }) => {
-    await user.click(document.querySelector('[data-action="push"]')!);
-    expect(model.get({ path: "tags" })).toEqual([""]);
-  })}
 {/snippet}
 
 {#snippet spliceButtonRemovesAnItem(
   ArrayField: typeof Self,
   AnyField: typeof FieldComponent,
   Model: typeof SchemaModel,
+  themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const model = new Model("edit", { tags: ["alpha", "beta"] })}
-  {#snippet child(
-    node: Node,
-    parent: "object" | "array" | "tuple" | "oneOf",
-    index?: number,
+  {@const variants = themes.variants(ArrayField, () => new Model("edit", { tags: ["alpha", "beta"] }), "array")}
+  <themes.Across {variants}>
+    {#snippet variant({ Component, model })}
+      {#snippet child(
+        node: Node,
+        parent: "object" | "array" | "tuple" | "oneOf",
+        index?: number,
+      )}
+        <AnyField {node} {model} {parent} {index} />
+      {/snippet}
+      <Component
+        node={{
+          kind: "array",
+          path: "tags",
+          itemNode: { kind: "string", path: "tags.*" },
+        }}
+        {model}
+        renderChild={child}
+        pushRenderer={null}
+        spliceRenderer={null}
+        insertRenderer={null}
+      />
+    {/snippet}
+  </themes.Across>
+  {test(async ({ expect, user }) =>
+    themes.each(variants, async ({ element, model }) => {
+      await user.click(element.querySelector('[data-action="splice"]')!);
+      expect(model.get({ path: "tags" })).toEqual(["beta"]);
+    }),
   )}
-    <AnyField {node} {model} {parent} {index} />
-  {/snippet}
-  <ArrayField
-    node={{
-      kind: "array",
-      path: "tags",
-      itemNode: { kind: "string", path: "tags.*" },
-    }}
-    {model}
-    renderChild={child}
-    pushRenderer={null}
-    spliceRenderer={null}
-    insertRenderer={null}
-  />
-  {test(async ({ expect, user }) => {
-    await user.click(document.querySelector('[data-action="splice"]')!);
-    expect(model.get({ path: "tags" })).toEqual(["beta"]);
-  })}
 {/snippet}
 
 {#snippet pushButtonIsAbsentWhenMaxItemsIsReached(
   ArrayField: typeof Self,
   AnyField: typeof FieldComponent,
   Model: typeof SchemaModel,
+  themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const model = new Model("edit", { tags: ["alpha", "beta"] })}
-  {#snippet child(
-    node: Node,
-    parent: "object" | "array" | "tuple" | "oneOf",
-    index?: number,
+  {@const variants = themes.variants(ArrayField, () => new Model("edit", { tags: ["alpha", "beta"] }), "array")}
+  <themes.Across {variants}>
+    {#snippet variant({ Component, model })}
+      {#snippet child(
+        node: Node,
+        parent: "object" | "array" | "tuple" | "oneOf",
+        index?: number,
+      )}
+        <AnyField {node} {model} {parent} {index} />
+      {/snippet}
+      <Component
+        node={{
+          kind: "array",
+          path: "tags",
+          itemNode: { kind: "string", path: "tags.*" },
+          maxItems: 2,
+        }}
+        {model}
+        renderChild={child}
+        pushRenderer={null}
+        spliceRenderer={null}
+        insertRenderer={null}
+      />
+    {/snippet}
+  </themes.Across>
+  {test(async ({ expect }) =>
+    themes.each(variants, async ({ element }) => {
+      expect(element.querySelector('[data-action="push"]')).toBeNull();
+    }),
   )}
-    <AnyField {node} {model} {parent} {index} />
-  {/snippet}
-  <ArrayField
-    node={{
-      kind: "array",
-      path: "tags",
-      itemNode: { kind: "string", path: "tags.*" },
-      maxItems: 2,
-    }}
-    {model}
-    renderChild={child}
-    pushRenderer={null}
-    spliceRenderer={null}
-    insertRenderer={null}
-  />
-  {test(async ({ expect }) => {
-    expect(document.querySelector('[data-action="push"]')).toBeNull();
-  })}
 {/snippet}
 
 {#snippet arrayOfObjectsRendersFieldsetsWithCorrectChildPaths(
   ArrayField: typeof Self,
   AnyField: typeof FieldComponent,
   Model: typeof SchemaModel,
+  themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const model = new Model("edit", {
+  {@const variants = themes.variants(ArrayField, () => new Model("edit", {
     people: [
       { name: "Alice", age: 30 },
       { name: "Bob", age: 25 },
     ],
-  })}
-  {#snippet child(
-    node: Node,
-    parent: "object" | "array" | "tuple" | "oneOf",
-    index?: number,
+  }), "array")}
+  <themes.Across {variants}>
+    {#snippet variant({ Component, model })}
+      {#snippet child(
+        node: Node,
+        parent: "object" | "array" | "tuple" | "oneOf",
+        index?: number,
+      )}
+        <AnyField {node} {model} {parent} {index} />
+      {/snippet}
+      <Component
+        node={{
+          kind: "array",
+          path: "people",
+          itemNode: {
+            kind: "object",
+            path: "people.*",
+            children: [
+              { kind: "string", path: "people.*.name" },
+              { kind: "number", path: "people.*.age" },
+            ],
+            required: new Set(["name", "age"]),
+          },
+        }}
+        {model}
+        renderChild={child}
+        pushRenderer={null}
+        spliceRenderer={null}
+        insertRenderer={null}
+      />
+    {/snippet}
+  </themes.Across>
+  {test(async ({ expect }) =>
+    themes.each(variants, async ({ element }) => {
+      expect(
+        element.querySelector('[data-path="people.0.name"]'),
+      ).not.toBeNull();
+      expect(element.querySelector('[data-path="people.1.age"]')).not.toBeNull();
+    }),
   )}
-    <AnyField {node} {model} {parent} {index} />
-  {/snippet}
-  <ArrayField
-    node={{
-      kind: "array",
-      path: "people",
-      itemNode: {
-        kind: "object",
-        path: "people.*",
-        children: [
-          { kind: "string", path: "people.*.name" },
-          { kind: "number", path: "people.*.age" },
-        ],
-        required: new Set(["name", "age"]),
-      },
-    }}
-    {model}
-    renderChild={child}
-    pushRenderer={null}
-    spliceRenderer={null}
-    insertRenderer={null}
-  />
-  {test(async ({ expect }) => {
-    expect(
-      document.querySelector('[data-path="people.0.name"]'),
-    ).not.toBeNull();
-    expect(document.querySelector('[data-path="people.1.age"]')).not.toBeNull();
-  })}
 {/snippet}

@@ -97,6 +97,7 @@
   import Child from "./Field.svelte";
   import type Self from "./Field.svelte";
   import type { Test } from "../../suede.sweater-vest.schemer/dsl.import.meta.vitest.ts";
+  import type { acrossThemes } from "../_internal/across.ts";
   import { attributes } from "./defaults/common.js";
 
   let { node, model, renderers, parent, index }: Props = $props();
@@ -194,78 +195,120 @@
 {#snippet absentOptionalFieldShowsOptInNotAnInput(
   Field: typeof Self,
   Model: typeof SchemaModel,
+  themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const model = new Model("edit", {})}
-  <Field node={{ kind: "string", path: "nickname", optional: true }} {model} />
-  {test(async ({ expect }) => {
-    expect(document.querySelector('[data-action="opt-in"]')).not.toBeNull();
-    expect(document.querySelector('[data-path="nickname"] input')).toBeNull();
-  })}
+  {@const variants = themes.variants(Field, () => new Model("edit", {}))}
+  <themes.Across {variants}>
+    {#snippet variant({ Component, model })}
+      <Component node={{ kind: "string", path: "nickname", optional: true }} {model} />
+    {/snippet}
+  </themes.Across>
+  {test(async ({ expect }) =>
+    themes.each(variants, async ({ element }) => {
+      expect(element.querySelector('[data-action="opt-in"]')).not.toBeNull();
+      expect(element.querySelector('[data-path="nickname"] input')).toBeNull();
+    }),
+  )}
 {/snippet}
 
 {#snippet clickingOptInRevealsTheInputField(
   Field: typeof Self,
   Model: typeof SchemaModel,
+  themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const model = new Model("edit", {})}
-  <Field node={{ kind: "string", path: "nickname", optional: true }} {model} />
-  {test(async ({ expect, user }) => {
-    await user.click(document.querySelector('[data-action="opt-in"]')!);
-    expect(
-      document.querySelector('[data-path="nickname"] input'),
-    ).not.toBeNull();
-  })}
+  {@const variants = themes.variants(Field, () => new Model("edit", {}))}
+  <themes.Across {variants}>
+    {#snippet variant({ Component, model })}
+      <Component node={{ kind: "string", path: "nickname", optional: true }} {model} />
+    {/snippet}
+  </themes.Across>
+  {test(async ({ expect, user }) =>
+    themes.each(variants, async ({ element }) => {
+      await user.click(element.querySelector('[data-action="opt-in"]')!);
+      expect(
+        element.querySelector('[data-path="nickname"] input'),
+      ).not.toBeNull();
+    }),
+  )}
 {/snippet}
 
 {#snippet requiredFieldHasNoOptInButton(
   Field: typeof Self,
   Model: typeof SchemaModel,
+  themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const model = new Model("edit", { name: "" })}
-  <Field node={{ kind: "string", path: "name", optional: false }} {model} />
-  {test(async ({ expect }) => {
-    expect(document.querySelector('[data-action="opt-in"]')).toBeNull();
-    expect(document.querySelector('[data-path="name"] input')).not.toBeNull();
-  })}
+  {@const variants = themes.variants(Field, () => new Model("edit", { name: "" }))}
+  <themes.Across {variants}>
+    {#snippet variant({ Component, model })}
+      <Component node={{ kind: "string", path: "name", optional: false }} {model} />
+    {/snippet}
+  </themes.Across>
+  {test(async ({ expect }) =>
+    themes.each(variants, async ({ element }) => {
+      expect(element.querySelector('[data-action="opt-in"]')).toBeNull();
+      expect(element.querySelector('[data-path="name"] input')).not.toBeNull();
+    }),
+  )}
 {/snippet}
 
 {#snippet aPresentOptionalFieldShowsAnOptOutButton(
   Field: typeof Self,
   Model: typeof SchemaModel,
+  themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const model = new Model("edit", { nickname: "Neo" })}
-  <Field node={{ kind: "string", path: "nickname", optional: true }} {model} />
-  {test(async ({ expect }) => {
-    expect(document.querySelector('[data-action="opt-out"]')).not.toBeNull();
-  })}
+  {@const variants = themes.variants(Field, () => new Model("edit", { nickname: "Neo" }))}
+  <themes.Across {variants}>
+    {#snippet variant({ Component, model })}
+      <Component node={{ kind: "string", path: "nickname", optional: true }} {model} />
+    {/snippet}
+  </themes.Across>
+  {test(async ({ expect }) =>
+    themes.each(variants, async ({ element }) => {
+      expect(element.querySelector('[data-action="opt-out"]')).not.toBeNull();
+    }),
+  )}
 {/snippet}
 
 {#snippet clickingOptOutRemovesTheValueAndShowsOptInAgain(
   Field: typeof Self,
   Model: typeof SchemaModel,
+  themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const model = new Model("edit", { nickname: "Neo" })}
-  <Field node={{ kind: "string", path: "nickname", optional: true }} {model} />
-  {test(async ({ expect, user }) => {
-    await user.click(document.querySelector('[data-action="opt-out"]')!);
-    expect(model.get({ path: "nickname" })).toBeUndefined();
-    expect(document.querySelector('[data-action="opt-in"]')).not.toBeNull();
-  })}
+  {@const variants = themes.variants(Field, () => new Model("edit", { nickname: "Neo" }))}
+  <themes.Across {variants}>
+    {#snippet variant({ Component, model })}
+      <Component node={{ kind: "string", path: "nickname", optional: true }} {model} />
+    {/snippet}
+  </themes.Across>
+  {test(async ({ expect, user }) =>
+    themes.each(variants, async ({ element, model }) => {
+      await user.click(element.querySelector('[data-action="opt-out"]')!);
+      expect(model.get({ path: "nickname" })).toBeUndefined();
+      expect(element.querySelector('[data-action="opt-in"]')).not.toBeNull();
+    }),
+  )}
 {/snippet}
 
 {#snippet anAbsentOptionalFieldDrawsNothingOutsideEditMode(
   Field: typeof Self,
   Model: typeof SchemaModel,
+  themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const model = new Model("view", {})}
-  <Field node={{ kind: "string", path: "nickname", optional: true }} {model} />
-  {test(async ({ expect }) => {
-    expect(document.querySelector('[data-path="nickname"]')).toBeNull();
-  })}
+  {@const variants = themes.variants(Field, () => new Model("view", {}))}
+  <themes.Across {variants}>
+    {#snippet variant({ Component, model })}
+      <Component node={{ kind: "string", path: "nickname", optional: true }} {model} />
+    {/snippet}
+  </themes.Across>
+  {test(async ({ expect }) =>
+    themes.each(variants, async ({ element }) => {
+      expect(element.querySelector('[data-path="nickname"]')).toBeNull();
+    }),
+  )}
 {/snippet}
