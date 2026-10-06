@@ -10,7 +10,13 @@ export default defineConfig({
   server: { host: true },
   plugins: [
     svelte(),
-    sweaterVest({ tsconfig: "tsconfig.app.json", exclude: libraries }),
+    sweaterVest({
+      tsconfig: "tsconfig.app.json",
+      exclude: libraries,
+      external: process.env.EXTERNAL_PORT
+        ? "http://localhost:" + process.env.EXTERNAL_PORT
+        : undefined,
+    }),
   ],
   test: {
     expect: { requireAssertions: true },
