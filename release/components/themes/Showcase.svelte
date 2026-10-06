@@ -27,8 +27,10 @@
 
 <!-- minimal: the showcase in edit mode, and read-only -->
 {#snippet minimal(Showcase: typeof Self, themes: typeof all)}
-  <Showcase theme={themes.minimal} />
-  <Showcase theme={themes.minimal} mode="view" />
+  <div style="display: grid; gap: 2rem;">
+    <Showcase theme={themes.minimal} />
+    <Showcase theme={themes.minimal} mode="view" />
+  </div>
 {/snippet}
 
 {#snippet minimalEditsEveryKind(
@@ -46,8 +48,10 @@
 
 <!-- material: the showcase in edit mode, and read-only -->
 {#snippet material(Showcase: typeof Self, themes: typeof all)}
-  <Showcase theme={themes.material} />
-  <Showcase theme={themes.material} mode="view" />
+  <div style="display: grid; gap: 2rem;">
+    <Showcase theme={themes.material} />
+    <Showcase theme={themes.material} mode="view" />
+  </div>
 {/snippet}
 
 {#snippet materialEditsEveryKind(
@@ -65,8 +69,10 @@
 
 <!-- paper: the showcase in edit mode, and read-only -->
 {#snippet paper(Showcase: typeof Self, themes: typeof all)}
-  <Showcase theme={themes.paper} />
-  <Showcase theme={themes.paper} mode="view" />
+  <div style="display: grid; gap: 2rem;">
+    <Showcase theme={themes.paper} />
+    <Showcase theme={themes.paper} mode="view" />
+  </div>
 {/snippet}
 
 {#snippet paperEditsEveryKind(
@@ -84,8 +90,10 @@
 
 <!-- terminal: the showcase in edit mode, and read-only -->
 {#snippet terminal(Showcase: typeof Self, themes: typeof all)}
-  <Showcase theme={themes.terminal} />
-  <Showcase theme={themes.terminal} mode="view" />
+  <div style="display: grid; gap: 2rem;">
+    <Showcase theme={themes.terminal} />
+    <Showcase theme={themes.terminal} mode="view" />
+  </div>
 {/snippet}
 
 {#snippet terminalEditsEveryKind(
@@ -103,8 +111,10 @@
 
 <!-- brutalist: the showcase in edit mode, and read-only -->
 {#snippet brutalist(Showcase: typeof Self, themes: typeof all)}
-  <Showcase theme={themes.brutalist} />
-  <Showcase theme={themes.brutalist} mode="view" />
+  <div style="display: grid; gap: 2rem;">
+    <Showcase theme={themes.brutalist} />
+    <Showcase theme={themes.brutalist} mode="view" />
+  </div>
 {/snippet}
 
 {#snippet brutalistEditsEveryKind(
