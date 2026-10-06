@@ -88,7 +88,10 @@ declare namespace resolve {
   export type ViaDefs = Expect<
     Invoke<
       typeof resolve,
-      [schema: { $ref: "#/$defs/Bar" }, ctx: Ctx<{ $defs: { Bar: { type: "number" } } }>]
+      [
+        schema: { $ref: "#/$defs/Bar" },
+        ctx: Ctx<{ $defs: { Bar: { type: "number" } } }>,
+      ]
     >,
     "=",
     { type: "number" }
@@ -113,7 +116,9 @@ declare namespace resolve {
       typeof resolve,
       [
         schema: { $ref: "#/$defs/A" },
-        ctx: Ctx<{ $defs: { A: { $ref: "#/$defs/B" }; B: { type: "boolean" } } }>,
+        ctx: Ctx<{
+          $defs: { A: { $ref: "#/$defs/B" }; B: { type: "boolean" } };
+        }>,
       ]
     >,
     "=",
@@ -125,7 +130,10 @@ declare namespace resolve {
     Warnings,
     [
       Expect<
-        Invoke<typeof resolve, [schema: { $ref: "#/definitions/Missing" }, ctx: Ctx<{}>]>,
+        Invoke<
+          typeof resolve,
+          [schema: { $ref: "#/definitions/Missing" }, ctx: Ctx<{}>]
+        >,
         "=",
         { type: "object"; title: "(unresolved: #/definitions/Missing)" }
       >,
@@ -156,7 +164,10 @@ declare namespace resolve {
   export type Remote = Given<
     Warnings,
     Expect<
-      Invoke<typeof resolve, [schema: { $ref: "https://example.com/schema.json" }, ctx: Ctx<{}>]>,
+      Invoke<
+        typeof resolve,
+        [schema: { $ref: "https://example.com/schema.json" }, ctx: Ctx<{}>]
+      >,
       "=",
       { type: "object"; title: "(unresolved: https://example.com/schema.json)" }
     >
@@ -227,7 +238,8 @@ const findAnchor = (anchor: string, node: unknown): JSONSchema7 | null => {
   if (node == null || typeof node !== "object" || Array.isArray(node))
     return null;
   const obj = node as Record<string, unknown>;
-  if (obj.$anchor === anchor) return isSchema(obj) ? (obj as JSONSchema7) : null;
+  if (obj.$anchor === anchor)
+    return isSchema(obj) ? (obj as JSONSchema7) : null;
   for (const value of Object.values(obj)) {
     const found = findAnchor(anchor, value);
     if (found) return found;
