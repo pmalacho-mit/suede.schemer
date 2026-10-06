@@ -48,7 +48,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(OneOfField, () => new Model("edit", { contact: {} }), "oneOf")}
+  {@const variants = themes.variants(
+    OneOfField,
+    () => new Model("edit", { contact: {} }),
+    "oneOf",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       {#snippet child(
@@ -102,7 +106,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(OneOfField, () => new Model("edit", {}), "oneOf")}
+  {@const variants = themes.variants(
+    OneOfField,
+    () => new Model("edit", {}),
+    "oneOf",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       {#snippet child(
@@ -129,7 +137,7 @@
   </themes.Across>
   {test(async ({ expect, within }) =>
     themes.each(variants, async ({ element }) => {
-    const view = within(element);
+      const view = within(element);
       const select = view.getByRole("combobox") as HTMLSelectElement;
       const labels = Array.from(select.options)
         .filter((o) => !o.disabled)
@@ -146,7 +154,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(OneOfField, () => new Model("edit", {}), "oneOf")}
+  {@const variants = themes.variants(
+    OneOfField,
+    () => new Model("edit", {}),
+    "oneOf",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       {#snippet child(
@@ -172,7 +184,7 @@
   </themes.Across>
   {test(async ({ expect, user, within }) =>
     themes.each(variants, async ({ element }) => {
-    const view = within(element);
+      const view = within(element);
       await user.selectOptions(view.getByRole("combobox"), "Text");
       expect(element.querySelector('[data-kind="string"]')).not.toBeNull();
     }),
@@ -186,7 +198,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(OneOfField, () => new Model("edit", 42 as unknown as {}), "oneOf")}
+  {@const variants = themes.variants(
+    OneOfField,
+    () => new Model("edit", 42 as unknown as {}),
+    "oneOf",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       {#snippet child(
@@ -212,7 +228,9 @@
   </themes.Across>
   {test(async ({ expect }) =>
     themes.each(variants, async ({ element }) => {
-      expect(element.querySelector('[data-kind="number"] input')).not.toBeNull();
+      expect(
+        element.querySelector('[data-kind="number"] input'),
+      ).not.toBeNull();
     }),
   )}
 {/snippet}

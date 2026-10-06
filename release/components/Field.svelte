@@ -201,7 +201,10 @@
   {@const variants = themes.variants(Field, () => new Model("edit", {}))}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
-      <Component node={{ kind: "string", path: "nickname", optional: true }} {model} />
+      <Component
+        node={{ kind: "string", path: "nickname", optional: true }}
+        {model}
+      />
     {/snippet}
   </themes.Across>
   {test(async ({ expect }) =>
@@ -221,7 +224,10 @@
   {@const variants = themes.variants(Field, () => new Model("edit", {}))}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
-      <Component node={{ kind: "string", path: "nickname", optional: true }} {model} />
+      <Component
+        node={{ kind: "string", path: "nickname", optional: true }}
+        {model}
+      />
     {/snippet}
   </themes.Across>
   {test(async ({ expect, user }) =>
@@ -240,10 +246,16 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(Field, () => new Model("edit", { name: "" }))}
+  {@const variants = themes.variants(
+    Field,
+    () => new Model("edit", { name: "" }),
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
-      <Component node={{ kind: "string", path: "name", optional: false }} {model} />
+      <Component
+        node={{ kind: "string", path: "name", optional: false }}
+        {model}
+      />
     {/snippet}
   </themes.Across>
   {test(async ({ expect }) =>
@@ -260,10 +272,16 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(Field, () => new Model("edit", { nickname: "Neo" }))}
+  {@const variants = themes.variants(
+    Field,
+    () => new Model("edit", { nickname: "Neo" }),
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
-      <Component node={{ kind: "string", path: "nickname", optional: true }} {model} />
+      <Component
+        node={{ kind: "string", path: "nickname", optional: true }}
+        {model}
+      />
     {/snippet}
   </themes.Across>
   {test(async ({ expect }) =>
@@ -279,10 +297,16 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(Field, () => new Model("edit", { nickname: "Neo" }))}
+  {@const variants = themes.variants(
+    Field,
+    () => new Model("edit", { nickname: "Neo" }),
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
-      <Component node={{ kind: "string", path: "nickname", optional: true }} {model} />
+      <Component
+        node={{ kind: "string", path: "nickname", optional: true }}
+        {model}
+      />
     {/snippet}
   </themes.Across>
   {test(async ({ expect, user }) =>
@@ -303,7 +327,10 @@
   {@const variants = themes.variants(Field, () => new Model("view", {}))}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
-      <Component node={{ kind: "string", path: "nickname", optional: true }} {model} />
+      <Component
+        node={{ kind: "string", path: "nickname", optional: true }}
+        {model}
+      />
     {/snippet}
   </themes.Across>
   {test(async ({ expect }) =>

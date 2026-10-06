@@ -71,7 +71,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(ArrayField, () => new Model("edit", { tags: ["alpha", "beta"] }), "array")}
+  {@const variants = themes.variants(
+    ArrayField,
+    () => new Model("edit", { tags: ["alpha", "beta"] }),
+    "array",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       {#snippet child(
@@ -109,7 +113,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(ArrayField, () => new Model("edit", { tags: [] }), "array")}
+  {@const variants = themes.variants(
+    ArrayField,
+    () => new Model("edit", { tags: [] }),
+    "array",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       {#snippet child(
@@ -148,7 +156,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(ArrayField, () => new Model("edit", { tags: ["alpha", "beta"] }), "array")}
+  {@const variants = themes.variants(
+    ArrayField,
+    () => new Model("edit", { tags: ["alpha", "beta"] }),
+    "array",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       {#snippet child(
@@ -187,7 +199,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(ArrayField, () => new Model("edit", { tags: ["alpha", "beta"] }), "array")}
+  {@const variants = themes.variants(
+    ArrayField,
+    () => new Model("edit", { tags: ["alpha", "beta"] }),
+    "array",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       {#snippet child(
@@ -226,12 +242,17 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(ArrayField, () => new Model("edit", {
-    people: [
-      { name: "Alice", age: 30 },
-      { name: "Bob", age: 25 },
-    ],
-  }), "array")}
+  {@const variants = themes.variants(
+    ArrayField,
+    () =>
+      new Model("edit", {
+        people: [
+          { name: "Alice", age: 30 },
+          { name: "Bob", age: 25 },
+        ],
+      }),
+    "array",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       {#snippet child(
@@ -268,7 +289,9 @@
       expect(
         element.querySelector('[data-path="people.0.name"]'),
       ).not.toBeNull();
-      expect(element.querySelector('[data-path="people.1.age"]')).not.toBeNull();
+      expect(
+        element.querySelector('[data-path="people.1.age"]'),
+      ).not.toBeNull();
     }),
   )}
 {/snippet}

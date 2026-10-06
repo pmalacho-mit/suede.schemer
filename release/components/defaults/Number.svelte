@@ -45,7 +45,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(NumberField, () => new Model("edit", { age: 0 }), "number")}
+  {@const variants = themes.variants(
+    NumberField,
+    () => new Model("edit", { age: 0 }),
+    "number",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       <Component node={{ kind: "number", path: "age" }} {model} />
@@ -53,7 +57,7 @@
   </themes.Across>
   {test(async ({ expect, within }) =>
     themes.each(variants, async ({ element }) => {
-    const view = within(element);
+      const view = within(element);
       const input = view.getByLabelText("age") as HTMLInputElement;
       expect(input.type).toBe("number");
     }),
@@ -66,7 +70,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(NumberField, () => new Model("edit", { rating: 5 }), "number")}
+  {@const variants = themes.variants(
+    NumberField,
+    () => new Model("edit", { rating: 5 }),
+    "number",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       <Component
@@ -77,7 +85,7 @@
   </themes.Across>
   {test(async ({ expect, within }) =>
     themes.each(variants, async ({ element }) => {
-    const view = within(element);
+      const view = within(element);
       const input = view.getByLabelText("rating") as HTMLInputElement;
       expect(Number(input.min)).toBe(1);
       expect(Number(input.max)).toBe(10);
@@ -91,7 +99,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(NumberField, () => new Model("edit", { priority: 1 }), "number")}
+  {@const variants = themes.variants(
+    NumberField,
+    () => new Model("edit", { priority: 1 }),
+    "number",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       <Component
@@ -102,11 +114,11 @@
   </themes.Across>
   {test(async ({ expect, within }) =>
     themes.each(variants, async ({ element }) => {
-    const view = within(element);
+      const view = within(element);
       const select = view.getByRole("combobox") as HTMLSelectElement;
-      expect(Array.from(select.options).filter((o) => !o.disabled)).toHaveLength(
-        3,
-      );
+      expect(
+        Array.from(select.options).filter((o) => !o.disabled),
+      ).toHaveLength(3);
     }),
   )}
 {/snippet}

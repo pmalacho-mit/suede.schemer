@@ -55,7 +55,10 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(Schema, () => new Model("edit", { name: "" }))}
+  {@const variants = themes.variants(
+    Schema,
+    () => new Model("edit", { name: "" }),
+  )}
   {#await build( { type: "object", properties: { name: { type: "string" } }, required: ["name"] }, ) then tree}
     <themes.Across {variants} contained={false}>
       {#snippet variant({ Component, model, theme })}
@@ -65,7 +68,9 @@
   {/await}
   {test(async ({ expect, waitFor }) =>
     themes.each(variants, async ({ element, model }) => {
-      await waitFor(() => expect(model.element({ path: "name" })).toBeDefined());
+      await waitFor(() =>
+        expect(model.element({ path: "name" })).toBeDefined(),
+      );
       expect(model.element({ path: "name" })?.dataset.path).toBe("name");
     }),
   )}
@@ -78,7 +83,10 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(Schema, () => new Model("edit", { address: { city: "" } }))}
+  {@const variants = themes.variants(
+    Schema,
+    () => new Model("edit", { address: { city: "" } }),
+  )}
   {#await build( { type: "object", properties: { address: { type: "object", properties: { city: { type: "string" } }, required: ["city"] } }, required: ["address"] }, ) then tree}
     <themes.Across {variants} contained={false}>
       {#snippet variant({ Component, model, theme })}
@@ -105,7 +113,10 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(Schema, () => new Model("edit", { tags: ["alpha", "beta"] }))}
+  {@const variants = themes.variants(
+    Schema,
+    () => new Model("edit", { tags: ["alpha", "beta"] }),
+  )}
   {#await build( { type: "object", properties: { tags: { type: "array", items: { type: "string" } } }, required: ["tags"] }, ) then tree}
     <themes.Across {variants} contained={false}>
       {#snippet variant({ Component, model, theme })}
@@ -131,9 +142,13 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(Schema, () => new Model("edit", {
-    people: [{ name: "Alice" }, { name: "Bob" }],
-  }))}
+  {@const variants = themes.variants(
+    Schema,
+    () =>
+      new Model("edit", {
+        people: [{ name: "Alice" }, { name: "Bob" }],
+      }),
+  )}
   {#await build( { type: "object", properties: { people: { type: "array", items: { type: "object", properties: { name: { type: "string" } }, required: ["name"] } } }, required: ["people"] }, ) then tree}
     <themes.Across {variants} contained={false}>
       {#snippet variant({ Component, model, theme })}
@@ -163,7 +178,10 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(Schema, () => new Model("edit", { tags: ["alpha"] }))}
+  {@const variants = themes.variants(
+    Schema,
+    () => new Model("edit", { tags: ["alpha"] }),
+  )}
   {#await build( { type: "object", properties: { tags: { type: "array", items: { type: "string" } } }, required: ["tags"] }, ) then tree}
     <themes.Across {variants} contained={false}>
       {#snippet variant({ Component, model, theme })}
@@ -188,7 +206,10 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(Schema, () => new Model("edit", { name: "" }))}
+  {@const variants = themes.variants(
+    Schema,
+    () => new Model("edit", { name: "" }),
+  )}
   {#await build( { type: "object", properties: { name: { type: "string" } }, required: ["name"] }, ) then tree}
     <themes.Across {variants} contained={false}>
       {#snippet variant({ Component, model, theme })}
@@ -198,7 +219,9 @@
   {/await}
   {test(async ({ expect, waitFor }) =>
     themes.each(variants, async ({ element, model }) => {
-      await waitFor(() => expect(model.element({ path: "name" })).toBeDefined());
+      await waitFor(() =>
+        expect(model.element({ path: "name" })).toBeDefined(),
+      );
       expect(model.element({ path: "does.not.exist" })).toBeUndefined();
     }),
   )}
@@ -212,7 +235,10 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(Schema, () => new Model("edit", { name: "", age: 0 }))}
+  {@const variants = themes.variants(
+    Schema,
+    () => new Model("edit", { name: "", age: 0 }),
+  )}
   {#await build( { allOf: [{ type: "object", properties: { name: { type: "string" } }, required: ["name"] }, { type: "object", properties: { age: { type: "number" } }, required: ["age"] }] }, ) then tree}
     <themes.Across {variants} contained={false}>
       {#snippet variant({ Component, model, theme })}
@@ -237,7 +263,10 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(Schema, () => new Model("edit", { name: "" }))}
+  {@const variants = themes.variants(
+    Schema,
+    () => new Model("edit", { name: "" }),
+  )}
   {#await build( { definitions: { Name: { type: "string", title: "Full Name" } }, type: "object", properties: { name: { $ref: "#/definitions/Name" } }, required: ["name"] }, ) then tree}
     <themes.Across {variants} contained={false}>
       {#snippet variant({ Component, model, theme })}
@@ -247,7 +276,7 @@
   {/await}
   {test(async ({ expect, within }) =>
     themes.each(variants, async ({ element }) => {
-    const view = within(element);
+      const view = within(element);
       expect(await view.findByLabelText("Full Name")).toBeDefined();
     }),
   )}
@@ -261,7 +290,10 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(Schema, () => new Model("edit", { name: "", age: 0, active: false }))}
+  {@const variants = themes.variants(
+    Schema,
+    () => new Model("edit", { name: "", age: 0, active: false }),
+  )}
   {#await build( { type: "object", properties: { name: { type: "string" }, age: { type: "number" }, active: { type: "boolean" } }, required: ["name", "age", "active"] }, ) then tree}
     <themes.Across {variants} contained={false}>
       {#snippet variant({ Component, model, theme })}
@@ -271,7 +303,7 @@
   {/await}
   {test(async ({ expect, within }) =>
     themes.each(variants, async ({ element }) => {
-    const view = within(element);
+      const view = within(element);
       for (const label of ["name", "age", "active"]) {
         const input = (await view.findByLabelText(label)) as HTMLInputElement;
         expect(input.disabled).toBe(false);
@@ -287,7 +319,10 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(Schema, () => new Model("edit", { tags: ["alpha"] }))}
+  {@const variants = themes.variants(
+    Schema,
+    () => new Model("edit", { tags: ["alpha"] }),
+  )}
   {#await build( { type: "object", properties: { tags: { type: "array", items: { type: "string" } } }, required: ["tags"] }, ) then tree}
     <themes.Across {variants} contained={false}>
       {#snippet variant({ Component, model, theme })}
@@ -312,7 +347,10 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(Schema, () => new Model("edit", { name: "Alice" }))}
+  {@const variants = themes.variants(
+    Schema,
+    () => new Model("edit", { name: "Alice" }),
+  )}
   {#await build( { type: "object", properties: { name: { type: "string" } }, required: ["name"] }, ) then tree}
     <themes.Across {variants} contained={false}>
       {#snippet variant({ Component, model, theme })}
@@ -322,7 +360,7 @@
   {/await}
   {test(async ({ expect, flushSync, within }) =>
     themes.each(variants, async ({ element, model }) => {
-    const view = within(element);
+      const view = within(element);
       const input = (await view.findByLabelText("name")) as HTMLInputElement;
       expect(input.value).toBe("Alice");
       flushSync(() => model.set({ path: "name" }, "Bob"));
@@ -339,7 +377,10 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(Schema, () => new Model("stream", { name: "Alice" }))}
+  {@const variants = themes.variants(
+    Schema,
+    () => new Model("stream", { name: "Alice" }),
+  )}
   {#await build( { type: "object", properties: { name: { type: "string" } }, required: ["name"] }, ) then tree}
     <themes.Across {variants} contained={false}>
       {#snippet variant({ Component, model, theme })}
@@ -349,7 +390,7 @@
   {/await}
   {test(async ({ expect, within }) =>
     themes.each(variants, async ({ element }) => {
-    const view = within(element);
+      const view = within(element);
       const input = (await view.findByLabelText("name")) as HTMLInputElement;
       expect(input.disabled).toBe(true);
     }),
@@ -363,7 +404,10 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(Schema, () => new Model("stream", { tags: ["alpha"] }))}
+  {@const variants = themes.variants(
+    Schema,
+    () => new Model("stream", { tags: ["alpha"] }),
+  )}
   {#await build( { type: "object", properties: { tags: { type: "array", items: { type: "string" } } }, required: ["tags"] }, ) then tree}
     <themes.Across {variants} contained={false}>
       {#snippet variant({ Component, model, theme })}
@@ -399,7 +443,7 @@
   {/await}
   {test(async ({ expect, within }) =>
     themes.each(variants, async ({ element }) => {
-    const view = within(element);
+      const view = within(element);
       expect(await view.findByLabelText("name")).toBeDefined();
       expect(await view.findByLabelText("age")).toBeDefined();
     }),
@@ -423,7 +467,7 @@
   {/await}
   {test(async ({ expect, flushSync, within }) =>
     themes.each(variants, async ({ element, model }) => {
-    const view = within(element);
+      const view = within(element);
       const input = (await view.findByLabelText("name")) as HTMLInputElement;
       expect(input.value).toBe("");
       flushSync(() => model.applyPartial({ name: "Alice" }));
@@ -449,7 +493,7 @@
   {/await}
   {test(async ({ expect, flushSync, within }) =>
     themes.each(variants, async ({ element, model }) => {
-    const view = within(element);
+      const view = within(element);
       const input = (await view.findByLabelText("age")) as HTMLInputElement;
       flushSync(() => model.applyPartial({ age: 42 }));
       expect(Number(input.value)).toBe(42);
@@ -464,7 +508,10 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(Schema, () => new Model("stream", { address: { city: "Boston" } }))}
+  {@const variants = themes.variants(
+    Schema,
+    () => new Model("stream", { address: { city: "Boston" } }),
+  )}
   {#await build( { type: "object", properties: { address: { type: "object", properties: { street: { type: "string" }, city: { type: "string" } }, required: ["street", "city"] } }, required: ["address"] }, ) then tree}
     <themes.Across {variants} contained={false}>
       {#snippet variant({ Component, model, theme })}
@@ -474,10 +521,12 @@
   {/await}
   {test(async ({ expect, flushSync, within }) =>
     themes.each(variants, async ({ element, model }) => {
-    const view = within(element);
+      const view = within(element);
       const street = (await view.findByLabelText("street")) as HTMLInputElement;
       const city = view.getByLabelText("city") as HTMLInputElement;
-      flushSync(() => model.applyPartial({ address: { street: "123 Main St" } }));
+      flushSync(() =>
+        model.applyPartial({ address: { street: "123 Main St" } }),
+      );
       expect(street.value).toBe("123 Main St");
       expect(city.value).toBe("Boston"); // untouched
     }),
@@ -491,7 +540,10 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(Schema, () => new Model("stream", { tags: [] }))}
+  {@const variants = themes.variants(
+    Schema,
+    () => new Model("stream", { tags: [] }),
+  )}
   {#await build( { type: "object", properties: { tags: { type: "array", items: { type: "string" } } }, required: ["tags"] }, ) then tree}
     <themes.Across {variants} contained={false}>
       {#snippet variant({ Component, model, theme })}
@@ -501,7 +553,9 @@
   {/await}
   {test(async ({ expect, waitFor, flushSync }) =>
     themes.each(variants, async ({ element, model }) => {
-      await waitFor(() => expect(model.element({ path: "tags" })).toBeDefined());
+      await waitFor(() =>
+        expect(model.element({ path: "tags" })).toBeDefined(),
+      );
       const items = () => element.querySelectorAll('[data-path^="tags."]');
       expect(items()).toHaveLength(0);
       flushSync(() => model.set({ path: "tags" }, ["alpha"]));
@@ -529,7 +583,7 @@
   {/await}
   {test(async ({ expect, flushSync, within }) =>
     themes.each(variants, async ({ element, model }) => {
-    const view = within(element);
+      const view = within(element);
       const first = (await view.findByLabelText("first")) as HTMLInputElement;
       const last = view.getByLabelText("last") as HTMLInputElement;
       flushSync(() => {
@@ -550,7 +604,10 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(Schema, () => new Model("view", { name: "Alice" }))}
+  {@const variants = themes.variants(
+    Schema,
+    () => new Model("view", { name: "Alice" }),
+  )}
   {#await build( { type: "object", properties: { name: { type: "string" } }, required: ["name"] }, ) then tree}
     <themes.Across {variants} contained={false}>
       {#snippet variant({ Component, model, theme })}
@@ -560,7 +617,7 @@
   {/await}
   {test(async ({ expect, within }) =>
     themes.each(variants, async ({ element }) => {
-    const view = within(element);
+      const view = within(element);
       const input = (await view.findByLabelText("name")) as HTMLInputElement;
       expect(input.disabled).toBe(true);
     }),
@@ -574,7 +631,10 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(Schema, () => new Model("view", { active: true }))}
+  {@const variants = themes.variants(
+    Schema,
+    () => new Model("view", { active: true }),
+  )}
   {#await build( { type: "object", properties: { active: { type: "boolean" } }, required: ["active"] }, ) then tree}
     <themes.Across {variants} contained={false}>
       {#snippet variant({ Component, model, theme })}
@@ -584,7 +644,7 @@
   {/await}
   {test(async ({ expect, within }) =>
     themes.each(variants, async ({ element }) => {
-    const view = within(element);
+      const view = within(element);
       const checkbox = (await view.findByRole("checkbox")) as HTMLInputElement;
       expect(checkbox.disabled).toBe(true);
     }),
@@ -598,7 +658,10 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(Schema, () => new Model("view", { nickname: "Neo" }))}
+  {@const variants = themes.variants(
+    Schema,
+    () => new Model("view", { nickname: "Neo" }),
+  )}
   {#await build( { type: "object", properties: { nickname: { type: "string" } } }, ) then tree}
     <themes.Across {variants} contained={false}>
       {#snippet variant({ Component, model, theme })}
@@ -608,7 +671,7 @@
   {/await}
   {test(async ({ expect, within }) =>
     themes.each(variants, async ({ element }) => {
-    const view = within(element);
+      const view = within(element);
       expect(await view.findByLabelText("nickname")).toBeDefined();
       expect(element.querySelector('[data-action="opt-out"]')).toBeNull();
       expect(element.querySelector('[data-action="opt-in"]')).toBeNull();
@@ -623,7 +686,10 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(Schema, () => new Model("view", { tags: ["alpha", "beta"] }))}
+  {@const variants = themes.variants(
+    Schema,
+    () => new Model("view", { tags: ["alpha", "beta"] }),
+  )}
   {#await build( { type: "object", properties: { tags: { type: "array", items: { type: "string" } } }, required: ["tags"] }, ) then tree}
     <themes.Across {variants} contained={false}>
       {#snippet variant({ Component, model, theme })}

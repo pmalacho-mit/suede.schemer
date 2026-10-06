@@ -29,7 +29,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(TupleField, () => new Model("edit", { coords: [10, 20] }), "tuple")}
+  {@const variants = themes.variants(
+    TupleField,
+    () => new Model("edit", { coords: [10, 20] }),
+    "tuple",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       {#snippet child(
@@ -68,7 +72,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(TupleField, () => new Model("edit", { pair: ["hello", 42] }), "tuple")}
+  {@const variants = themes.variants(
+    TupleField,
+    () => new Model("edit", { pair: ["hello", 42] }),
+    "tuple",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       {#snippet child(
@@ -113,7 +121,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(TupleField, () => new Model("edit", { coords: [0, 0] }), "tuple")}
+  {@const variants = themes.variants(
+    TupleField,
+    () => new Model("edit", { coords: [0, 0] }),
+    "tuple",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       {#snippet child(
@@ -153,12 +165,17 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(TupleField, () => new Model("edit", {
-    points: [
-      [1, 2],
-      [3, 4],
-    ],
-  }), "tuple")}
+  {@const variants = themes.variants(
+    TupleField,
+    () =>
+      new Model("edit", {
+        points: [
+          [1, 2],
+          [3, 4],
+        ],
+      }),
+    "tuple",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ model })}
       <AnyField

@@ -27,7 +27,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(ObjectField, () => new Model("edit", { name: "", age: 0 }), "object")}
+  {@const variants = themes.variants(
+    ObjectField,
+    () => new Model("edit", { name: "", age: 0 }),
+    "object",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       {#snippet child(
@@ -55,9 +59,11 @@
   </themes.Across>
   {test(async ({ expect, within }) =>
     themes.each(variants, async ({ element }) => {
-    const view = within(element);
+      const view = within(element);
       const fieldset = view.getByRole("group");
-      expect(fieldset.querySelector("legend")?.textContent?.trim()).toBe("User");
+      expect(fieldset.querySelector("legend")?.textContent?.trim()).toBe(
+        "User",
+      );
     }),
   )}
 {/snippet}
@@ -69,7 +75,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(ObjectField, () => new Model("edit", { name: "", age: 0, active: false }), "object")}
+  {@const variants = themes.variants(
+    ObjectField,
+    () => new Model("edit", { name: "", age: 0, active: false }),
+    "object",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       {#snippet child(
@@ -110,7 +120,11 @@
   themes: typeof acrossThemes,
   test: Test,
 )}
-  {@const variants = themes.variants(ObjectField, () => new Model("edit", { address: { street: "", city: "" } }), "object")}
+  {@const variants = themes.variants(
+    ObjectField,
+    () => new Model("edit", { address: { street: "", city: "" } }),
+    "object",
+  )}
   <themes.Across {variants}>
     {#snippet variant({ Component, model })}
       {#snippet child(
@@ -144,12 +158,14 @@
   </themes.Across>
   {test(async ({ expect, within }) =>
     themes.each(variants, async ({ element }) => {
-    const view = within(element);
+      const view = within(element);
       expect(view.getAllByRole("group").length).toBeGreaterThanOrEqual(2);
       expect(
         element.querySelector('[data-path="address.street"]'),
       ).not.toBeNull();
-      expect(element.querySelector('[data-path="address.city"]')).not.toBeNull();
+      expect(
+        element.querySelector('[data-path="address.city"]'),
+      ).not.toBeNull();
     }),
   )}
 {/snippet}
