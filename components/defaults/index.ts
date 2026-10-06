@@ -34,7 +34,10 @@ export const component = {
     opt_in__: OptIn,
     opt_out__: OptOut,
   } satisfies {
-    [K in Field.RenderActions]: Component<Field.Props<any>>;
+    [K in Exclude<
+      Field.RenderActions,
+      "opted_out__"
+    >]: Component<Field.Props<any>>;
   },
   forArray: {
     push: Push,
