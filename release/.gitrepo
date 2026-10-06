@@ -4,7 +4,7 @@
 ; git-subrepo command. See https://github.com/ingydotnet/git-subrepo#readme
 ;
 [subrepo]
-	remote = https://github.com/pmalacho-mit/svelte-schema-renderer-suede
+	remote = https://github.com/pmalacho-mit/suede.schemer.git
 	branch = release
 	commit = 496be562e8cd5b2610eb8a8f32d2b3e49c0b30db
 	parent = 6131d6145eaac7ee6bf5d71d1f3203347757c0a0
